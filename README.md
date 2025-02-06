@@ -2,6 +2,13 @@
 
 A new Flutter project.
 
+Color palette: 
+- Raisin Black: #22242F
+- Cerulean: #40798C
+- Verdigris: #70A9A1
+- Hunyadi Yellow: #FFBF65
+- Cornsilk: #F6F1D1
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
