@@ -8,16 +8,27 @@ class AppColors {
 }
 
 class UserPage extends StatelessWidget {
-  const UserPage({super.key});
-
+  const UserPage({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('User Page'),
+        title: Text('User Page'),
       ),
       body: Center(
-        child: const Text('This is the User Page'),
+        child: Container(
+          width: 200,
+          height: 200,
+          decoration: BoxDecoration(
+            color: AppColors.yellow,
+            borderRadius: BorderRadius.circular(20)),
+          child: Center(
+            child: Text(
+              'Your mom',
+              style: TextStyle(color: AppColors.darkblue),
+              ),
+            ),
+        ),
       ),
     );
   }
