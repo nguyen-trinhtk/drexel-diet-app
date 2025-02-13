@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:getwidget/getwidget.dart';
 
 void main() {
-
-  runApp( MyApp());
-
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({ Key? key }) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,20 +16,36 @@ class MyApp extends StatelessWidget {
           backgroundColor: Color(0xffffbf65),
           title: const Text('Test Menu Page'),
         ),
-        body: ListView.builder(
-          scrollDirection: Axis.vertical,
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, // Number of columns in a row
+              crossAxisSpacing: 10, // Space between columns
+              mainAxisSpacing: 10, // Space between rows
+              childAspectRatio: 1.5, // Adjust width/height ratio
+            ),
+          itemCount: 5, // Added item count
           itemBuilder: (BuildContext context, int index) {
-            return ListTile (
-              leading: const Icon(Icons.food_bank),
-              title: Text('List item $index'),
-              trailing: const Text('See more')
-            );
-          },
+            return GFCard(
+                boxFit: BoxFit.cover,
+                title: GFListTile(
+                  title: Text('Food Name $index'),
+                ),
+                content: Text("Food Description"),
+                buttonBar: GFButtonBar(
+                  children: [
+                    GFButton(
+                      onPressed: () {},
+                      text: 'See more',
+                    ),
+                  ],
+                ),
+              );
+            },
+            )
         ),
-      ), 
+      ),
     );
-      
-
-
   }
 }
