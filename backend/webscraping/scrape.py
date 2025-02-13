@@ -40,7 +40,7 @@ for stationBlock in stationBlocks:
     stationItems = []
     stationBlockChildren = stationBlock.findChildren()
     for menuItem in stationBlockChildren:
-       itemTitle = re.search("",  str(menuItem))
+       itemTitle = re.search("<h3.*><span class=\"sc-fjvvzt kQweEp HeaderItemNameLink\" data-testid=\"product-card-header-link\">(.*)</span></h3>",  str(menuItem))
        if itemTitle == None:
            pass
        elif itemTitle:
@@ -48,4 +48,6 @@ for stationBlock in stationBlocks:
        else:
            pass
     menuItems.append(stationItems)
-print(menuItems) 
+
+print(menuItems)
+
