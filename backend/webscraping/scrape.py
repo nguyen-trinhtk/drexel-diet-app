@@ -1,4 +1,5 @@
 import re
+import sqlite3
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -129,8 +130,29 @@ for stationBlock in stationBlocks:
     menuEatWell.append(stationEatWell)
     menuPlantForward.append(stationPlantForward)
 
+connection = sqlite3.connect('menu.db')
+cursor = connection.cursor()
+cursor.execute("DROP TABLE MENU")
+table = """ CREATE TABLE MENU (                           
+            Name VARCHAR(255),                            
+            Station VARCHAR(255),                         
+            Calories INT,                                 
+            LowCarbon BLOB,                               
+            GlutenFree BLOB,                              
+            Vegan BLOB,                                   
+            Vegetarian BLOB,                              
+            WholeGrain BLOB,                              
+            EatWell BLOB,                                 
+            PlantForward BLOB                             
+        ); """
+cursor.execute(table)
+
 for i in range(len(stationTitles)):
     for k in range(len(menuItems)):
         for j in range(len(menuItems[k])):
-            print(menuItems[k][j], stationTitles[i], menuCalories[k][j], menuLowCarbon[k], menuVegetarian[k], menuGlutenFree[k], menuWholeGrain[k], menuEatWell[k], menuPlantForward[k], menuVegan[k])
-        print("")
+            cursor.execute("INSERT INTO MENU (Name, Station, Calories, LowCarbon, Vegetarian, GlutenFree, WholeGrain, EatWell, PlantForward, Vegan) VALUES(?,?,?,?,?,?,?,?,?,?)", (menuItems[k][j], stationTitles[i], menuCalories[k][j], menuLowCarbon[k][j], menuVegetarian[k][j], menuGlutenFree[k][j], menuWholeGrain[k][j], menuEatWell[k][j], menuPlantForward[k][j], menuVegan[k][j]))
+            #print(menuItems[k][j], stationTitles[i], menuCalories[k][j], menuLowCarbon[k][j], menuVegetarian[k][j], menuGlutenFree[k][j], menuWholeGrain[k][j], menuEatWell[k][j], menuPlantForward[k][j], menuVegan[k][j])
+        #print("")
+#cursor.execute(table)                          
+connection.commit()                                                   
+connection.close() 
