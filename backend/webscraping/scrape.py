@@ -132,20 +132,20 @@ for stationBlock in stationBlocks:
 
 connection = sqlite3.connect('menu.db')
 cursor = connection.cursor()
-cursor.execute("DROP TABLE MENU")
-table = """ CREATE TABLE MENU (                           
-            Name VARCHAR(255),                            
-            Station VARCHAR(255),                         
-            Calories INT,                                 
-            LowCarbon BLOB,                               
-            GlutenFree BLOB,                              
-            Vegan BLOB,                                   
-            Vegetarian BLOB,                              
-            WholeGrain BLOB,                              
-            EatWell BLOB,                                 
-            PlantForward BLOB                             
-        ); """
-cursor.execute(table)
+cursor.execute("DELETE FROM MENU")
+#table = """ CREATE TABLE MENU (                           
+#            Name VARCHAR(255),                            
+#            Station VARCHAR(255),                         
+#            Calories INT,                                 
+#            LowCarbon BLOB,                               
+#            GlutenFree BLOB,                              
+#            Vegan BLOB,                                   
+#            Vegetarian BLOB,                              
+#            WholeGrain BLOB,                              
+#            EatWell BLOB,                                 
+#            PlantForward BLOB                             
+#        ); """
+#cursor.execute(table)
 
 for i in range(len(stationTitles)):
     for k in range(len(menuItems)):
