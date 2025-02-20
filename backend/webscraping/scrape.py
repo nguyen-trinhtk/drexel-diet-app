@@ -1,4 +1,5 @@
 import re
+import sqlite3
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -19,6 +20,7 @@ content = browser.page_source
 browser.close() # close browser
 
 soup = bs(content, "lxml") # use bs4 to parse raw HTML using the lxml parser
+
 stationBlocks = soup.findAll("div", class_="sc-ejfMa-d flvhaP MenuStation_no-categories") # find dining stations
 stationBlockChildren = stationBlocks[0].findChildren() # find all child elements of the stations
 stationTitles = []
@@ -31,21 +33,126 @@ for stationBlock in stationBlocks:
         if match == None:
             pass
         elif match.group(1) not in stationTitles:
-            stationTitles.append(match.group(1))
+                stationTitles.append(match.group(1))
         else:
             pass
 # find all menu items, split up into lists based on station
 menuItems = []
-for stationBlock in stationBlocks:
+menuCalories = []
+menuDescriptions = []
+menuLowCarbon = []
+menuVegetarian = []
+menuGlutenFree = []
+menuWholeGrain = []
+menuEatWell = []
+menuPlantForward = []
+menuVegan = []
+
+for stationBlock in stationBlocks: 
     stationItems = []
+    stationCalories = []
+    stationDescriptions = []
+    stationLowCarbon = []
+    stationVegetarian = []
+    stationGlutenFree = []
+    stationWholeGrain = []
+    stationEatWell = []
+    stationPlantForward = []
+    stationVegan = []
     stationBlockChildren = stationBlock.findChildren()
+    
     for menuItem in stationBlockChildren:
-       itemTitle = re.search("",  str(menuItem))
+       itemTitle = re.search("<h3.*><span class=\"sc-fjvvzt kQweEp HeaderItemNameLink\" data-testid=\"product-card-header-link\">(.*)</span></h3>",  str(menuItem))
        if itemTitle == None:
            pass
-       elif itemTitle:
+       elif itemTitle and itemTitle.group(1) not in stationItems:
            stationItems.append(itemTitle.group(1))
+           itemCalories = re.search(".*>(.*) Calories</span>", str(menuItem))
+           if itemCalories == None:
+               pass
+           else:
+               stationCalories.append(int(itemCalories.group(1)))
+           
+           precursor = str(itemCalories.group(1)) + " Calories"
+           
+           itemLowCarbon = re.search(precursor + ".*Low Carbon Certified", str(menuItem))
+           if itemLowCarbon == None:
+               stationLowCarbon.append(False)
+           else:
+               stationLowCarbon.append(True)
+           
+           itemGlutenFree = re.search(precursor + ".*Made Without.*</li>", str(menuItem))
+           if itemGlutenFree == None:
+               stationGlutenFree.append(False)
+           else:
+               stationGlutenFree.append(True)
+           
+           itemVegan = re.search(precursor + ".*Vegan.*</li>", str(menuItem))
+           if itemVegan == None:
+               stationVegan.append(False)
+           else:
+               stationVegan.append(True)
+           
+           itemVegetarian = re.search(precursor + ".*Vegetarian.*</li>", str(menuItem))
+           if itemVegetarian == None:
+               stationVegetarian.append(False)
+           else:
+               stationVegetarian.append(True)
+
+           itemWholeGrain = re.search(precursor + ".*Made With Whole.*</li>", str(menuItem))
+           if itemWholeGrain == None:
+               stationWholeGrain.append(False)
+           else:
+               stationWholeGrain.append(True)
+
+           itemEatWell = re.search(precursor + ".*Eat Well.*</li>", str(menuItem))
+           if itemEatWell == None:
+               stationEatWell.append(False)
+           else:
+               stationEatWell.append(True)
+
+           itemPlantForward = re.search(precursor + ".*Plant Forward.*</li>", str(menuItem))
+           if itemPlantForward == None:
+               stationPlantForward.append(False)
+           else:
+               stationPlantForward.append(True)
        else:
            pass
+
+    menuCalories.append(stationCalories)
     menuItems.append(stationItems)
-print(menuItems) 
+    menuDescriptions.append(stationDescriptions)
+    menuLowCarbon.append(stationLowCarbon)
+    menuGlutenFree.append(stationGlutenFree)
+    menuVegan.append(stationVegan)
+    menuVegetarian.append(stationVegetarian)
+    menuWholeGrain.append(stationWholeGrain)
+    menuEatWell.append(stationEatWell)
+    menuPlantForward.append(stationPlantForward)
+
+connection = sqlite3.connect('menu.db')
+cursor = connection.cursor()
+cursor.execute("DELETE FROM MENU")
+#table = """ CREATE TABLE MENU (                           
+#            Name VARCHAR(255),                            
+#            Station VARCHAR(255),                         
+#            Calories INT,                                 
+#            LowCarbon BLOB,                               
+#            GlutenFree BLOB,                              
+#            Vegan BLOB,                                   
+#            Vegetarian BLOB,                              
+#            WholeGrain BLOB,                              
+#            EatWell BLOB,                                 
+#            PlantForward BLOB                             
+#        ); """
+#cursor.execute(table)
+
+for i in range(len(stationTitles)):
+    for k in range(len(menuItems)):
+        for j in range(len(menuItems[k])):
+            cursor.execute("INSERT INTO MENU (Name, Station, Calories, LowCarbon, Vegetarian, GlutenFree, WholeGrain, EatWell, PlantForward, Vegan) VALUES(?,?,?,?,?,?,?,?,?,?)", (menuItems[k][j], stationTitles[i], menuCalories[k][j], menuLowCarbon[k][j], menuVegetarian[k][j], menuGlutenFree[k][j], menuWholeGrain[k][j], menuEatWell[k][j], menuPlantForward[k][j], menuVegan[k][j]))
+            #print(menuItems[k][j], stationTitles[i], menuCalories[k][j], menuLowCarbon[k][j], menuVegetarian[k][j], menuGlutenFree[k][j], menuWholeGrain[k][j], menuEatWell[k][j], menuPlantForward[k][j], menuVegan[k][j])
+        #print("")
+#cursor.execute(table)                          
+connection.commit()                                                   
+connection.close() 
