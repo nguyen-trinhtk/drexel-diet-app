@@ -75,6 +75,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  getwidget:
+    dependency: "direct main"
+    description:
+      name: getwidget
+      sha256: "064b034e0bd2becdac3ddc51a053f26435a2c7679a49012a4b66757ef065ccb3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.0"
   leak_tracker:
     dependency: transitive
     description:
