@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'backend/goal_calculator.dart';
 
 double currentVolume = 3;
 
@@ -18,25 +20,73 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
-  int selectedGenderIndex = 0; // Default gender selection
+  int goalCalories = 0;
+  int selectedGenderIndex = 0;
   final List<String> genders = ["♂️", "♀️"];
   DateTime? selectedDate;
   String selectedUnit = "Metric";
 
-  // Separate controllers for different fields
   final TextEditingController ageController = TextEditingController();
   final TextEditingController heightController = TextEditingController();
   final TextEditingController weightController = TextEditingController();
   final TextEditingController goalWeightController = TextEditingController();
 
+  bool isEatWellSelected = false;
+  bool isVeganSelected = false;
+  bool isVegetarianSelected = false;
+  bool isLowCarbonCertifiedSelected = false;
+  bool isGlutenFreeSelected = false;
+  bool isWholeGrainsSelected = false;
+  bool isPlantForwardSelected = false;
+
   @override
   void dispose() {
-    // Dispose controllers to free up resources
     ageController.dispose();
     heightController.dispose();
     weightController.dispose();
     goalWeightController.dispose();
     super.dispose();
+  }
+
+  int daysUntil(String inputDate) {
+    try {
+      DateTime targetDate = DateFormat('MM-dd-yyyy').parse(inputDate);
+      DateTime today = DateTime.now();
+
+      Duration difference = targetDate.difference(today);
+      return difference.inDays;
+    } catch (e) {
+      return -1; // Indicating an error
+    }
+  }
+
+  void _recordUserInput() {
+    final String age = ageController.text;
+    final String height = heightController.text;
+    final String weight = weightController.text;
+    final String goalWeight = goalWeightController.text;
+    final String gender = genders[selectedGenderIndex];
+    final String unit = selectedUnit;
+    final int activityLevel =
+        currentVolume.toInt(); // Ensure activity level is an integer
+    final String date = selectedDate != null
+        ? DateFormat('MM-dd-yyyy').format(selectedDate!)
+        : "Date not picked.";
+    int daysToGoal = daysUntil(date);
+
+    // Call setState to rebuild the UI with updated goalCalories
+    setState(() {
+      goalCalories = calculateCaloricGoal(
+        int.parse(age),
+        double.parse(height),
+        double.parse(weight),
+        double.parse(goalWeight),
+        activityLevel,
+        gender,
+        daysToGoal,
+        unit,
+      );
+    });
   }
 
   @override
@@ -88,9 +138,9 @@ class _UserPageState extends State<UserPage> {
                         color: AppColors.yellow,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Text(
-                          'Calories Left',
+                          'Goal Calories: $goalCalories',
                           style: TextStyle(
                             color: AppColors.darkblue,
                             fontWeight: FontWeight.bold,
@@ -107,15 +157,87 @@ class _UserPageState extends State<UserPage> {
                         color: AppColors.yellow,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: const Center(
-                        child: Text(
-                          'Food Preferences',
-                          style: TextStyle(
-                            color: AppColors.darkblue,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20.0,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Food Preferences',
+                            style: TextStyle(
+                              color: AppColors.darkblue,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20.0,
+                            ),
                           ),
-                        ),
+                          Wrap(
+                            spacing: 8.0,
+                            runSpacing: 4.0,
+                            children: [
+                              FilterChip(
+                                label: const Text('Eat Well'),
+                                selected: isEatWellSelected,
+                                onSelected: (bool selected) {
+                                  setState(() {
+                                    isEatWellSelected = selected;
+                                  });
+                                },
+                              ),
+                              FilterChip(
+                                label: const Text('Vegan'),
+                                selected: isVeganSelected,
+                                onSelected: (bool selected) {
+                                  setState(() {
+                                    isVeganSelected = selected;
+                                  });
+                                },
+                              ),
+                              FilterChip(
+                                label: const Text('Vegetarian'),
+                                selected: isVegetarianSelected,
+                                onSelected: (bool selected) {
+                                  setState(() {
+                                    isVegetarianSelected = selected;
+                                  });
+                                },
+                              ),
+                              FilterChip(
+                                label: const Text('Low Carbon Certified'),
+                                selected: isLowCarbonCertifiedSelected,
+                                onSelected: (bool selected) {
+                                  setState(() {
+                                    isLowCarbonCertifiedSelected = selected;
+                                  });
+                                },
+                              ),
+                              FilterChip(
+                                label: const Text('Gluten Free'),
+                                selected: isGlutenFreeSelected,
+                                onSelected: (bool selected) {
+                                  setState(() {
+                                    isGlutenFreeSelected = selected;
+                                  });
+                                },
+                              ),
+                              FilterChip(
+                                label: const Text('Whole Grains'),
+                                selected: isWholeGrainsSelected,
+                                onSelected: (bool selected) {
+                                  setState(() {
+                                    isWholeGrainsSelected = selected;
+                                  });
+                                },
+                              ),
+                              FilterChip(
+                                label: const Text('Plant Forward'),
+                                selected: isPlantForwardSelected,
+                                onSelected: (bool selected) {
+                                  setState(() {
+                                    isPlantForwardSelected = selected;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -128,10 +250,25 @@ class _UserPageState extends State<UserPage> {
               flex: 1,
               child: Row(
                 children: [
-                  _buildTextField('Age', ageController),
-                  _buildTextField('Height', heightController),
-                  _buildTextField('Current Weight', weightController),
-                  _buildTextField('Goal Weight', goalWeightController),
+                  // TextFields for Age, Height, Weight, Goal Weight
+                  _buildTextField('Age', ageController, TextInputType.number,
+                      FilteringTextInputFormatter.digitsOnly),
+                  _buildTextField(
+                      'Height',
+                      heightController,
+                      TextInputType.numberWithOptions(decimal: true),
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))),
+                  _buildTextField(
+                      'Current Weight',
+                      weightController,
+                      TextInputType.numberWithOptions(decimal: true),
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))),
+                  _buildTextField(
+                      'Goal Weight',
+                      goalWeightController,
+                      TextInputType.numberWithOptions(decimal: true),
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))),
+                  // Activity Level with Slider
                   Expanded(
                     child: Container(
                       margin: const EdgeInsets.only(right: 10),
@@ -250,6 +387,7 @@ class _UserPageState extends State<UserPage> {
                       ),
                     ),
                   ),
+                  // Unit Dropdown
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
@@ -287,8 +425,7 @@ class _UserPageState extends State<UserPage> {
                                           TextStyle(color: AppColors.darkblue)),
                                 );
                               }).toList(),
-                              dropdownColor:
-                                  AppColors.silk, // Dropdown background color
+                              dropdownColor: AppColors.silk,
                               style: TextStyle(
                                   color: AppColors.darkblue, fontSize: 16),
                               underline: Container(
@@ -302,6 +439,11 @@ class _UserPageState extends State<UserPage> {
                 ],
               ),
             ),
+            // Button to record user input
+            ElevatedButton(
+              onPressed: _recordUserInput,
+              child: const Text('Save Data'),
+            ),
           ],
         ),
       ),
@@ -309,7 +451,8 @@ class _UserPageState extends State<UserPage> {
   }
 
   // Helper function to create text fields
-  Widget _buildTextField(String label, TextEditingController controller) {
+  Widget _buildTextField(String label, TextEditingController controller,
+      TextInputType keyboardType, TextInputFormatter inputFormatter) {
     return Expanded(
       child: Container(
         margin: const EdgeInsets.only(right: 10),
@@ -320,6 +463,8 @@ class _UserPageState extends State<UserPage> {
         child: Center(
           child: TextField(
             controller: controller,
+            keyboardType: keyboardType,
+            inputFormatters: [inputFormatter],
             decoration: InputDecoration(
               border: const OutlineInputBorder(),
               labelText: label,

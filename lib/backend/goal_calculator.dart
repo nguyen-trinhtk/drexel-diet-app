@@ -16,20 +16,20 @@ int calculateCaloricGoal(
     String units) //metric or imperial
 {
   //unit conversion
-  if (units == 'imperial') {
+  if (units == 'Imperial') {
     //convert into metric
     height *= 2.54;
     currentWeight *= 0.453592;
     goalWeight *= 0.453592;
-  } else if (units != 'metric') {
+  } else if (units != 'Metric') {
     // if neither metric nor imperial, throw exception
     throw Exception('Invalid unit type');
   }
   //gender-based BMR
   double bmr = 0;
-  if (gender == 'female') {
+  if (gender == '♀️') {
     bmr = (10 * currentWeight) + (6.25 * height) - (5 * age) - 161;
-  } else if (gender == 'male') {
+  } else if (gender == '♂️') {
     bmr = (10 * currentWeight) + (6.25 * height) - (5 * age) + 5;
   }
   //calorie goal
