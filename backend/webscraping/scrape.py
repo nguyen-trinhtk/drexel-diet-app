@@ -1,12 +1,16 @@
 import re
 import sqlite3
 from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.expected_conditions import visibility_of_element_located
 from bs4 import BeautifulSoup as bs
 
-browser = webdriver.Firefox()  # start a web browser
+optionsFirefox = Options()
+optionsFirefox.add_argument("--headless") # don't display firefox window
+
+browser = webdriver.Firefox(options=optionsFirefox)  # start a web browser
 browser.get("https://drexel.campusdish.com/LocationsAndMenus/UrbanEatery")  # navigate to URL
 
 # wait until all elements of the webpage are loaded
@@ -16,7 +20,7 @@ title = (
     .text
 )
 
-content = browser.page_source
+content = browser.page_source # scrape all html
 browser.close() # close browser
 
 soup = bs(content, "lxml") # use bs4 to parse raw HTML using the lxml parser
@@ -130,29 +134,14 @@ for stationBlock in stationBlocks:
     menuEatWell.append(stationEatWell)
     menuPlantForward.append(stationPlantForward)
 
-connection = sqlite3.connect('menu.db')
-cursor = connection.cursor()
-cursor.execute("DELETE FROM MENU")
-#table = """ CREATE TABLE MENU (                           
-#            Name VARCHAR(255),                            
-#            Station VARCHAR(255),                         
-#            Calories INT,                                 
-#            LowCarbon BLOB,                               
-#            GlutenFree BLOB,                              
-#            Vegan BLOB,                                   
-#            Vegetarian BLOB,                              
-#            WholeGrain BLOB,                              
-#            EatWell BLOB,                                 
-#            PlantForward BLOB                             
-#        ); """
-#cursor.execute(table)
+connection = sqlite3.connect('menu.db') # connect to sqlite3 database
+cursor = connection.cursor() # create cursor to manipulate database
+cursor.execute("DELETE FROM MENU") # remove all previous items from the database
 
-for i in range(len(stationTitles)):
-    for k in range(len(menuItems)):
-        for j in range(len(menuItems[k])):
-            cursor.execute("INSERT INTO MENU (Name, Station, Calories, LowCarbon, Vegetarian, GlutenFree, WholeGrain, EatWell, PlantForward, Vegan) VALUES(?,?,?,?,?,?,?,?,?,?)", (menuItems[k][j], stationTitles[i], menuCalories[k][j], menuLowCarbon[k][j], menuVegetarian[k][j], menuGlutenFree[k][j], menuWholeGrain[k][j], menuEatWell[k][j], menuPlantForward[k][j], menuVegan[k][j]))
-            #print(menuItems[k][j], stationTitles[i], menuCalories[k][j], menuLowCarbon[k][j], menuVegetarian[k][j], menuGlutenFree[k][j], menuWholeGrain[k][j], menuEatWell[k][j], menuPlantForward[k][j], menuVegan[k][j])
-        #print("")
-#cursor.execute(table)                          
-connection.commit()                                                   
-connection.close() 
+# send all scraped items to database
+for i in range(0, len(stationTitles)):
+    for k in range(0, len(menuItems[i])):
+        cursor.execute("INSERT INTO MENU (Name, Station, Calories, LowCarbon, Vegetarian, GlutenFree, WholeGrain, EatWell, PlantForward, Vegan) VALUES(?,?,?,?,?,?,?,?,?,?)", (menuItems[i][k], stationTitles[i], menuCalories[i][k], menuLowCarbon[i][k], menuVegetarian[i][k], menuGlutenFree[i][k], menuWholeGrain[i][k], menuEatWell[i][k], menuPlantForward[i][k], menuVegan[i][k]))
+
+connection.commit() # commit the changes to the database                                                
+connection.close() # close connection to the database
