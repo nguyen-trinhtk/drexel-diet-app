@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
-// use "flutter pub add getwidget" to run 
+// use "flutter pub add getwidget" to run
 
 import 'homepage.dart';
+import 'userpage.dart';
 
 void main() {
   runApp(MyApp());
@@ -34,9 +35,11 @@ class HomeScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Color(0xffffbf65),
               ),
-              child: Text("Menu", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              child: Text("Menu",
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             ),
-            Builder( // Context
+            Builder(
+              // Context
               builder: (context) => GFButton(
                 onPressed: () {
                   Navigator.of(context).push(
@@ -47,6 +50,17 @@ class HomeScreen extends StatelessWidget {
                 fullWidthButton: true,
               ),
             ),
+            Builder(
+              builder: (context) => GFButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const UserPage())
+                    );
+                  },
+                  text: "Go to User Page",
+                  fullWidthButton: true,
+                ),
+              ),
           ],
         ),
       ),
