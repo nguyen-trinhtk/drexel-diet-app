@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
 
 class MenuPage extends StatelessWidget {
-  const MenuPage ({Key? key}) : super(key: key);
+  const MenuPage ({super.key});
 
   @override
   Widget build(BuildContext context) {
+    double viewWidth = MediaQuery.sizeOf(context).width;
+    double viewHeight = MediaQuery.sizeOf(context).height;
+
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -21,8 +24,8 @@ class MenuPage extends StatelessWidget {
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, // Number of columns in a row
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: findCardsPerRow(viewWidth, 300), // Number of columns in a row
               crossAxisSpacing: 10, // Space between columns
               mainAxisSpacing: 10, // Space between rows
               childAspectRatio: 1.5, // Adjust width/height ratio
@@ -50,4 +53,8 @@ class MenuPage extends StatelessWidget {
       ),
     );
   }
+}
+
+int findCardsPerRow(double viewWidth, double minCardWidth) {
+  return viewWidth ~/ minCardWidth;
 }
