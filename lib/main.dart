@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
-// use "flutter pub add getwidget" to run
 
-import 'homepage.dart';
 import 'userpage.dart';
 
 void main() {
@@ -11,7 +9,6 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -21,11 +18,24 @@ class MyApp extends StatelessWidget {
 }
 
 class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
+    double viewWidth = MediaQuery.sizeOf(context).width;
+    double viewHeight = MediaQuery.sizeOf(context).height;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xffffbf65),
+        title: const Text('Menu Page'),
+        actions: [
+          IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () {
+                Navigator.pop(context);
+              })
+        ],
       ),
       drawer: Drawer(
         child: ListView(
@@ -43,7 +53,7 @@ class HomeScreen extends StatelessWidget {
               builder: (context) => GFButton(
                 onPressed: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const MenuPage()),
+                    MaterialPageRoute(builder: (context) => const HomeScreen()),
                   );
                 },
                 text: "Go to Menu",
@@ -53,18 +63,49 @@ class HomeScreen extends StatelessWidget {
             Builder(
               builder: (context) => GFButton(
                 onPressed: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const UserPage())
-                    );
-                  },
-                  text: "Go to User Page",
-                  fullWidthButton: true,
-                ),
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const UserPage()));
+                },
+                text: "Go to User Page",
+                fullWidthButton: true,
               ),
+            ),
           ],
         ),
       ),
-      body: Center(child: Text("Home Page")),
+      body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount:
+                  findCardsPerRow(viewWidth, 300), // Number of columns in a row
+              crossAxisSpacing: 10, // Space between columns
+              mainAxisSpacing: 10, // Space between rows
+              childAspectRatio: 1.5, // Adjust width/height ratio
+            ),
+            itemCount: 5, // Added item count
+            itemBuilder: (BuildContext context, int index) {
+              return GFCard(
+                boxFit: BoxFit.cover,
+                title: GFListTile(
+                  title: Text('Food Name $index'),
+                ),
+                content: Text("Food Description"),
+                buttonBar: GFButtonBar(
+                  children: [
+                    GFButton(
+                      onPressed: () {},
+                      text: 'See more',
+                    ),
+                  ],
+                ),
+              );
+            },
+          )),
     );
   }
+}
+
+int findCardsPerRow(double viewWidth, double minCardWidth) {
+  return viewWidth ~/ minCardWidth;
 }

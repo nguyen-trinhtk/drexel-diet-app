@@ -5,7 +5,6 @@ import 'package:getwidget/getwidget.dart';
 
 
 import 'backend/goal_calculator.dart';
-import 'homepage.dart';
 import 'main.dart';
 
 double currentVolume = 3;
@@ -122,7 +121,7 @@ class _UserPageState extends State<UserPage> {
                 builder: (context) => GFButton(
                   onPressed: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const MenuPage()),
+                      MaterialPageRoute(builder: (context) => const HomeScreen()),
                     );
                   },
                   text: "Go to Menu",
