@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:getwidget/getwidget.dart';
 
-
 import 'backend/goal_calculator.dart';
 import 'main.dart';
 
