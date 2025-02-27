@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
 
-import 'userpage.dart';
+import 'sidebar.dart';
 
 void main() {
   runApp(MyApp());
@@ -37,42 +37,7 @@ class HomeScreen extends StatelessWidget {
               })
         ],
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Color(0xffffbf65),
-              ),
-              child: Text("Menu",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            ),
-            Builder(
-              // Context
-              builder: (context) => GFButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const HomeScreen()),
-                  );
-                },
-                text: "Go to Menu",
-                fullWidthButton: true,
-              ),
-            ),
-            Builder(
-              builder: (context) => GFButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const UserPage()));
-                },
-                text: "Go to User Page",
-                fullWidthButton: true,
-              ),
-            ),
-          ],
-        ),
-      ),
+      drawer: Sidebar(),
       body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: GridView.builder(

@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:getwidget/getwidget.dart';
 
 import 'backend/goal_calculator.dart';
-import 'main.dart';
+import 'sidebar.dart';
 
 double currentVolume = 3;
 
@@ -95,52 +95,17 @@ class _UserPageState extends State<UserPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Color(0xffffbf65),
-            actions: [
-              IconButton(
-              icon: const Icon (Icons.close),
+      appBar: AppBar(
+        backgroundColor: Color(0xffffbf65),
+        actions: [
+          IconButton(
+              icon: const Icon(Icons.close),
               onPressed: () {
-              Navigator.pop(context);
-            })],
-        ),
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Color(0xffffbf65),
-                ),
-                child: Text("Menu",
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-              ),
-              Builder(
-                // Context
-                builder: (context) => GFButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const HomeScreen()),
-                    );
-                  },
-                  text: "Go to Menu",
-                  fullWidthButton: true,
-                ),
-              ),
-              Builder(
-                builder: (context) => GFButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => HomeScreen())
-                      );
-                    },
-                    text: "Go back Home",
-                    fullWidthButton: true,
-                ),
-              ),
-            ],
-        ),
+                Navigator.pop(context);
+              })
+        ],
       ),
+      drawer: Sidebar(),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
