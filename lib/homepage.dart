@@ -11,13 +11,14 @@ class MenuPage extends StatelessWidget {
     double viewWidth = MediaQuery.sizeOf(context).width;
     double viewHeight = MediaQuery.sizeOf(context).height;
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xffffbf65),
-        title: const Text('Test Menu Page'),
-        actions: [
-          IconButton(
-              icon: const Icon(Icons.close),
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Color(0xffffbf65),
+          title: const Text('Test Menu Page'),
+          actions: [
+            IconButton(
+              icon: const Icon (Icons.close),
               onPressed: () {
                 Navigator.pop(context);
               })
