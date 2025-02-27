@@ -29,13 +29,7 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Color(0xffffbf65),
         title: const Text('Menu Page'),
-        actions: [
-          IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () {
-                Navigator.pop(context);
-              })
-        ],
+        
       ),
       drawer: Sidebar(),
       body: Padding(
