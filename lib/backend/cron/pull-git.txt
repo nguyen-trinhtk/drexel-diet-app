@@ -1,0 +1,11 @@
+#Every day at midnight
+0 0 * * * cd /anodrexia && git pull \ 
+
+#builds app for web
+flutter build web \ 
+
+#copies files to nginx html files
+cp build /var/www/html/Dining/build \ 
+
+#restarts nginx system
+systemctl restart nginx
