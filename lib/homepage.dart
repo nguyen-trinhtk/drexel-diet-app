@@ -7,8 +7,7 @@ class MenuPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double viewWidth = MediaQuery.sizeOf(context).width;
-    double viewHeight = MediaQuery.sizeOf(context).height;
-
+    
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
