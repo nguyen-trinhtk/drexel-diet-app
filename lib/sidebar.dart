@@ -19,23 +19,19 @@ class Sidebar extends StatelessWidget {
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
           ),
           Builder(
-            // Context
             builder: (context) => GFButton(
               onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const HomeScreen()),
-                );
-              },
-              text: "Go to Menu",
-              fullWidthButton: true,
-            ),
-          ),
-          Builder(
-            builder: (context) => GFButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const UserPage()),
-                );
+                var route = ModalRoute.of(context);
+                if (route != null) {
+                  var routeName = route.settings.name;
+                  if (routeName != "/UserPage") {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        settings: RouteSettings(name: "/UserPage"),
+                        builder: (context) => const UserPage( )),
+                  );
+                  }
+                }
               },
               text: "Go to User Page",
               fullWidthButton: true,
