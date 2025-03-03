@@ -1,11 +1,1 @@
-#Every day at midnight
-0 0 * * * cd /anodrexia && git pull \ 
-
-#builds app for web
-flutter build web \ 
-
-#copies files to nginx html files
-cp build /var/www/html/Dining/build \ 
-
-#restarts nginx system
-systemctl restart nginx
+0 0 * * * git pull && flutter build web --base-href '/var/www/html/test.pummer.li/' && sudo rm -rf /var/www/html/test.pummer.li && sudo mv build/web /var/www/html/test.pummer.li && sudo chmod 755 /var/www/html/test.pummer.li && sudo systemctl reload nginx

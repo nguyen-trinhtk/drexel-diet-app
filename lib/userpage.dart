@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:getwidget/getwidget.dart';
 
 import 'backend/goal_calculator.dart';
 import 'sidebar.dart';
@@ -173,85 +172,7 @@ class _UserPageState extends State<UserPage> {
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            'Food Preferences',
-                            style: TextStyle(
-                              color: AppColors.darkblue,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20.0,
-                            ),
-                          ),
-                          Wrap(
-                            spacing: 8.0,
-                            runSpacing: 4.0,
-                            children: [
-                              FilterChip(
-                                label: const Text('Eat Well'),
-                                selected: isEatWellSelected,
-                                onSelected: (bool selected) {
-                                  setState(() {
-                                    isEatWellSelected = selected;
-                                  });
-                                },
-                              ),
-                              FilterChip(
-                                label: const Text('Vegan'),
-                                selected: isVeganSelected,
-                                onSelected: (bool selected) {
-                                  setState(() {
-                                    isVeganSelected = selected;
-                                  });
-                                },
-                              ),
-                              FilterChip(
-                                label: const Text('Vegetarian'),
-                                selected: isVegetarianSelected,
-                                onSelected: (bool selected) {
-                                  setState(() {
-                                    isVegetarianSelected = selected;
-                                  });
-                                },
-                              ),
-                              FilterChip(
-                                label: const Text('Low Carbon Certified'),
-                                selected: isLowCarbonCertifiedSelected,
-                                onSelected: (bool selected) {
-                                  setState(() {
-                                    isLowCarbonCertifiedSelected = selected;
-                                  });
-                                },
-                              ),
-                              FilterChip(
-                                label: const Text('Gluten Free'),
-                                selected: isGlutenFreeSelected,
-                                onSelected: (bool selected) {
-                                  setState(() {
-                                    isGlutenFreeSelected = selected;
-                                  });
-                                },
-                              ),
-                              FilterChip(
-                                label: const Text('Whole Grains'),
-                                selected: isWholeGrainsSelected,
-                                onSelected: (bool selected) {
-                                  setState(() {
-                                    isWholeGrainsSelected = selected;
-                                  });
-                                },
-                              ),
-                              FilterChip(
-                                label: const Text('Plant Forward'),
-                                selected: isPlantForwardSelected,
-                                onSelected: (bool selected) {
-                                  setState(() {
-                                    isPlantForwardSelected = selected;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
+
                       ),
                     ),
                   ),

@@ -3,6 +3,7 @@ import 'package:getwidget/getwidget.dart';
 
 import 'sidebar.dart';
 import 'dbExtract.dart';
+import 'foodfilter.dart';
 
 void main() async {
   await openDBConnection();
@@ -16,6 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: HomeScreen(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -26,44 +28,62 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double viewWidth = MediaQuery.sizeOf(context).width;
-    // double viewHeight = MediaQuery.sizeOf(context).height;
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xffffbf65),
         title: const Text('Menu Page'),
-        
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.filter_list),
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                builder: (BuildContext context) {
+                  return FractionallySizedBox(
+                    heightFactor: 1,
+                    widthFactor: 0.75,
+                    alignment: Alignment.centerRight,
+                    child: FoodFilterDrawer(),
+                  );
+                },
+              );
+            },
+          ),
+        ],
       ),
       drawer: Sidebar(),
       body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount:
-                  findCardsPerRow(viewWidth, 300), // Number of columns in a row
-              crossAxisSpacing: 10, // Space between columns
-              mainAxisSpacing: 10, // Space between rows
-              childAspectRatio: 1.5, // Adjust width/height ratio
-            ),
-            itemCount: 5, // Added item count
-            itemBuilder: (BuildContext context, int index) {
-              return GFCard(
-                boxFit: BoxFit.cover,
-                title: GFListTile(
-                  title: Text('Food Name $index'),
-                ),
-                content: Text("Food Description"),
-                buttonBar: GFButtonBar(
-                  children: [
-                    GFButton(
-                      onPressed: () {},
-                      text: 'See more',
-                    ),
-                  ],
-                ),
-              );
-            },
-          )),
+        padding: const EdgeInsets.all(8.0),
+        child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount:
+                findCardsPerRow(viewWidth, 300), // Number of columns in a row
+            crossAxisSpacing: 10, // Space between columns
+            mainAxisSpacing: 10, // Space between rows
+            childAspectRatio: 1.5, // Adjust width/height ratio
+          ),
+          itemCount: 5, // Added item count
+          itemBuilder: (BuildContext context, int index) {
+            return GFCard(
+              boxFit: BoxFit.cover,
+              title: GFListTile(
+                title: Text('Food Name $index'),
+              ),
+              content: Text("Food Description"),
+              buttonBar: GFButtonBar(
+                children: [
+                  GFButton(
+                    onPressed: () {},
+                    text: 'See more',
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }
