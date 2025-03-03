@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
 
 import 'sidebar.dart';
+import 'dbExtract.dart';
 
-void main() {
+void main() async {
+  await openDBConnection();
+  await getFoodMenu();
   runApp(MyApp());
 }
 
