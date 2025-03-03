@@ -1,0 +1,29 @@
+{
+
+"0":
+{
+    "Name": "Sriracha Fried Chicken Biscuit",
+    "Station": "Ignite Grill",
+    "Calories": 360,
+    "LowCarbon": 0,
+    "GlutenFree": 0,
+    "Vegan": 0,
+    "Vegetarian": 0,
+    "WholeGrain": 0,
+    "EatWell": 0,
+    "PlantForward": 0
+  },
+  "1":
+  {
+    "Name": "Crispy Hromestyle French Fries",
+    "Station": "Ignite Grill",
+    "Calories": 120,
+    "LowCarbon": 0,
+    "GlutenFree": 1,
+    "Vegan": 1,
+    "Vegetarian": 0,
+    "WholeGrain": 0,
+    "EatWell": 0,
+    "PlantForward": 0
+  }
+}
