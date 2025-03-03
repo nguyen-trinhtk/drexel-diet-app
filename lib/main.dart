@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'dart:convert';
 
 import 'sidebar.dart';
 import 'dbExtract.dart';
 import 'foodfilter.dart';
 
+
+
 void main() async {
-  await openDBConnection();
-  await getFoodMenu();
   runApp(MyApp());
 }
 
@@ -22,8 +24,29 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  var jsonData; 
+  Future<void> loadJsonAsset() async { 
+  final String jsonString = await rootBundle.loadString('lib/menu.json'); 
+  final data = jsonDecode(jsonString); 
+    setState(() { 
+      jsonData = data; 
+    }); 
+    //print(jsonData); 
+  } 
+  
+  @override 
+  void initState() { 
+    super.initState(); 
+    loadJsonAsset(); 
+  } 
 
   @override
   Widget build(BuildContext context) {
@@ -64,23 +87,29 @@ class HomeScreen extends StatelessWidget {
             mainAxisSpacing: 10, // Space between rows
             childAspectRatio: 1.5, // Adjust width/height ratio
           ),
-          itemCount: 5, // Added item count
+          itemCount: 2, // Added item count
           itemBuilder: (BuildContext context, int index) {
-            return GFCard(
-              boxFit: BoxFit.cover,
-              title: GFListTile(
-                title: Text('Food Name $index'),
-              ),
-              content: Text("Food Description"),
-              buttonBar: GFButtonBar(
-                children: [
-                  GFButton(
-                    onPressed: () {},
-                    text: 'See more',
-                  ),
-                ],
-              ),
-            );
+            String strIndex = index.toString();
+            if (jsonData[strIndex]["GlutenFree"] < 2) {
+              return GFCard(
+                boxFit: BoxFit.cover,
+                title: GFListTile(
+                  title: Text(jsonData[strIndex]['Name']),
+                ),
+                content: Text("Food Description"),
+                buttonBar: GFButtonBar(
+                  children: [
+                    GFButton(
+                      onPressed: () {},
+                      text: 'See more',
+                    ),
+                  ],
+                ),
+              );
+            }
+            else{
+              return Container();
+            }
           },
         ),
       ),
