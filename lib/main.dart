@@ -7,7 +7,6 @@ import 'sidebar.dart';
 import 'foodfilter.dart';
 
 
-
 void main() async {
   runApp(MyApp());
 }
@@ -51,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     double viewWidth = MediaQuery.sizeOf(context).width;
-
+    // if jsondata = null return splash screen
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xffffbf65),
