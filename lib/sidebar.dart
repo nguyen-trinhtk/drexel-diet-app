@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
 
-import 'main.dart';
 import 'userpage.dart';
 
 class Sidebar extends StatelessWidget {
