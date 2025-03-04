@@ -4,7 +4,6 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
 
 import 'sidebar.dart';
-import 'dbExtract.dart';
 import 'foodfilter.dart';
 
 
@@ -33,8 +32,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   var jsonData; 
+  
   Future<void> loadJsonAsset() async { 
-  final String jsonString = await rootBundle.loadString('lib/menu.json'); 
+  final String jsonString = await rootBundle.loadString('lib/backend/webscraping/menu.json'); 
   final data = jsonDecode(jsonString); 
     setState(() { 
       jsonData = data; 
@@ -82,15 +82,14 @@ class _HomeScreenState extends State<HomeScreen> {
         child: GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount:
-                findCardsPerRow(viewWidth, 300), // Number of columns in a row
+                findCardsPerRow(viewWidth, 350), // Number of columns in a row
             crossAxisSpacing: 10, // Space between columns
             mainAxisSpacing: 10, // Space between rows
             childAspectRatio: 1.5, // Adjust width/height ratio
           ),
-          itemCount: 2, // Added item count
+          itemCount: jsonData.length, // Added item count
           itemBuilder: (BuildContext context, int index) {
             String strIndex = index.toString();
-            if (jsonData[strIndex]["GlutenFree"] < 2) {
               return GFCard(
                 boxFit: BoxFit.cover,
                 title: GFListTile(
@@ -106,10 +105,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               );
-            }
-            else{
-              return Container();
-            }
           },
         ),
       ),
