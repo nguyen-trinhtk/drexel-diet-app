@@ -1,5 +1,4 @@
 import re
-import sqlite3
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.by import By
@@ -134,14 +133,29 @@ for stationBlock in stationBlocks:
     menuEatWell.append(stationEatWell)
     menuPlantForward.append(stationPlantForward)
 
-connection = sqlite3.connect('menu.db') # connect to sqlite3 database
-cursor = connection.cursor() # create cursor to manipulate database
-cursor.execute("DELETE FROM MENU") # remove all previous items from the database
+db = open("menu.json", "r+")
+db.truncate(0)
+db.write("{\n")
 
 # send all scraped items to database
+counter = 0
 for i in range(0, len(stationTitles)):
     for k in range(0, len(menuItems[i])):
-        cursor.execute("INSERT INTO MENU (Name, Station, Calories, LowCarbon, Vegetarian, GlutenFree, WholeGrain, EatWell, PlantForward, Vegan) VALUES(?,?,?,?,?,?,?,?,?,?)", (menuItems[i][k], stationTitles[i], menuCalories[i][k], menuLowCarbon[i][k], menuVegetarian[i][k], menuGlutenFree[i][k], menuWholeGrain[i][k], menuEatWell[i][k], menuPlantForward[i][k], menuVegan[i][k]))
-
-connection.commit() # commit the changes to the database                                                
-connection.close() # close connection to the database
+        if counter != 0:
+            db.write("\t},\n")
+        db.write("\t\"" + str(counter) + "\":\n")
+        db.write("\t{\n")
+        db.write("\t\t\"Name\": \"" + str(menuItems[i][k]) + "\",\n")
+        db.write("\t\t\"Station\": \"" +  str(stationTitles[i]) + "\",\n")
+        db.write("\t\t\"Calories\": " + str(menuCalories[i][k]) + ",\n")
+        db.write("\t\t\"LowCarbon\": " + str(int(menuLowCarbon[i][k])) + ",\n")
+        db.write("\t\t\"GlutenFree\": " + str(int(menuGlutenFree[i][k])) + ",\n")
+        db.write("\t\t\"Vegan\": " + str(int(menuVegan[i][k])) + ",\n")
+        db.write("\t\t\"Vegetarian\": " + str(int(menuVegetarian[i][k])) + ",\n")
+        db.write("\t\t\"WholeGrain\": " + str(int(menuWholeGrain[i][k])) + ",\n")
+        db.write("\t\t\"EatWell\": " + str(int(menuEatWell[i][k])) + ",\n")
+        db.write("\t\t\"PlantForward\": " + str(int(menuPlantForward[i][k])) + "\n")
+        counter += 1
+db.write("\t}\n")
+db.write("}")
+db.close()
