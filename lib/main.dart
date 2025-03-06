@@ -106,6 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: Text(jsonData[strIndex]['Name']),
                 ),
                 content: Text(calories),
+                /*
                 buttonBar: GFButtonBar(
                   children: [
                     GFButton(
@@ -113,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       text: 'See more',
                     ),
                   ],
-                ),
+                ),*/
               );
             }
             else {
