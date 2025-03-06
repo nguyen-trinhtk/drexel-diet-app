@@ -95,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: GFListTile(
                   title: Text(jsonData[strIndex]['Name']),
                 ),
-                content: Text("Food Description"),
+                content: Text(jsonData[strIndex]['Calories']),
                 buttonBar: GFButtonBar(
                   children: [
                     GFButton(
