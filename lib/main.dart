@@ -92,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
           itemBuilder: (BuildContext context, int index) {
             String strIndex = index.toString();
             String calories = "Calories: ";
-            calories = calories + jsonData[strIndex]['Calories'];
+            calories = calories + jsonData[strIndex]['Calories'].toString();
             bool display =  true;
             for (FoodPreference filter in foodPreferenceFilters){
               if (jsonData[strIndex][filter.toString()] == 1) {
