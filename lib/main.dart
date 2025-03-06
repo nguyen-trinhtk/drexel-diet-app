@@ -41,6 +41,8 @@ class _HomeScreenState extends State<HomeScreen> {
     //print(jsonData); 
   } 
 
+
+  
   @override 
   void initState() { 
     super.initState(); 
@@ -101,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: GFListTile(
                   title: Text(jsonData[strIndex]['Name']),
                 ),
-                content: Text(jsonData[strIndex]['Calories']),
+                content: Text(calories),
                 buttonBar: GFButtonBar(
                   children: [
                     GFButton(
