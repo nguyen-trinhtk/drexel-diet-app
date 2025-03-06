@@ -91,6 +91,8 @@ class _HomeScreenState extends State<HomeScreen> {
           itemCount: jsonData.length, // Added item count
           itemBuilder: (BuildContext context, int index) {
             String strIndex = index.toString();
+            String calories = "Calories: ";
+            calories = calories + jsonData[strIndex]['Calories'];
             bool display =  true;
             for (FoodPreference filter in foodPreferenceFilters){
               if (jsonData[strIndex][filter.toString()] == 1) {
