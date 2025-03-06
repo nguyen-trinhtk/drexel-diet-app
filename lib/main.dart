@@ -41,6 +41,8 @@ class _HomeScreenState extends State<HomeScreen> {
     }); 
     //print(jsonData); 
   } 
+
+
   
   @override 
   void initState() { 
@@ -90,12 +92,14 @@ class _HomeScreenState extends State<HomeScreen> {
           itemCount: jsonData.length, // Added item count
           itemBuilder: (BuildContext context, int index) {
             String strIndex = index.toString();
+            String calories = "Calories: ";
+            calories = calories + jsonData[strIndex]['Calories'].toString();
               return GFCard(
                 boxFit: BoxFit.cover,
                 title: GFListTile(
                   title: Text(jsonData[strIndex]['Name']),
                 ),
-                content: Text(jsonData[strIndex]['Calories']),
+                content: Text(calories),
                 buttonBar: GFButtonBar(
                   children: [
                     GFButton(
