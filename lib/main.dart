@@ -5,7 +5,6 @@ import 'dart:convert';
 
 import 'sidebar.dart';
 import 'foodfilter.dart';
-import 'foodfilter.dart';
 
 
 void main() async {
@@ -34,14 +33,14 @@ class _HomeScreenState extends State<HomeScreen> {
   var jsonData; 
   
   Future<void> loadJsonAsset() async { 
-  final String jsonString = await rootBundle.loadString('lib/backend/webscraping/menu.json'); 
-  final data = jsonDecode(jsonString); 
+    final String jsonString = await rootBundle.loadString('lib/backend/webscraping/menu.json'); 
+    var data = jsonDecode(jsonString);
     setState(() { 
       jsonData = data; 
     }); 
     //print(jsonData); 
   } 
-  
+
   @override 
   void initState() { 
     super.initState(); 
@@ -90,6 +89,13 @@ class _HomeScreenState extends State<HomeScreen> {
           itemCount: jsonData.length, // Added item count
           itemBuilder: (BuildContext context, int index) {
             String strIndex = index.toString();
+            bool display =  true;
+            for (FoodPreference filter in foodPreferenceFilters){
+              if (jsonData[strIndex][filter.toString()] == 1) {
+                display = false;
+              }
+            }
+            if (display) {
               return GFCard(
                 boxFit: BoxFit.cover,
                 title: GFListTile(
@@ -105,6 +111,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               );
+            }
+            else {
+              return Container();
+            }
           },
         ),
       ),

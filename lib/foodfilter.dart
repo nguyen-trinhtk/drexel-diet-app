@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'main.dart';
+
+Set<Station> stationFilters = <Station>{};
+Set<FoodPreference> foodPreferenceFilters = <FoodPreference>{};
 
 enum Station {
   downtownGrounds,
@@ -32,8 +36,6 @@ class FoodFilterDrawer extends StatefulWidget {
 //Selected choices are in the stationFilters and foodPreferenceFilters sets :)
 
 class _FoodFilterDrawerState extends State<FoodFilterDrawer> {
-  Set<Station> stationFilters = <Station>{};
-  Set<FoodPreference> foodPreferenceFilters = <FoodPreference>{};
   String formatText(String text) {
     return text.replaceAllMapped(RegExp(r'([A-Z])'), (Match match) => ' ${match.group(0)}').trim().replaceFirstMapped(RegExp(r'^[a-z]'), (Match match) => match.group(0)!.toUpperCase());
   }
@@ -78,6 +80,7 @@ class _FoodFilterDrawerState extends State<FoodFilterDrawer> {
                 setState(() {
                   if (selected) {
                     foodPreferenceFilters.add(preference);
+                    
                   } else {
                     foodPreferenceFilters.remove(preference);
                   }

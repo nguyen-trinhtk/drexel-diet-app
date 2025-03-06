@@ -1,22 +1,48 @@
 {
 	"0":
 	{
-		"Name": "Old Fashioned Oatmeal (6  fl oz)",
+		"Name": "Nonfat Vanilla Yogurt ( 1/2 cup)",
 		"Station": "Downtown Grounds",
-		"Calories": 110,
-		"LowCarbon": 1,
-		"GlutenFree": 0,
-		"Vegan": 1,
-		"Vegetarian": 0,
-		"WholeGrain": 1,
+		"Calories": 90,
+		"LowCarbon": 0,
+		"GlutenFree": 1,
+		"Vegan": 0,
+		"Vegetarian": 1,
+		"WholeGrain": 0,
 		"EatWell": 0,
 		"PlantForward": 0
 	},
 	"1":
 	{
-		"Name": "Shredded Mozzarella (2  tablespoon)",
-		"Station": "Ignite Exhibition",
-		"Calories": 40,
+		"Name": "Red Grapes ( 1/4 cup)",
+		"Station": "Downtown Grounds",
+		"Calories": 30,
+		"LowCarbon": 0,
+		"GlutenFree": 1,
+		"Vegan": 1,
+		"Vegetarian": 0,
+		"WholeGrain": 0,
+		"EatWell": 0,
+		"PlantForward": 0
+	},
+	"2":
+	{
+		"Name": "Granola ( 1/4 cup)",
+		"Station": "Downtown Grounds",
+		"Calories": 110,
+		"LowCarbon": 0,
+		"GlutenFree": 0,
+		"Vegan": 0,
+		"Vegetarian": 1,
+		"WholeGrain": 1,
+		"EatWell": 0,
+		"PlantForward": 0
+	},
+	"3":
+	{
+		"Name": "Belgian Waffle Mix",
+		"Station": "Downtown Grounds",
+		"Calories": 450,
 		"LowCarbon": 0,
 		"GlutenFree": 0,
 		"Vegan": 0,
@@ -25,10 +51,179 @@
 		"EatWell": 0,
 		"PlantForward": 0
 	},
-	"2":
+	"4":
 	{
-		"Name": "Diced Plum Tomatoes ( 1/4 cup)",
-		"Station": "Ignite Exhibition",
+		"Name": "Gardenburger Black Bean Burger (1  each)",
+		"Station": "Ignite Grill",
+		"Calories": 110,
+		"LowCarbon": 0,
+		"GlutenFree": 0,
+		"Vegan": 0,
+		"Vegetarian": 0,
+		"WholeGrain": 0,
+		"EatWell": 0,
+		"PlantForward": 0
+	},
+	"5":
+	{
+		"Name": "Cheeseburger",
+		"Station": "Ignite Grill",
+		"Calories": 400,
+		"LowCarbon": 0,
+		"GlutenFree": 0,
+		"Vegan": 0,
+		"Vegetarian": 0,
+		"WholeGrain": 0,
+		"EatWell": 0,
+		"PlantForward": 0
+	},
+	"6":
+	{
+		"Name": "Char-Grilled Turkey Burger",
+		"Station": "Ignite Grill",
+		"Calories": 350,
+		"LowCarbon": 1,
+		"GlutenFree": 0,
+		"Vegan": 0,
+		"Vegetarian": 0,
+		"WholeGrain": 0,
+		"EatWell": 1,
+		"PlantForward": 0
+	},
+	"7":
+	{
+		"Name": "Ham and Swiss on a Pretzel Roll",
+		"Station": "Sola Deli",
+		"Calories": 670,
+		"LowCarbon": 0,
+		"GlutenFree": 0,
+		"Vegan": 0,
+		"Vegetarian": 0,
+		"WholeGrain": 0,
+		"EatWell": 0,
+		"PlantForward": 0
+	},
+	"8":
+	{
+		"Name": "Grilled Veg &amp; Hummus Pita",
+		"Station": "Sola Deli",
+		"Calories": 370,
+		"LowCarbon": 1,
+		"GlutenFree": 0,
+		"Vegan": 0,
+		"Vegetarian": 0,
+		"WholeGrain": 0,
+		"EatWell": 1,
+		"PlantForward": 0
+	},
+	"9":
+	{
+		"Name": "Southwest Black Bean Soup (6  fl oz)",
+		"Station": "Uc Veg Lto",
+		"Calories": 100,
+		"LowCarbon": 1,
+		"GlutenFree": 1,
+		"Vegan": 1,
+		"Vegetarian": 0,
+		"WholeGrain": 0,
+		"EatWell": 0,
+		"PlantForward": 0
+	},
+	"10":
+	{
+		"Name": "Greek Quinoa Salad",
+		"Station": "Uc Veg Lto",
+		"Calories": 170,
+		"LowCarbon": 1,
+		"GlutenFree": 0,
+		"Vegan": 0,
+		"Vegetarian": 0,
+		"WholeGrain": 1,
+		"EatWell": 0,
+		"PlantForward": 0
+	},
+	"11":
+	{
+		"Name": "Shredded Cheddar Cheese (2  tablespoon)",
+		"Station": "Uc Veg Salad Bar",
+		"Calories": 60,
+		"LowCarbon": 0,
+		"GlutenFree": 1,
+		"Vegan": 0,
+		"Vegetarian": 0,
+		"WholeGrain": 0,
+		"EatWell": 0,
+		"PlantForward": 0
+	},
+	"12":
+	{
+		"Name": "Chopped Fresh Spinach ( 1/4 cup)",
+		"Station": "Uc Veg Salad Bar",
+		"Calories": 0,
+		"LowCarbon": 0,
+		"GlutenFree": 1,
+		"Vegan": 1,
+		"Vegetarian": 1,
+		"WholeGrain": 0,
+		"EatWell": 0,
+		"PlantForward": 0
+	},
+	"13":
+	{
+		"Name": "Croutons (2  tablespoon)",
+		"Station": "Uc Veg Salad Bar",
+		"Calories": 30,
+		"LowCarbon": 0,
+		"GlutenFree": 0,
+		"Vegan": 0,
+		"Vegetarian": 1,
+		"WholeGrain": 0,
+		"EatWell": 0,
+		"PlantForward": 0
+	},
+	"14":
+	{
+		"Name": "Creamy Caesar Dressing (1  tablespoon)",
+		"Station": "Uc Veg Salad Bar",
+		"Calories": 70,
+		"LowCarbon": 0,
+		"GlutenFree": 1,
+		"Vegan": 0,
+		"Vegetarian": 0,
+		"WholeGrain": 0,
+		"EatWell": 0,
+		"PlantForward": 0
+	},
+	"15":
+	{
+		"Name": "Sliced Beets ( 1/4 cup)",
+		"Station": "Uc Veg Salad Bar",
+		"Calories": 20,
+		"LowCarbon": 0,
+		"GlutenFree": 1,
+		"Vegan": 1,
+		"Vegetarian": 0,
+		"WholeGrain": 0,
+		"EatWell": 0,
+		"PlantForward": 0
+	},
+	"16":
+	{
+		"Name": "Cucumbers (4  slice)",
+		"Station": "Uc Veg Salad Bar",
+		"Calories": 0,
+		"LowCarbon": 0,
+		"GlutenFree": 1,
+		"Vegan": 1,
+		"Vegetarian": 0,
+		"WholeGrain": 0,
+		"EatWell": 0,
+		"PlantForward": 0
+	},
+	"17":
+	{
+		"Name": "Grape Tomatoes ( 1/4 cup)",
+		"Station": "Uc Veg Salad Bar",
 		"Calories": 10,
 		"LowCarbon": 0,
 		"GlutenFree": 1,
@@ -38,76 +233,50 @@
 		"EatWell": 0,
 		"PlantForward": 0
 	},
-	"3":
+	"18":
 	{
-		"Name": "Scrambled Eggs",
-		"Station": "Ignite Exhibition",
-		"Calories": 130,
-		"LowCarbon": 0,
-		"GlutenFree": 1,
-		"Vegan": 0,
-		"Vegetarian": 1,
-		"WholeGrain": 0,
-		"EatWell": 0,
-		"PlantForward": 0
-	},
-	"4":
-	{
-		"Name": "Diced Onions (2  tablespoon)",
-		"Station": "Ignite Exhibition",
-		"Calories": 5,
-		"LowCarbon": 0,
-		"GlutenFree": 1,
-		"Vegan": 1,
-		"Vegetarian": 0,
-		"WholeGrain": 0,
-		"EatWell": 0,
-		"PlantForward": 0
-	},
-	"5":
-	{
-		"Name": "Bacon Pieces (2  tablespoon)",
-		"Station": "Ignite Exhibition",
+		"Name": "Garbanzo Beans ( 1/4 cup)",
+		"Station": "Uc Veg Salad Bar",
 		"Calories": 70,
 		"LowCarbon": 0,
 		"GlutenFree": 1,
-		"Vegan": 0,
+		"Vegan": 1,
 		"Vegetarian": 0,
 		"WholeGrain": 0,
 		"EatWell": 0,
 		"PlantForward": 0
 	},
-	"6":
+	"19":
 	{
-		"Name": "Shredded Cheddar Cheese (2  tablespoon)",
-		"Station": "Ignite Exhibition",
-		"Calories": 60,
+		"Name": "Sliced Red Onions ( 1/4 cup)",
+		"Station": "Uc Veg Salad Bar",
+		"Calories": 10,
 		"LowCarbon": 0,
 		"GlutenFree": 1,
-		"Vegan": 0,
+		"Vegan": 1,
 		"Vegetarian": 0,
 		"WholeGrain": 0,
 		"EatWell": 0,
 		"PlantForward": 0
 	},
-	"7":
+	"20":
 	{
-		"Name": "Pork Sausage Patty (1  each)",
-		"Station": "Street Fare",
-		"Calories": 180,
-		"LowCarbon": 1,
+		"Name": "Spring Salad Mix (1  cup)",
+		"Station": "Uc Veg Salad Bar",
+		"Calories": 0,
+		"LowCarbon": 0,
 		"GlutenFree": 1,
 		"Vegan": 1,
-		"Vegetarian": 1,
+		"Vegetarian": 0,
 		"WholeGrain": 0,
 		"EatWell": 0,
 		"PlantForward": 0
 	},
-	"8":
+	"21":
 	{
-		"Name": "Biscuits &amp; Sausage Gravy",
-		"Station": "Street Fare",
-		"Calories": 460,
+		"Name": "Pepperoni Pizza",
+		"Station": "Vespa Pizza",
+		"Calories": 370,
 		"LowCarbon": 0,
 		"GlutenFree": 0,
 		"Vegan": 0,
@@ -116,79 +285,14 @@
 		"EatWell": 0,
 		"PlantForward": 0
 	},
-	"9":
+	"22":
 	{
-		"Name": "Scrambled Eggs",
-		"Station": "Street Fare",
-		"Calories": 180,
+		"Name": "Classic Cheese Pizza",
+		"Station": "Vespa Pizza",
+		"Calories": 350,
 		"LowCarbon": 0,
-		"GlutenFree": 1,
-		"Vegan": 0,
-		"Vegetarian": 1,
-		"WholeGrain": 0,
-		"EatWell": 0,
-		"PlantForward": 0
-	},
-	"10":
-	{
-		"Name": "Turkey Bacon",
-		"Station": "Street Fare",
-		"Calories": 60,
-		"LowCarbon": 0,
-		"GlutenFree": 1,
-		"Vegan": 0,
-		"Vegetarian": 0,
-		"WholeGrain": 0,
-		"EatWell": 0,
-		"PlantForward": 0
-	},
-	"11":
-	{
-		"Name": "Hard-Cooked Egg",
-		"Station": "Street Fare",
-		"Calories": 70,
-		"LowCarbon": 0,
-		"GlutenFree": 1,
-		"Vegan": 0,
-		"Vegetarian": 1,
-		"WholeGrain": 0,
-		"EatWell": 0,
-		"PlantForward": 0
-	},
-	"12":
-	{
-		"Name": "Tofu-Potato Hash",
-		"Station": "Street Fare",
-		"Calories": 140,
-		"LowCarbon": 1,
-		"GlutenFree": 1,
-		"Vegan": 1,
-		"Vegetarian": 0,
-		"WholeGrain": 0,
-		"EatWell": 0,
-		"PlantForward": 0
-	},
-	"13":
-	{
-		"Name": "Buttermilk Pancakes",
-		"Station": "Street Fare",
-		"Calories": 160,
-		"LowCarbon": 1,
 		"GlutenFree": 0,
 		"Vegan": 0,
-		"Vegetarian": 0,
-		"WholeGrain": 0,
-		"EatWell": 0,
-		"PlantForward": 0
-	},
-	"14":
-	{
-		"Name": "Home Fries",
-		"Station": "Street Fare",
-		"Calories": 140,
-		"LowCarbon": 0,
-		"GlutenFree": 1,
-		"Vegan": 1,
 		"Vegetarian": 0,
 		"WholeGrain": 0,
 		"EatWell": 0,
