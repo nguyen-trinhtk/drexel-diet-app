@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'main.dart';
 
 Set<Station> stationFilters = <Station>{};
 Set<FoodPreference> foodPreferenceFilters = <FoodPreference>{};

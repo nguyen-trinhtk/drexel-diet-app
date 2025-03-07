@@ -150,6 +150,7 @@ class _UserPageState extends State<UserPage> {
                       decoration: BoxDecoration(
                         color: AppColors.yellow,
                         borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: AppColors.darkblue),
                       ),
                       child: Center(
                         child: Text(

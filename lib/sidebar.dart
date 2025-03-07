@@ -4,6 +4,8 @@ import 'package:getwidget/getwidget.dart';
 import 'userpage.dart';
 
 class Sidebar extends StatelessWidget {
+  const Sidebar({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
