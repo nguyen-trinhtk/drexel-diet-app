@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-Set<Station> stationFilters = <Station>{};
-Set<FoodPreference> foodPreferenceFilters = <FoodPreference>{};
-
+  Set<Station> stationFilters = <Station>{};
+  Set<FoodPreference> foodPreferenceFilters = <FoodPreference>{};
 enum Station {
   downtownGrounds,
   igniteGrill,
@@ -29,12 +29,13 @@ class FoodFilterDrawer extends StatefulWidget {
   const FoodFilterDrawer({super.key});
 
   @override
-  State<FoodFilterDrawer> createState() => _FoodFilterDrawerState();
+  State<FoodFilterDrawer> createState() => FoodFilterDrawerState();
 }
 
 //Selected choices are in the stationFilters and foodPreferenceFilters sets :)
 
-class _FoodFilterDrawerState extends State<FoodFilterDrawer> {
+class FoodFilterDrawerState extends State<FoodFilterDrawer> with ChangeNotifier{
+
   String formatText(String text) {
     return text.replaceAllMapped(RegExp(r'([A-Z])'), (Match match) => ' ${match.group(0)}').trim().replaceFirstMapped(RegExp(r'^[a-z]'), (Match match) => match.group(0)!.toUpperCase());
   }
@@ -91,7 +92,10 @@ class _FoodFilterDrawerState extends State<FoodFilterDrawer> {
         const SizedBox(height: 20.0),
         Center(
           child: ElevatedButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              Navigator.pop(context);
+              context.read<FoodFilterDrawerState>().notifyListeners();
+              },
             child: const Text('Apply Filters'),
           ),
         ),

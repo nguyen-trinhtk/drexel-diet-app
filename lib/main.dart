@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:provider/provider.dart';
 import 'dart:convert';
 
 import 'sidebar.dart';
 import 'foodfilter.dart';
 
 
-void main() async {
-  runApp(MyApp());
-}
+void main() async => runApp(
+  ChangeNotifierProvider(
+    create: (context) => FoodFilterDrawerState(),
+    child: MyApp(),
+  ),
+);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -40,8 +44,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }); 
     //print(jsonData); 
   } 
-
-
   
   @override 
   void initState() { 
@@ -49,8 +51,34 @@ class _HomeScreenState extends State<HomeScreen> {
     loadJsonAsset(); 
   } 
 
+  List<String> foods = [
+  "lowCarbon",
+  "glutenFree",
+  "vegan",
+  "vegetarian",
+  "wholeGrain",
+  "eatWell",
+  "plantForward"
+  ];
+
+
   @override
   Widget build(BuildContext context) {
+    List<String> filteredFoods = [];
+    context.watch<FoodFilterDrawerState>();
+
+    for (FoodPreference filter in foodPreferenceFilters) {
+      for (String food in foods) {
+        if (filter.name.toString() == food){
+          filteredFoods.add(food);
+        }
+      }
+    }
+
+    if (filteredFoods.isEmpty) {
+      filteredFoods = foods;
+    }
+
     double viewWidth = MediaQuery.sizeOf(context).width;
     // if jsondata = null return splash screen
     return Scaffold(
@@ -93,10 +121,11 @@ class _HomeScreenState extends State<HomeScreen> {
             String strIndex = index.toString();
             String calories = "Calories: ";
             calories = calories + jsonData[strIndex]['Calories'].toString();
-            bool display =  true;
-            for (FoodPreference filter in foodPreferenceFilters){
-              if (jsonData[strIndex][filter.toString()] == 1) {
-                display = false;
+            bool display =  false;
+            for (String food in filteredFoods){
+              //print(filter);
+              if (jsonData[strIndex][food] == 1) {
+                display = true;
               }
             }
             if (display) {
@@ -106,19 +135,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: Text(jsonData[strIndex]['Name']),
                 ),
                 content: Text(calories),
-                /*
-                buttonBar: GFButtonBar(
-                  children: [
-                    GFButton(
-                      onPressed: () {},
-                      text: 'See more',
-                    ),
-                  ],
-                ),*/
               );
             }
             else {
-              return Container();
+              return null;
             }
           },
         ),
