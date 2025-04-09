@@ -24,11 +24,11 @@ class ThemedBoxPainter extends CustomPainter {
 
     // Draw the background
     canvas.drawRRect( 
-      RRect.fromRectAndRadius(Rect.fromPoints(Offset(70,400), Offset(700,775)), Radius.circular(40)),
+      RRect.fromRectAndRadius(Rect.fromPoints(a, b), Radius.circular(40)),
       bgColor,
     );
         canvas.drawRRect( 
-      RRect.fromRectAndRadius(Rect.fromPoints(Offset(70,400), Offset(700,775)), Radius.circular(40)),
+      RRect.fromRectAndRadius(Rect.fromPoints(a, b), Radius.circular(40)),
       bdColor,
     );
   }
@@ -76,43 +76,3 @@ class ThemedSidebar extends CustomPainter {
   bool shouldRepaint(CustomPainter oldDelegate) =>false;
 
 }
-
-class MealCard extends GFCard {
-  MealCard({
-    super.key,
-    super.color, 
-    super.elevation, 
-    super.shape, 
-    super.borderOnForeground, 
-    super.padding, 
-    super.margin, 
-    super.clipBehavior, 
-    super.semanticContainer, 
-    super.title, 
-    super.content, 
-    super.image, 
-    super.showImage, 
-    super.showOverlayImage, 
-    super.buttonBar, 
-    super.imageOverlay, 
-    super.titlePosition, 
-    super.boxFit, 
-    super.colorFilter, 
-    super.height, 
-    super.gradient, 
-    });
-    @override
-    // ignore: overridden_fields
-    final borderRadius = BorderRadius.all(Radius.circular(40));
-    @override
-    // ignore: overridden_fields
-    final border = Border.all(color: Color(0xFF232597), width:1, style: BorderStyle.solid);
-    @override 
-    // ignore: overridden_fields
-    final color = Color(0xFFFFFFFF);
-    @override
-    // ignore: overridden_fields
-    final boxFit = BoxFit.cover;
-}
-
-

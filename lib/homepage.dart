@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'foodfilter.dart';
 import 'package:getwidget/getwidget.dart';
-import 'ui.dart';
+//import 'ui.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -15,22 +15,12 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
+  
   @override
   Widget build(BuildContext context) {
 
-  var jsonData; 
   
-  Future<void> loadJsonAsset() async { 
-    final String jsonString = await rootBundle.loadString('lib/backend/webscraping/menu.json'); 
-    var data = jsonDecode(jsonString);
-    setState(() { 
-      jsonData = data; 
-    }); 
-    print(jsonData); 
-  } 
   
-
-  loadJsonAsset(); 
 
   List<String> foods = [
   "lowCarbon",
@@ -63,8 +53,9 @@ class _HomepageState extends State<Homepage> {
     // if jsondata = null return splash screen
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFFFFECED),
-        title: const Text('Menu Page'),
+        scrolledUnderElevation: 0,
+        backgroundColor: Colors.transparent,
+        //title: const Text('Menu Page'),
         actions: [
           IconButton(
             icon: const Icon(Icons.filter_list),
@@ -85,6 +76,7 @@ class _HomepageState extends State<Homepage> {
           ),
         ],
       ),
+      backgroundColor: Color(0xFFFFECED),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: GridView.builder(
@@ -103,16 +95,24 @@ class _HomepageState extends State<Homepage> {
             bool display =  false;
             for (String food in filteredFoods){
               //print(filter);
-              if (jsonData[strIndex][food] == 1) {
+              //if (jsonData[strIndex][food] == 1) {
                 display = true;
-              }
+              //}
             }
             if (display) {
-              return MealCard(
+              return GFCard(
                 title: GFListTile(
                   title: Text(jsonData[strIndex]['Name']),
                 ),
                 content: Text(calories),
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(
+                    color: Color(0xFF232597),
+                    width: 1.0,
+                  ),
+                  borderRadius: BorderRadius.circular(40),
+                ),
               );
             }
             else {
@@ -123,8 +123,25 @@ class _HomepageState extends State<Homepage> {
       ),
     );
   }
-}
+  // ignore: prefer_typing_uninitialized_variables
+  var jsonData; 
+  
+  Future<void> loadJsonAsset() async { 
+    final String jsonString = await rootBundle.loadString('lib/backend/webscraping/menu.json'); 
+    var data = jsonDecode(jsonString);
+    setState(() { 
+      jsonData = data; 
+    }); 
+    //print(jsonData); 
+  } 
+  
+  @override 
+  void initState() { 
+    super.initState(); 
+    loadJsonAsset(); 
+  }
 
-int findCardsPerRow(double viewWidth, double minCardWidth) {
-  return viewWidth ~/ minCardWidth;
+  int findCardsPerRow(double viewWidth, double minCardWidth) {
+    return viewWidth ~/ minCardWidth;
+  }
 }

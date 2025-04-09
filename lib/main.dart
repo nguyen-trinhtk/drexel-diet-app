@@ -1,4 +1,5 @@
 import 'package:code/homepage.dart';
+import 'package:code/profilepage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -72,15 +73,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: TabBarView(
                     physics: const NeverScrollableScrollPhysics(),
                     children: [
-                      Scaffold(
-                        backgroundColor: Color(0xFFFFECED),
-                        body: Stack(
-                          children: [
-                            Homepage(),
-                            //Pages Go here
-                          ]
-                        ),
-                      ),
+                      Center(child: Text("Blank")),
+                      Center(child: Text("Blank")),
+                      Profilepage(),
+                      Homepage(),
                     ],
                   ),
                 ),
