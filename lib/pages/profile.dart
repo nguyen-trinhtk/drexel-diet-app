@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:getwidget/getwidget.dart';
-import 'ui.dart';
+// import 'package:getwidget/getwidget.dart';
+import '../theme/ui.dart';
+import '../theme/colors.dart';
 
-class Profilepage extends StatefulWidget {
-  const Profilepage({super.key});
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
-  _ProfilepageState createState() => _ProfilepageState();
+  _ProfilePageState createState() => _ProfilePageState();
 }
 
-class _ProfilepageState extends State<Profilepage> {
+class _ProfilePageState extends State<ProfilePage> {
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFFECED),
+      backgroundColor: AppColors.primaryBackground,
       body: Stack(
         children: <Widget> [
           ThemedBox(pointA: Offset(55,30), pointB: Offset(800,325)), // Profile Box

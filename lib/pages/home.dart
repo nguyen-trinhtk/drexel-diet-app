@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:provider/provider.dart';
 import 'dart:convert';
-import 'foodfilter.dart';
+import 'filter.dart';
 import 'package:getwidget/getwidget.dart';
-//import 'ui.dart';
+import '../theme/colors.dart';
 
-class Homepage extends StatefulWidget {
-  const Homepage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
   _HomepageState createState() => _HomepageState();
 }
 
-class _HomepageState extends State<Homepage> {
+class _HomepageState extends State<HomePage> {
   
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,7 @@ class _HomepageState extends State<Homepage> {
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparentBlack,
         //title: const Text('Menu Page'),
         actions: [
           IconButton(
@@ -76,7 +76,7 @@ class _HomepageState extends State<Homepage> {
           ),
         ],
       ),
-      backgroundColor: Color(0xFFFFECED),
+      backgroundColor: AppColors.primaryBackground,
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: GridView.builder(
@@ -105,10 +105,10 @@ class _HomepageState extends State<Homepage> {
                   title: Text(jsonData[strIndex]['Name']),
                 ),
                 content: Text(calories),
-                color: Colors.white,
+                color: AppColors.white,
                 shape: RoundedRectangleBorder(
                   side: BorderSide(
-                    color: Color(0xFF232597),
+                    color: AppColors.primaryText,
                     width: 1.0,
                   ),
                   borderRadius: BorderRadius.circular(40),

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:getwidget/getwidget.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'colors.dart';
 
 class ThemedBoxPainter extends CustomPainter {
-
   final Color bg;
   final Color bd;
   final Offset a;
@@ -23,11 +21,11 @@ class ThemedBoxPainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     // Draw the background
-    canvas.drawRRect( 
+    canvas.drawRRect(
       RRect.fromRectAndRadius(Rect.fromPoints(a, b), Radius.circular(40)),
       bgColor,
     );
-        canvas.drawRRect( 
+    canvas.drawRRect(
       RRect.fromRectAndRadius(Rect.fromPoints(a, b), Radius.circular(40)),
       bdColor,
     );
@@ -38,41 +36,42 @@ class ThemedBoxPainter extends CustomPainter {
 }
 
 class ThemedBox extends StatelessWidget {
-  
   final Color background;
   final Color border;
   final Offset pointA;
   final Offset pointB;
 
- const ThemedBox({
+  const ThemedBox({
     super.key,
-    this.background = const Color(0xFFFFFFFF),
-    this.border = const Color(0xFF232597),
+    this.background = AppColors.white,
+    this.border = AppColors.primaryText,
     required this.pointA,
     required this.pointB,
   });
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(painter: ThemedBoxPainter(background, border, pointA, pointB), size:MediaQuery.of(context).size,);
+    return CustomPaint(
+      painter: ThemedBoxPainter(background, border, pointA, pointB),
+      size: MediaQuery.of(context).size,
+    );
   }
-  
 }
 
 class ThemedSidebar extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Color.fromARGB(255, 255, 205, 208)
+      ..color = AppColors.secondaryBackground
       ..style = PaintingStyle.fill;
-    
-    canvas.drawRect( 
+
+    canvas.drawRect(
       Rect.fromLTWH(0, 0, 212, size.height),
       paint,
     );
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) =>false;
-
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
+
