@@ -66,7 +66,7 @@ class ThemedSidebar extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     canvas.drawRect(
-      Rect.fromLTWH(0, 0, 212, size.height),
+      Rect.fromLTWH(0, 0, 277, size.height),
       paint,
     );
   }

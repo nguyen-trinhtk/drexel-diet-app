@@ -1,6 +1,7 @@
 import 'package:code/pages/home.dart';
 import 'package:code/pages/profile.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'pages/filter.dart';
 import 'theme/ui.dart';
@@ -44,10 +45,10 @@ class _HomeScreenState extends State<HomeScreen> {
             size: MediaQuery.of(context).size,
           )),
       DefaultTabController(
-        length: 4,
-        initialIndex: 3,
+        length: 5,
+        initialIndex: 4,
         child: Scaffold(
-          backgroundColor: AppColors.primaryBackground,
+          backgroundColor: const Color.fromARGB(0, 255, 236, 237),
           body: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -59,13 +60,23 @@ class _HomeScreenState extends State<HomeScreen> {
                   dividerColor: AppColors.transparentWhite,
                   physics: const NeverScrollableScrollPhysics(),
                   isScrollable: true,
+                  //tabAlignment: TabAlignment.center,
                   onTap: (index) {
                     if (index == 0) {
                       DefaultTabController.of(context).animateTo(0);
                     }
                   },
                   tabs: [
-                    SizedBox(width: 430, height: 210),
+                    SizedBox(width: 225, height: 275),
+                    Padding(
+                        padding: EdgeInsetsDirectional.all(0),
+                        child: RotatedBox(
+                            quarterTurns: 1,
+                            child: Tab(
+                                child: CustomText(
+                                    content: 'Settings',
+                                    header: true,
+                                    fontSize: 25)))),
                     Padding(
                         padding: EdgeInsetsDirectional.all(0),
                         child: RotatedBox(
@@ -90,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             quarterTurns: 1,
                             child: Tab(
                                 child: CustomText(
-                                    content: 'Settings',
+                                    content: 'Home',
                                     header: true,
                                     fontSize: 25)))),
                   ],
@@ -105,6 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Center(child: Text("Blank")),
                     Center(child: Text("Blank")),
+                    Center(child: Text("Blank")),
                     ProfilePage(),
                     HomePage(),
                   ],
@@ -114,10 +126,17 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
+      
       Positioned(
           left: 0,
           bottom: 50,
-          child: AbsorbPointer(child: SizedBox(width: 205, height: 460))),
+          child: AbsorbPointer(child: SizedBox(width: 275, height: 255))),
+      
+      /*Positioned(
+        left:10,
+        top:30,
+        child: Image.asset('../assets/images/logo.png', scale: 3)
+      ),*/
     ]);
   }
 }

@@ -8,12 +8,16 @@ class CustomText extends StatelessWidget {
   final double fontSize;
   final Color color;
   final bool bold;
+  final dynamic textAlign;
+  final dynamic decoration;
 
-  const CustomText({
+  const CustomText({super.key, 
     required this.content,
     this.header = false,
     required this.fontSize,
     this.color = AppColors.primaryText,
+    this.textAlign = TextAlign.left,
+    this.decoration = TextDecoration.none,
     this.bold = false,
   });
 
@@ -23,7 +27,10 @@ class CustomText extends StatelessWidget {
     FontWeight fontWeight = bold ? AppFonts.boldWeight : AppFonts.regularWeight;
     return Text(
       content,
+      textAlign: textAlign,
+      overflow: TextOverflow.ellipsis,
       style: TextStyle(
+        decoration: decoration,
         fontFamily: fontFamily,
         fontSize: fontSize,
         color: color,

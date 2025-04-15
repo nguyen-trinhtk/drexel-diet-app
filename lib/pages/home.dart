@@ -1,3 +1,4 @@
+import 'package:code/theme/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:provider/provider.dart';
@@ -5,6 +6,7 @@ import 'dart:convert';
 import 'filter.dart';
 import 'package:getwidget/getwidget.dart';
 import '../theme/colors.dart';
+import '../theme/custom_text.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,8 +21,6 @@ class _HomepageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
 
-  
-  
 
   List<String> foods = [
   "lowCarbon",
@@ -55,24 +55,29 @@ class _HomepageState extends State<HomePage> {
       appBar: AppBar(
         scrolledUnderElevation: 0,
         backgroundColor: AppColors.transparentBlack,
-        //title: const Text('Menu Page'),
+        // ignore: deprecated_member_use
+        title: Container(padding: EdgeInsets.only(left:16), child:SearchBarTheme(data: SearchBarThemeData(backgroundColor: MaterialStateProperty.all(Colors.white), elevation:  MaterialStateProperty.all(0), side: MaterialStateProperty.all(BorderSide(width: 1, color:AppColors.primaryText)), constraints: BoxConstraints.expand(width: viewWidth, height: 40)), child: SearchBar(hintText: "Search", hintStyle: MaterialStateProperty.all(TextStyle(color: Color(0xFFCACAF6), fontFamily: AppFonts.headerFont)),))),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.filter_list),
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                builder: (BuildContext context) {
-                  return FractionallySizedBox(
-                    heightFactor: 1,
-                    widthFactor: 0.75,
-                    alignment: Alignment.centerRight,
-                    child: FoodFilterDrawer(),
-                  );
-                },
-              );
-            },
+          Container(
+            padding: EdgeInsets.only(right: 26),
+            child:TextButton(
+              style: TextButton.styleFrom(backgroundColor: AppColors.primaryText),
+              child: Container(padding: EdgeInsets.all(8), child:CustomText(content:"Filters", fontSize: 18, color:Colors.white)),
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (BuildContext context) {
+                    return FractionallySizedBox(
+                      heightFactor: 1,
+                      widthFactor: 0.75,
+                      alignment: Alignment.centerRight,
+                      child: FoodFilterDrawer(),
+                    );
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -90,7 +95,7 @@ class _HomepageState extends State<HomePage> {
           itemCount: jsonData.length, // Added item count
           itemBuilder: (BuildContext context, int index) {
             String strIndex = index.toString();
-            String calories = "Calories: ";
+            String calories = "Calories ";
             calories = calories + jsonData[strIndex]['Calories'].toString();
             bool display =  false;
             for (String food in filteredFoods){
@@ -102,9 +107,13 @@ class _HomepageState extends State<HomePage> {
             if (display) {
               return GFCard(
                 title: GFListTile(
-                  title: Text(jsonData[strIndex]['Name']),
+                  title: Container(padding:EdgeInsets.only(bottom: 4), decoration:BoxDecoration(border: Border(bottom: BorderSide(width: 2.5, color: AppColors.accent))),child:Center(child:CustomText(content: jsonData[strIndex]['Name'], fontSize: 18, header: true, textAlign: TextAlign.center, color: AppColors.accent)),),
+                  subTitle: Container(padding:EdgeInsets.only(top:4), child:Center(child:CustomText(content: calories, fontSize: 16, header: true,  textAlign: TextAlign.center, ))),
                 ),
-                content: Text(calories),
+                content: CustomText(content:jsonData[strIndex]['Description'], fontSize: 14),
+                buttonBar: GFButtonBar(children:[
+                  GFButton(onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Button pressed!')),), color: AppColors.accent, disabledColor: AppColors.accent, hoverColor: AppColors.primaryText, borderShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)), text: "Add", textStyle: TextStyle(color: Colors.white, fontFamily: AppFonts.textFont, fontSize: 16)),
+                ]),
                 color: AppColors.white,
                 shape: RoundedRectangleBorder(
                   side: BorderSide(

@@ -6,7 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.expected_conditions import visibility_of_element_located
 
 optionsFirefox = Options()
-optionsFirefox.add_argument("--headless") # don't display firefox window
+#optionsFirefox.add_argument("--headless") # don't display firefox window
 
 browser = webdriver.Firefox(options=optionsFirefox)  # start a web browser
 browser.get("https://drexel.campusdish.com/LocationsAndMenus/UrbanEatery")  # navigate to URL
@@ -34,25 +34,28 @@ buttons = browser.find_elements(By.XPATH, "//*[@class='sc-aXZVg sc-eqUAAy ktDvbv
 menuItems = []
 
 for button in buttons:
-    menuItem = {}
-    button.click()
-    WebDriverWait(driver=browser, timeout=10).until(visibility_of_element_located((By.XPATH, "//*[@class='sc-krNlru jTWVjC ModalHeaderItemName']")))
-    menuItem["name"] = browser.find_element(By.XPATH, "//*[@class='sc-krNlru jTWVjC ModalHeaderItemName']").text
-    menuItem["description"] = browser.find_element(By.XPATH, "//*[@class='sc-fvtFIe CrMXX ModalProductDescriptionContent']").text
-    menuItem["calories"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE']/span[1]").text
-    menuItem["totalFat"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE'][2]/span[1]").text
-    menuItem["saturatedFat"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE'][2]/ul[1]/li[1]/span[1]").text
-    menuItem["transFat"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE'][2]/ul[1]/li[2]/span[1]").text
-    menuItem["cholesterol"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE'][3]/span[1]").text
-    menuItem["sodium"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE'][4]/span[1]").text
-    menuItem["totalCarbohydrates"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE'][5]/span[1]").text
-    menuItem["dietaryFiber"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE'][5]/ul[1]/li[1]/span[1]").text
-    menuItem["totalSugars"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE'][5]/ul[1]/li[2]/span[1]").text
-    menuItem["addedSugars"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE'][5]/ul[1]/li[2]/ul[1]/li[1]/span[1]").text
-    menuItem["protein"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE'][6]/span[1]").text
-    closeButton = browser.find_element(By.XPATH, "//*[@class='sc-eDPEul ldupur']")
-    closeButton.click()
-    menuItems.append(menuItem)
+    try:
+        menuItem = {}
+        button.click()
+        WebDriverWait(driver=browser, timeout=10).until(visibility_of_element_located((By.XPATH, "//*[@class='sc-krNlru jTWVjC ModalHeaderItemName']")))
+        menuItem["name"] = browser.find_element(By.XPATH, "//*[@class='sc-krNlru jTWVjC ModalHeaderItemName']").text
+        menuItem["description"] = browser.find_element(By.XPATH, "//*[@class='sc-fvtFIe CrMXX ModalProductDescriptionContent']").text
+        menuItem["calories"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE']/span[1]").text
+        menuItem["totalFat"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE'][2]/span[1]").text
+        menuItem["saturatedFat"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE'][2]/ul[1]/li[1]/span[1]").text
+        menuItem["transFat"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE'][2]/ul[1]/li[2]/span[1]").text
+        menuItem["cholesterol"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE'][3]/span[1]").text
+        menuItem["sodium"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE'][4]/span[1]").text
+        menuItem["totalCarbohydrates"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE'][5]/span[1]").text
+        menuItem["dietaryFiber"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE'][5]/ul[1]/li[1]/span[1]").text
+        menuItem["totalSugars"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE'][5]/ul[1]/li[2]/span[1]").text
+        menuItem["addedSugars"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE'][5]/ul[1]/li[2]/ul[1]/li[1]/span[1]").text
+        menuItem["protein"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE'][6]/span[1]").text
+        closeButton = browser.find_element(By.XPATH, "//*[@class='sc-eDPEul ldupur']")
+        closeButton.click()
+        menuItems.append(menuItem)
+    except:
+        pass
 browser.close()
 
 db = open("menu1.json", "r+")
