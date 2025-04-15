@@ -56,7 +56,7 @@ class _HomepageState extends State<HomePage> {
         scrolledUnderElevation: 0,
         backgroundColor: AppColors.transparentBlack,
         // ignore: deprecated_member_use
-        title: Container(padding: EdgeInsets.only(left:16), child:SearchBarTheme(data: SearchBarThemeData(backgroundColor: MaterialStateProperty.all(Colors.white), elevation:  MaterialStateProperty.all(0), side: MaterialStateProperty.all(BorderSide(width: 1, color:AppColors.primaryText)), constraints: BoxConstraints.expand(width: viewWidth, height: 40)), child: SearchBar(hintText: "Search", hintStyle: MaterialStateProperty.all(TextStyle(color: Color(0xFFCACAF6), fontFamily: AppFonts.headerFont)),))),
+        title: Container(padding: EdgeInsets.only(left:16), child:SearchBarTheme(data: SearchBarThemeData(backgroundColor: MaterialStateProperty.all(Colors.white), overlayColor: MaterialStateProperty.all(Colors.transparent), elevation:  MaterialStateProperty.all(0), side: MaterialStateProperty.all(BorderSide(width: 1, color:AppColors.primaryText)), constraints: BoxConstraints.expand(width: viewWidth, height: 45)), child: SearchBar(hintText: "Search", hintStyle: MaterialStateProperty.all(TextStyle(color: Color(0xFFCACAF6), fontFamily: AppFonts.headerFont)), textStyle: MaterialStateProperty.all(TextStyle(color:AppColors.primaryText, fontFamily: AppFonts.headerFont)),))),
         actions: [
           Container(
             padding: EdgeInsets.only(right: 26),
