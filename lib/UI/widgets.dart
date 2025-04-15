@@ -57,8 +57,11 @@ class ThemedBox extends StatelessWidget {
     );
   }
 }
-
 class ThemedSidebar extends CustomPainter {
+  final double width;
+
+  ThemedSidebar({this.width = 200}); 
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
@@ -66,7 +69,7 @@ class ThemedSidebar extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     canvas.drawRect(
-      Rect.fromLTWH(0, 0, 277, size.height),
+      Rect.fromLTWH(0, 0, width, size.height),
       paint,
     );
   }
@@ -74,4 +77,3 @@ class ThemedSidebar extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
-

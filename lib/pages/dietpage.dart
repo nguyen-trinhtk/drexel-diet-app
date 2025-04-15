@@ -1,7 +1,7 @@
 // Page for diet plans
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
-import '../theme/colors.dart';
+import '../UI/colors.dart';
 
 void main() => runApp(MyApp());
 

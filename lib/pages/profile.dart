@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:getwidget/getwidget.dart';
-import '../theme/ui.dart';
-import '../theme/colors.dart';
+import '../UI/widgets.dart';
+import '../UI/colors.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});

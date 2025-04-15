@@ -1,12 +1,12 @@
-import 'package:code/theme/fonts.dart';
+import 'package:code/UI/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'filter.dart';
 import 'package:getwidget/getwidget.dart';
-import '../theme/colors.dart';
-import '../theme/custom_text.dart';
+import '../UI/colors.dart';
+import '../UI/custom_text.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
