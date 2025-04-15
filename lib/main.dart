@@ -4,7 +4,7 @@ import 'package:code/pages/dietpage.dart';
 import 'package:flutter/material.dart';
 import 'pages/filter.dart';
 
-import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import 'UI/widgets.dart';
