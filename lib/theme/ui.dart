@@ -4,10 +4,14 @@ import 'colors.dart';
 class ThemedBoxPainter extends CustomPainter {
   final Color bg;
   final Color bd;
+  final Color ds;
   final Offset a;
   final Offset b;
+  final Offset c;
+  final Offset d;
+  final bool s;
 
-  ThemedBoxPainter(this.bg, this.bd, this.a, this.b);
+  ThemedBoxPainter(this.bg, this.bd, this.ds, this.a, this.b, this.s, this.c, this.d);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -20,6 +24,16 @@ class ThemedBoxPainter extends CustomPainter {
       ..strokeWidth = 1.5
       ..style = PaintingStyle.stroke;
 
+    final dsColor = Paint()
+      ..color = ds
+      ..style = PaintingStyle.fill;
+
+    if (s) {
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(Rect.fromPoints(c, d), Radius.circular(40)),
+        dsColor,
+      );
+    }
     // Draw the background
     canvas.drawRRect(
       RRect.fromRectAndRadius(Rect.fromPoints(a, b), Radius.circular(40)),
@@ -38,21 +52,29 @@ class ThemedBoxPainter extends CustomPainter {
 class ThemedBox extends StatelessWidget {
   final Color background;
   final Color border;
+  final Color shadow;
+  final bool dropShadow;
   final Offset pointA;
   final Offset pointB;
+  final Offset pointC;
+  final Offset pointD;
 
   const ThemedBox({
     super.key,
     this.background = AppColors.white,
     this.border = AppColors.primaryText,
+    this.shadow = AppColors.accent,
+    this.dropShadow = false,
     required this.pointA,
     required this.pointB,
+    this.pointC = const Offset(0,0),
+    this.pointD = const Offset(0,0),
   });
 
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      painter: ThemedBoxPainter(background, border, pointA, pointB),
+      painter: ThemedBoxPainter(background, border, shadow, pointA, pointB, dropShadow, pointC, pointD),
       size: MediaQuery.of(context).size,
     );
   }
