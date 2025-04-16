@@ -172,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen>
                     width: 200, 
                     color: AppColors.secondaryBackground,
                     alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.only(left: 40),
+                    padding: const EdgeInsets.only(left: 30),
                     child: TextButton(
                         onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Logged out or some shit here'))),
                         style: ButtonStyle(
