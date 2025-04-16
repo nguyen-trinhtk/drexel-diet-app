@@ -126,9 +126,9 @@ class _HomepageState extends State<HomePage> {
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount:
                 findCardsPerRow(viewWidth, 350), // Number of columns in a row
-            crossAxisSpacing: 10, // Space between columns
-            mainAxisSpacing: 10, // Space between rows
-            childAspectRatio: 1.5, // Adjust width/height ratio
+            crossAxisSpacing: 0, // Space between columns
+            mainAxisSpacing: 0, // Space between rows
+            childAspectRatio: 1.4, // Adjust width/height ratio
           ),
           itemCount: jsonData.length, // Added item count
           itemBuilder: (BuildContext context, int index) {
@@ -170,7 +170,12 @@ class _HomepageState extends State<HomePage> {
                       ))),
                 ),
                 content: CustomText(
-                    content: jsonData[strIndex]['Description'], fontSize: 14),
+                        content: jsonData[strIndex]['Description'],
+                        fontSize: 14,
+                        overflow: TextOverflow.visible,
+                        softWrap: true,
+                        textAlign: TextAlign.center,
+                        ),
                 buttonBar: GFButtonBar(children: [
                   GFButton(
                       onPressed: () =>
