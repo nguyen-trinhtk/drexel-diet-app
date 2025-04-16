@@ -94,8 +94,16 @@ class _HomeScreenState extends State<HomeScreen>
                               index == _tabController.index - 1;
                           final isAfterSelected = index == _tabController.index + 1;
                         if (index == 0) {
-                          return Container(height: 150, 
+                          return Container(height: 200, 
                             decoration: BoxDecoration(color: AppColors.secondaryBackground, borderRadius: BorderRadius.only(bottomRight: isBeforeSelected ? Radius.circular(25) : Radius.zero)),
+                            alignment: Alignment.bottomCenter,
+                            padding: EdgeInsets.only(bottom: 25),
+                            child: CustomText(
+                              content: 'ANODREXIA', 
+                              fontSize: 16,
+                              header: true,
+                              bold: true, 
+                              )
                           );
                         } else if (index == 6) {
                           return Container(height: 50, 
@@ -114,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 });
                               },
                               child: Container(
-                                height: 50,
+                                height: 40,
                                 width: double.infinity,
                                 alignment: Alignment.centerLeft,
                                 padding: const EdgeInsets.only(left: 20),
