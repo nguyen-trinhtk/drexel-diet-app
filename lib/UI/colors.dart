@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 class AppColors {
   static const primaryBackground = Color(0xFFFFECED);
   static const secondaryBackground = Color(0xFFFFCDD0); // for sidebar
@@ -9,4 +10,5 @@ class AppColors {
   static const black = Color(0xFF000000);
   static const transparentWhite = Color(0x00FFFFFF);
   static const transparentBlack = Color(0x00000000);
+  static const translucentWhite = Color(0x7FFFFFFF);
 }

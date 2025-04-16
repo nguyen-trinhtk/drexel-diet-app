@@ -44,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this, initialIndex: 0);
+    _tabController = TabController(length: 7, vsync: this, initialIndex: 1);
 
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
@@ -80,85 +80,126 @@ class _HomeScreenState extends State<HomeScreen>
                 ),
                 Container(
                   width: 100,
-                  height: 250,
-                  margin: const EdgeInsets.only(left: 100, top: 150),
+                  height: 450,
+                  margin: const EdgeInsets.only(left: 100, top: 0),
                   color: AppColors.primaryBackground
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 150),
-                  child: Column(
-                    children: List.generate(5, (index) {
-                      final labels = ['Home', 'Profile', 'Diet Plans', 'History', 'Settings'];
-                      final icons = [Icons.home_outlined, Icons.person_outlined, Icons.bookmark_outline, Icons.history_outlined, Icons.settings_outlined];
-                      final label = labels[index];
-                      final isSelected = _tabController.index == index;
-                      final isBeforeSelected =
-                          index == _tabController.index - 1;
-                      final isAfterSelected = index == _tabController.index + 1;
-                      return Padding(
-                        padding: const EdgeInsets.only(left: 20),
-                        child: InkWell(
-                          onTap: () {
-                            setState(() {
-                              _tabController.animateTo(index);
-                            });
-                          },
-                          child: Container(
-                            height: 50,
-                            width: double.infinity,
-                            alignment: Alignment.centerLeft,
+                // Padding(
+                //   padding: const EdgeInsets.only(top: 100),
+                //   child: 
+                  Column(
+                    children: List.generate(7, (index) {
+                          final isSelected = _tabController.index == index;
+                          final isBeforeSelected =
+                              index == _tabController.index - 1;
+                          final isAfterSelected = index == _tabController.index + 1;
+                        if (index == 0) {
+                          return Container(height: 150, 
+                            decoration: BoxDecoration(color: AppColors.secondaryBackground, borderRadius: BorderRadius.only(bottomRight: isBeforeSelected ? Radius.circular(25) : Radius.zero)),
+                          );
+                        } else if (index == 6) {
+                          return Container(height: 50, 
+                            decoration: BoxDecoration(color: AppColors.secondaryBackground, borderRadius: BorderRadius.only(topRight: isAfterSelected ? Radius.circular(25) : Radius.zero)),
+                          );
+                        } else {
+                          final labels = ['Home', 'Profile', 'Diet Plans', 'History', 'Settings'];
+                          final icons = [Icons.home_outlined, Icons.person_outlined, Icons.bookmark_outline, Icons.history_outlined, Icons.settings_outlined];
+                          final label = labels[index - 1];
+                          return Padding(
                             padding: const EdgeInsets.only(left: 20),
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? AppColors.primaryBackground
-                                  : AppColors.secondaryBackground,
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(isSelected ? 50 : 0),
-                                bottomLeft:
-                                    Radius.circular(isSelected ? 50 : 0),
-                                topRight:
-                                    Radius.circular(isAfterSelected ? 25 : 0),
-                                bottomRight:
-                                    Radius.circular(isBeforeSelected ? 25 : 0),
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _tabController.animateTo(index);
+                                });
+                              },
+                              child: Container(
+                                height: 50,
+                                width: double.infinity,
+                                alignment: Alignment.centerLeft,
+                                padding: const EdgeInsets.only(left: 20),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? AppColors.primaryBackground
+                                      : AppColors.secondaryBackground,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(isSelected ? 50 : 0),
+                                    bottomLeft:
+                                        Radius.circular(isSelected ? 50 : 0),
+                                    topRight:
+                                        Radius.circular(isAfterSelected ? 25 : 0),
+                                    bottomRight:
+                                        Radius.circular(isBeforeSelected ? 25 : 0),
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      icons[index - 1],
+                                      color: isSelected ? AppColors.accent : AppColors.white,
+                                      size: 24,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    CustomText(
+                                      content: label,
+                                      header: true,
+                                      fontSize: 16,
+                                      color: isSelected ? AppColors.accent : AppColors.white,
+                                    ),
+                                  ],
+                                ),
+  
                               ),
                             ),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  icons[index],
-                                  color: isSelected ? AppColors.accent : AppColors.white,
-                                  size: 24,
-                                ),
-                                const SizedBox(width: 10),
-                                CustomText(
-                                  content: label,
-                                  header: true,
-                                  fontSize: 16,
-                                  color: isSelected ? AppColors.accent : AppColors.white,
-                                ),
-                              ],
-                            ),
-
-                          ),
-                        ),
-                      );
+                          );
+                        }
                       }),
+                    
                     ),
-                ),
+                // ),
+                Positioned(
+                  bottom: 35,
+                  child: Container(
+                    height: 50, 
+                    width: 200, 
+                    color: AppColors.secondaryBackground,
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.only(left: 40),
+                    child: TextButton(
+                        onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Logged out or some shit here'))),
+                        style: ButtonStyle(
+                        overlayColor: WidgetStateColor.transparent
+                      ),
+                      child: Row(children: [
+                      Icon(Icons.logout_outlined, color: AppColors.accent, size: 24),
+                      const SizedBox(width: 10),
+                      CustomText(
+                        content: "Logout",
+                        header: true,
+                        fontSize: 16,
+                        color: AppColors.accent, 
+                        bold: true,
+                      ),
+                    ],
+                    ),
+                    )
+                  ),
+                )
               ],
             ),
           ),
 
-          // Tab content
           Flexible(
             child: TabBarView(
               controller: _tabController,
               physics: const NeverScrollableScrollPhysics(),
               children: [
+                Center(child: Text("Blank")),
                 HomePage(),
                 ProfilePage(),
                 Center(child: Text("Blank")),
                 HistoryPage(),
+                Center(child: Text("Blank")),
                 Center(child: Text("Blank")),
               ],
             ),
