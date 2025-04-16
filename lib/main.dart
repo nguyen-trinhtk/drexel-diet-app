@@ -1,6 +1,6 @@
 import 'package:code/pages/home.dart';
 import 'package:code/pages/profile.dart';
-import 'package:code/pages/diet.dart';
+import 'package:code/pages/history.dart';
 import 'package:flutter/material.dart';
 import 'pages/filter.dart';
 
@@ -44,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this, initialIndex: 0);
+    _tabController = TabController(length: 5, vsync: this, initialIndex: 0);
 
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
@@ -80,16 +80,16 @@ class _HomeScreenState extends State<HomeScreen>
                 ),
                 Container(
                   width: 100,
-                  height: 200,
+                  height: 250,
                   margin: const EdgeInsets.only(left: 100, top: 150),
                   color: AppColors.primaryBackground
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 150),
                   child: Column(
-                    children: List.generate(4, (index) {
-                      final labels = ['Home', 'Profile', 'History', 'Settings'];
-                      final icons = [Icons.home_outlined, Icons.person_outlined, Icons.history_outlined, Icons.settings_outlined];
+                    children: List.generate(5, (index) {
+                      final labels = ['Home', 'Profile', 'Diet Plans', 'History', 'Settings'];
+                      final icons = [Icons.home_outlined, Icons.person_outlined, Icons.bookmark_outline, Icons.history_outlined, Icons.settings_outlined];
                       final label = labels[index];
                       final isSelected = _tabController.index == index;
                       final isBeforeSelected =
@@ -117,9 +117,9 @@ class _HomeScreenState extends State<HomeScreen>
                                 bottomLeft:
                                     Radius.circular(isSelected ? 50 : 0),
                                 topRight:
-                                    Radius.circular(isAfterSelected ? 50 : 0),
+                                    Radius.circular(isAfterSelected ? 25 : 0),
                                 bottomRight:
-                                    Radius.circular(isBeforeSelected ? 50 : 0),
+                                    Radius.circular(isBeforeSelected ? 25 : 0),
                               ),
                             ),
                             child: Row(
@@ -133,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 CustomText(
                                   content: label,
                                   header: true,
-                                  fontSize: 20,
+                                  fontSize: 16,
                                   color: isSelected ? AppColors.accent : AppColors.white,
                                 ),
                               ],
@@ -157,7 +157,8 @@ class _HomeScreenState extends State<HomeScreen>
               children: [
                 HomePage(),
                 ProfilePage(),
-                DietPage(),
+                Center(child: Text("Blank")),
+                HistoryPage(),
                 Center(child: Text("Blank")),
               ],
             ),
