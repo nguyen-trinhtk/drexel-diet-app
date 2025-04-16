@@ -17,7 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomepageState extends State<HomePage> {
-  bool isDishesContainerExpanded = true;
+  bool isDishesContainerExpanded = false;
 
   @override
   Widget build(BuildContext context) {
