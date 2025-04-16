@@ -13,15 +13,19 @@ import 'UI/widgets.dart';
 import 'UI/colors.dart';
 import 'UI/custom_text.dart';
 
-void main() async => runApp(
+void main() async => (
+  
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  runApp(
       ChangeNotifierProvider(
         create: (context) => FoodFilterDrawerState(),
         child: MyApp(),
       ),
     );
-    WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-    runApp(MyApp());
+);
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
