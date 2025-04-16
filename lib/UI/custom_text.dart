@@ -10,8 +10,12 @@ class CustomText extends StatelessWidget {
   final bool bold;
   final TextAlign textAlign;
   final bool underline;
+  final bool softWrap;
+  final TextOverflow overflow;
 
   const CustomText({
+    this.softWrap = false,
+    this.overflow = TextOverflow.ellipsis,
     super.key,
     required this.content,
     this.header = false,
@@ -21,6 +25,8 @@ class CustomText extends StatelessWidget {
     this.underline = false,
     this.bold = false,
   });
+
+  
 @override
 Widget build(BuildContext context) {
   String fontFamily = header ? AppFonts.headerFont : AppFonts.textFont;
@@ -34,7 +40,8 @@ Widget build(BuildContext context) {
         Text(
           content,
           textAlign: textAlign,
-          overflow: TextOverflow.ellipsis,
+          softWrap: softWrap,
+          overflow: overflow,
           style: TextStyle(
             fontFamily: fontFamily,
             fontSize: fontSize,
