@@ -153,7 +153,7 @@ class _HomepageState extends State<HomePage> {
                   crossAxisCount: findCardsPerRow(viewWidth, 350),
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
-                  childAspectRatio: 1.15,
+                  childAspectRatio: isDishesContainerExpanded ? 1.15 : 1.75,
                 ),
                 itemCount: jsonData.length,
                 itemBuilder: (BuildContext context, int index) {
