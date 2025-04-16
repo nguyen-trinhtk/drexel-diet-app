@@ -81,12 +81,15 @@ class _HomeScreenState extends State<HomeScreen>
                 Container(
                   width: 100,
                   height: 200,
-                  margin: const EdgeInsets.only(left: 100),
+                  margin: const EdgeInsets.only(left: 100, top: 150),
                   color: AppColors.primaryBackground
                 ),
-                Column(
+                Padding(
+                  padding: const EdgeInsets.only(top: 150),
+                  child: Column(
                     children: List.generate(4, (index) {
                       final labels = ['Home', 'Profile', 'History', 'Settings'];
+                      final icons = [Icons.home_outlined, Icons.person_outlined, Icons.history_outlined, Icons.settings_outlined];
                       final label = labels[index];
                       final isSelected = _tabController.index == index;
                       final isBeforeSelected =
@@ -119,18 +122,28 @@ class _HomeScreenState extends State<HomeScreen>
                                     Radius.circular(isBeforeSelected ? 50 : 0),
                               ),
                             ),
-                            child: CustomText(
-                              content: label,
-                              header: true,
-                              fontSize: 20,
-                              color: isSelected
-                                  ? AppColors.accent
-                                  : AppColors.white,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  icons[index],
+                                  color: isSelected ? AppColors.accent : AppColors.white,
+                                  size: 24,
+                                ),
+                                const SizedBox(width: 10),
+                                CustomText(
+                                  content: label,
+                                  header: true,
+                                  fontSize: 20,
+                                  color: isSelected ? AppColors.accent : AppColors.white,
+                                ),
+                              ],
                             ),
+
                           ),
                         ),
                       );
-                    }),
+                      }),
+                    ),
                 ),
               ],
             ),
