@@ -3,6 +3,8 @@ import 'package:code/pages/profile.dart';
 import 'package:code/pages/dietpage.dart';
 import 'package:flutter/material.dart';
 import 'pages/filter.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 // import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +19,9 @@ void main() async => runApp(
         child: MyApp(),
       ),
     );
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
