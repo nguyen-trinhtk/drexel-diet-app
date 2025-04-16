@@ -64,15 +64,22 @@ class _HomepageState extends State<HomePage> {
               style: TextButton.styleFrom(backgroundColor: AppColors.primaryText),
               child: Container(padding: EdgeInsets.all(8), child:CustomText(content:"Filters", fontSize: 18, color:Colors.white)),
               onPressed: () {
-                showModalBottomSheet(
+                showDialog(
                   context: context,
-                  isScrollControlled: true,
                   builder: (BuildContext context) {
-                    return FractionallySizedBox(
-                      heightFactor: 1,
-                      widthFactor: 0.75,
-                      alignment: Alignment.centerRight,
-                      child: FoodFilterDrawer(),
+                    return Dialog(
+                      backgroundColor: AppColors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        side: BorderSide(
+                          color: AppColors.primaryText,
+                          width: 1.5,
+                        ),
+                      ),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.45, 
+                        child: FoodFilterDrawer(),
+                      ),
                     );
                   },
                 );
