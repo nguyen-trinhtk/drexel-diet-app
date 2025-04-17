@@ -92,9 +92,6 @@ class _HomeScreenState extends State<HomeScreen>
                   margin: const EdgeInsets.only(left: 100, top: 0),
                   color: AppColors.primaryBackground
                 ),
-                // Padding(
-                //   padding: const EdgeInsets.only(top: 100),
-                //   child: 
                   Column(
                     children: List.generate(7, (index) {
                           final isSelected = _tabController.index == index;
@@ -105,13 +102,22 @@ class _HomeScreenState extends State<HomeScreen>
                           return Container(height: 200, 
                             decoration: BoxDecoration(color: AppColors.secondaryBackground, borderRadius: BorderRadius.only(bottomRight: isBeforeSelected ? Radius.circular(25) : Radius.zero)),
                             alignment: Alignment.bottomCenter,
-                            padding: EdgeInsets.only(bottom: 25),
-                            child: CustomText(
-                              content: 'ANODREXIA', 
-                              fontSize: 16,
-                              header: true,
-                              bold: true, 
-                              )
+                            // padding: EdgeInsets.only(bottom: 10),
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  '../assets/logo.png',
+                                  width: 150,
+                                  height: 150,
+                                ),
+                                CustomText(
+                                  content: 'ANODREXIA', 
+                                  fontSize: 16,
+                                  header: true,
+                                  bold: true, 
+                                  )
+                              ],
+                            ),
                           );
                         } else if (index == 6) {
                           return Container(height: 50, 

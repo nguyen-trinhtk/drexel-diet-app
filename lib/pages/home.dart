@@ -190,7 +190,7 @@ class _HomepageState extends State<HomePage> {
                           isLogBarExpanded = true;
                         });
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('You got 10% fatter')),
+                          const SnackBar(content: Text('Dish Logged')),
                         );
                       },
                     );
@@ -246,43 +246,53 @@ class _HomepageState extends State<HomePage> {
                               child: Column(
                                 children: [
                                   FoodItemInfo(
-                                    foodName: 'haiz',
+                                    foodName: 'Old Fashioned Oatmeal',
                                     quantity: 1,
                                     nutritionInfo: {
-                                      'Calories': 127,
-                                      'Carbs': 12,
-                                      'Protein': 30,
-                                      'Fat': 4,
+                                      'Calories': 110,
+                                      'Carbs': 15,
+                                      'Protein': 5,
+                                      'Fat': 0,
                                     },
                                   ),
                                   FoodItemInfo(
-                                    foodName: 'whatttttt',
-                                    quantity: 1,
-                                    nutritionInfo: {
-                                      'Calories': 50,
-                                      'Carbs': 10,
-                                      'Protein': 2,
-                                      'Fat': 1,
-                                    },
-                                  ),
-                                  FoodItemInfo(
-                                    foodName: 'abcdefghijklmnopqrSTFU',
-                                    quantity: 1,
-                                    nutritionInfo: {
-                                      'Calories': 200,
-                                      'Carbs': 45,
-                                      'Protein': 4,
-                                      'Fat': 0.5,
-                                    },
-                                  ),
-                                  FoodItemInfo(
-                                    foodName: 'blah blah blah blah blah',
+                                    foodName: 'Eggs',
                                     quantity: 1,
                                     nutritionInfo: {
                                       'Calories': 80,
-                                      'Carbs': 20,
-                                      'Protein': 1,
-                                      'Fat': 0.5,
+                                      'Carbs': 2,
+                                      'Protein': 12,
+                                      'Fat': 5,
+                                    },
+                                  ),
+                                  FoodItemInfo(
+                                    foodName: 'Bacon Pieces',
+                                    quantity: 1,
+                                    nutritionInfo: {
+                                      'Calories': 70,
+                                      'Carbs': 0,
+                                      'Protein': 12,
+                                      'Fat': 6,
+                                    },
+                                  ),
+                                  FoodItemInfo(
+                                    foodName: 'Scramble Eggs',
+                                    quantity: 1,
+                                    nutritionInfo: {
+                                      'Calories': 180,
+                                      'Carbs': 2,
+                                      'Protein': 15,
+                                      'Fat': 8,
+                                    },
+                                  ),
+                                  FoodItemInfo(
+                                    foodName: 'Buttermilk Pancake',
+                                    quantity: 1,
+                                    nutritionInfo: {
+                                      'Calories': 160,
+                                      'Carbs': 30,
+                                      'Protein': 10,
+                                      'Fat': 20,
                                     },
                                   ),
                                 ],
@@ -310,7 +320,7 @@ class _HomepageState extends State<HomePage> {
                             width: 50,
                             alignment: Alignment.centerRight,
                             child: CustomText(
-                              content: '999',
+                              content: '600',
                               fontSize: 14,
                               header: true,
                             ),
@@ -330,7 +340,7 @@ class _HomepageState extends State<HomePage> {
                             width: 50,
                             alignment: Alignment.centerRight,
                             child: CustomText(
-                              content: '34',
+                              content: '49',
                               fontSize: 14,
                               header: true,
                             ),
@@ -350,7 +360,7 @@ class _HomepageState extends State<HomePage> {
                             width: 50,
                             alignment: Alignment.centerRight,
                             child: CustomText(
-                              content: '22',
+                              content: '54',
                               fontSize: 14,
                               header: true,
                             ),
@@ -370,7 +380,7 @@ class _HomepageState extends State<HomePage> {
                             width: 50,
                             alignment: Alignment.centerRight,
                             child: CustomText(
-                              content: '17',
+                              content: '39',
                               fontSize: 14,
                               header: true,
                             ),

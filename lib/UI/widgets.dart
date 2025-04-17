@@ -337,7 +337,7 @@ class FoodCard extends StatelessWidget {
       ),
       color: AppColors.white,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+        padding: const EdgeInsets.only(left: 20, right: 20, top: 15, bottom: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -366,7 +366,6 @@ class FoodCard extends StatelessWidget {
               header: true,
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 10),
             Expanded(
               child: CustomText(
                 content: description,
@@ -376,9 +375,9 @@ class FoodCard extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             SizedBox(
-              height: fontSize * 2.5,
+              height: fontSize * 2,
               child: CustomButton(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 fontSize: fontSize,

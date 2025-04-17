@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// import 'package:getwidget/getwidget.dart';
 import '../UI/widgets.dart';
 import '../UI/colors.dart';
 import '../UI/fonts.dart';
@@ -21,7 +22,8 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: AppColors.primaryBackground,
-        body: Stack(children: <Widget>[
+        body: 
+        Stack(children: <Widget>[
           IgnorePointer(
               child: ThemedBox(
                   pointA: Offset(55, 30),
@@ -210,7 +212,7 @@ class _ProfilePageState extends State<ProfilePage> {
             pointD: Offset(1348, 608),
           )),
           Positioned(
-              right: 250,
+              right: 130,
               top: 50,
               child: CustomText(
                 content: "Goal Weight",
@@ -218,7 +220,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 header: true,
               )),
           Positioned(
-              right: 300,
+              right: 170,
               top: 85,
               child: CustomText(
                 content: "45",
@@ -227,7 +229,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 color: AppColors.accent,
               )),
           Positioned(
-              right: 240,
+              right: 120,
               top: 250,
               child: CustomText(
                 content: "Goal Calories",
@@ -235,7 +237,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 header: true,
               )),
           Positioned(
-              right: 250,
+              right: 130,
               top: 285,
               child: CustomText(
                 content: "1792",
@@ -244,7 +246,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 color: AppColors.accent,
               )),
           Positioned(
-              right: 325,
+              right: 190,
               top: 450,
               child: CustomText(
                 content: "Days",
@@ -252,7 +254,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 header: true,
               )),
           Positioned(
-              right: 200,
+              right: 80,
               top: 485,
               child: CustomText(
                 content: "5 of 23",
@@ -261,33 +263,31 @@ class _ProfilePageState extends State<ProfilePage> {
                 color: AppColors.accent,
               )),
           Positioned(
-              right: 125,
+              right: 80,
               bottom: 40,
               // ignore: deprecated_member_use
               child: Stack(children: [
-                TextButton(
+                CustomButton(
                     onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Button pressed!')),
                         ),
-                    style: TextButton.styleFrom(
-                        padding: EdgeInsets.only(
-                            right: 140, left: 135, top: 45, bottom: 45),
-                        backgroundColor: AppColors.accent),
-                    child: CustomText(
-                      content: "View Plans  ",
+                      text: "View Plans    ",
                       fontSize: 24,
-                      color: Colors.white,
                       header: true,
-                    )),
+                      padding: EdgeInsets.all(30),
+                      borderRadius: 100,
+                    ),
                 Positioned(
-                    right: 105,
-                    bottom: 35,
+                    right: 20,
+                    bottom: 25,
                     child: Icon(
                       Icons.arrow_forward,
                       size: 42,
-                      color: Colors.white,
+                      color: AppColors.white,
                     ))
               ])),
-        ]));
+            ],
+          ),
+        );
   }
 }
