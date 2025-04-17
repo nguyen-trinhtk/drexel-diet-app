@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../UI/colors.dart';
+import '../UI/custom_elements.dart';
 
-  Set<Station> stationFilters = <Station>{};
-  Set<FoodPreference> foodPreferenceFilters = <FoodPreference>{};
+Set<Station> stationFilters = <Station>{};
+Set<FoodPreference> foodPreferenceFilters = <FoodPreference>{};
+
 enum Station {
   downtownGrounds,
   igniteGrill,
@@ -32,82 +35,181 @@ class FoodFilterDrawer extends StatefulWidget {
   State<FoodFilterDrawer> createState() => FoodFilterDrawerState();
 }
 
-//Selected choices are in the stationFilters and foodPreferenceFilters sets :)
-
-class FoodFilterDrawerState extends State<FoodFilterDrawer> with ChangeNotifier{
-
+class FoodFilterDrawerState extends State<FoodFilterDrawer>
+    with ChangeNotifier {
   String formatText(String text) {
-    return text.replaceAllMapped(RegExp(r'([A-Z])'), (Match match) => ' ${match.group(0)}').trim().replaceFirstMapped(RegExp(r'^[a-z]'), (Match match) => match.group(0)!.toUpperCase());
+    return text
+        .replaceAllMapped(
+            RegExp(r'([A-Z])'), (Match match) => ' ${match.group(0)}')
+        .trim()
+        .replaceFirstMapped(
+            RegExp(r'^[a-z]'), (Match match) => match.group(0)!.toUpperCase());
   }
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        const SizedBox(height: 20.0),
-        Text('Station Preference',
-            style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 20.0),
-        Wrap(
-          spacing: 5.0,
-          runSpacing: 5.0,
-          children: Station.values.map((Station stationName) {
-            return FilterChip(
-              label: Text(formatText(stationName.name)),
-              selected: stationFilters.contains(stationName),
-              onSelected: (bool selected) {
-                setState(() {
-                  if (selected) {
-                    stationFilters.add(stationName);
-                  } else {
-                    stationFilters.remove(stationName);
-                  }
-                });
-              },
-            );
-          }).toList(),
+
+@override
+Widget build(BuildContext context) {
+  return Stack(
+    children: [
+      Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            const SizedBox(height: 10),
+            Container(
+              height: 40,
+              alignment: Alignment.center,
+              child: CustomText(
+                content: 'Filters',
+                fontSize: 20,
+                header: true,
+                bold: true,
+                underline: true,
+              ),
+            ),
+            Container(
+              height: 40,
+              alignment: Alignment.center,
+              child: CustomText(
+                content: 'Station Preferences',
+                fontSize: 16,
+                bold: true,
+              ),
+            ),
+            Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 10,
+              runSpacing: 10,
+              children: Station.values.map((Station stationName) {
+                return FilterChip(
+                  showCheckmark: false,
+                  backgroundColor: AppColors.white,
+                  selectedColor: AppColors.accent,
+                  selected: stationFilters.contains(stationName),
+                  onSelected: (bool selected) {
+                    setState(() {
+                      if (selected) {
+                        stationFilters.add(stationName);
+                      } else {
+                        stationFilters.remove(stationName);
+                      }
+                    });
+                  },
+                  label: CustomText(
+                    content: formatText(stationName.name),
+                    fontSize: 12,
+                    color: stationFilters.contains(stationName)
+                        ? AppColors.white
+                        : AppColors.accent,
+                    bold: true,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    side: BorderSide(
+                      color: AppColors.accent,
+                      width: 1,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 20),
+            Container(
+              height: 40,
+              alignment: Alignment.center,
+              child: CustomText(
+                content: 'Food Preferences',
+                fontSize: 16,
+                bold: true,
+              ),
+            ),
+            Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 10,
+              runSpacing: 10,
+              children: FoodPreference.values.map((FoodPreference preference) {
+                return FilterChip(
+                  showCheckmark: false,
+                  backgroundColor: AppColors.white,
+                  selectedColor: AppColors.accent,
+                  selected: foodPreferenceFilters.contains(preference),
+                  onSelected: (bool selected) {
+                    setState(() {
+                      if (selected) {
+                        foodPreferenceFilters.add(preference);
+                      } else {
+                        foodPreferenceFilters.remove(preference);
+                      }
+                    });
+                  },
+                  label: CustomText(
+                    content: formatText(preference.name),
+                    fontSize: 12,
+                    color: foodPreferenceFilters.contains(preference)
+                        ? AppColors.white
+                        : AppColors.accent,
+                    bold: true,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    side: BorderSide(
+                      color: AppColors.accent,
+                      width: 1,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 40),
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CustomButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      context.read<FoodFilterDrawerState>().notifyListeners();
+                    },
+                      padding: const EdgeInsets.all(10),
+                      text: 'Apply Filters',
+                      header: true,
+                      fontSize: 12,
+                      textColor: AppColors.white,
+                  ),
+                  const SizedBox(width: 10),
+                  CustomButton(
+                    onPressed: () {
+                      setState(() {
+                        stationFilters.clear();
+                        foodPreferenceFilters.clear();
+                      });
+                    },
+                      padding: const EdgeInsets.all(10),
+                      color: AppColors.white,
+                      borderColor: AppColors.primaryText,
+                      hoverColor: AppColors.tertiaryText,
+                      textColor: AppColors.primaryText,
+                      text: '    Reset    ',
+                      fontSize: 12,
+                      header: true,
+                    ),
+                ],
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 20.0),
-        Text('Food Preference', style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 20.0),
-        Wrap(
-          spacing: 5.0,
-          runSpacing: 5.0,
-          children: FoodPreference.values.map((FoodPreference preference) {
-            return FilterChip(
-              label: Text(formatText(preference.name)),
-              selected: foodPreferenceFilters.contains(preference),
-              onSelected: (bool selected) {
-                setState(() {
-                  if (selected) {
-                    foodPreferenceFilters.add(preference);
-                    
-                  } else {
-                    foodPreferenceFilters.remove(preference);
-                  }
-                });
-              },
-            );
-          }).toList(),
+      ),
+      Positioned(
+        top: 20,
+        right: 20,
+        child: IconButton(
+          icon: const Icon(Icons.close),
+          iconSize: 20,
+          onPressed: () => Navigator.pop(context),
+          color: AppColors.primaryText,
         ),
-        const SizedBox(height: 20.0),
-        Center(
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              context.read<FoodFilterDrawerState>().notifyListeners();
-              },
-            child: const Text('Apply Filters'),
-          ),
-        ),
-        const SizedBox(height: 20.0),
-        Text(
-          'Selected Stations: ${stationFilters.map((e) => formatText(e.name)).join(', ')}',
-        ),
-        const SizedBox(height: 20.0),
-        Text(
-          'Selected Food Preferences: ${foodPreferenceFilters.map((e) => formatText(e.name)).join(', ')}',
-        ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
+
 }

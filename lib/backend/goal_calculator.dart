@@ -1,5 +1,4 @@
 // import 'dart:developer';
-import 'dart:io';
 
 // Formula used:  Mifflin and St Jeor Equation (1990)
 // Male metric BMR = (10 × weight in kg) + (6.25 × height in cm) – (5 × age in years) + 5
@@ -47,36 +46,4 @@ int calculateCaloricGoal(
   double goalCalories =
       bmr - ((currentWeight - goalWeight) * 7700 / daysToGoal);
   return goalCalories.toInt();
-}
-
-void main() {
-  //example data
-  print('Enter your age: ');
-  int? age = int.parse(stdin.readLineSync()!);
-  print('Enter your height: ');
-  double? height = double.parse(stdin.readLineSync()!);
-  print('Enter your current weight: ');
-  double? currentWeight = double.parse(stdin.readLineSync()!);
-  print('Enter your goal weight: ');
-  double? goalWeight = double.parse(stdin.readLineSync()!);
-  print('Enter your activity level (1: sedentary 2: light 3: moderate 4: active 5: very active): ');
-  int? activityLevel = int.parse(stdin.readLineSync()!);
-  print('Enter your biological gender: ');
-  String gender = stdin.readLineSync()!;
-  print('How many days later you want to achieve your goal: ');
-  int daysToGoal = int.parse(stdin.readLineSync()!);
-  print('Enter your unit used for weight and height: ');
-  String units = stdin.readLineSync()!;
-  //calculate caloric goal
-  int goalCalories = calculateCaloricGoal(
-    age,
-    height,
-    currentWeight,
-    goalWeight,
-    activityLevel,
-    gender,
-    daysToGoal,
-    units,
-  );
-  print('Goal Calories: $goalCalories');
 }

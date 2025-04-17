@@ -39,6 +39,9 @@ dependencies:
   path: ^1.9.0
   google_fonts: ^6.2.1
   flutter_svg: ^2.0.17
+  firebase_core: ^3.13.0
+  font_awesome_flutter: ^10.8.0
+  firebase_auth: ^5.5.2
 
 dev_dependencies:
   flutter_test:
@@ -56,6 +59,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  uses-material-design: true
   fonts:
     - family: KronaOne
       fonts:
@@ -63,11 +67,6 @@ flutter:
     - family: Kodchasan
       fonts:
         - asset: assets/fonts/Kodchasan-Regular.ttf
-
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
-  uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
   # assets:
