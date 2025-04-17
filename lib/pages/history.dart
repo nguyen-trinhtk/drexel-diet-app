@@ -1,5 +1,4 @@
 // Page for user's meal history
-// Page for diet plans
 import 'package:flutter/material.dart';
 // import 'package:getwidget/getwidget.dart';
 import '../UI/colors.dart';
@@ -13,20 +12,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: DietPage(),
+      home: HistoryPage(),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
-class DietPage extends StatefulWidget {
-  const DietPage({super.key});
+class HistoryPage extends StatefulWidget {
+  const HistoryPage({super.key});
 
   @override
-  _DietPageState createState() => _DietPageState();
+  _HistoryPageState createState() => _HistoryPageState();
 }
 
-class _DietPageState extends State<DietPage> {
+class _HistoryPageState extends State<HistoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
