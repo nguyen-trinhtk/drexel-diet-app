@@ -4,7 +4,7 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.expected_conditions import visibility_of_element_located
-from bs4 import BeautifulSoup as bs
+from bs4 import BeautifulSoup as bs 
 
 optionsFirefox = Options()
 optionsFirefox.add_argument("--headless") # don't display firefox window
@@ -63,7 +63,7 @@ for stationBlock in stationBlocks:
     stationPlantForward = []
     stationVegan = []
     stationBlockChildren = stationBlock.findChildren()
-    
+    # Scrape Website information blocks
     for menuItem in stationBlockChildren:
        itemTitle = re.search("<h3.*><span class=\"sc-fjvvzt kQweEp HeaderItemNameLink\" data-testid=\"product-card-header-link\">(.*)</span></h3>",  str(menuItem))
        if itemTitle == None:
