@@ -175,3 +175,135 @@ class FoodItemInfo extends StatelessWidget {
     );
   }
 }
+
+class ThemedHistoryCard extends Card {
+  final int calories;
+  final List<String> foodList;
+  final int protein;
+  final int carbonhydrates;
+  final int fat;
+
+  const ThemedHistoryCard({
+    Key? key,
+    required this.calories,
+    required this.foodList,
+    required this.protein,
+    required this.carbonhydrates,
+    required this.fat,
+  });
+
+  List<Widget> _createFoodText() {
+      return new List<Widget>.generate(foodList.length, (int index) {
+        String foodName = foodList[index];
+        return CustomText(
+                          content: "$foodName",
+                          fontSize: 20,);
+      });
+    }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+              color: AppColors.white,
+              margin: EdgeInsets.all(10),
+              shape: RoundedRectangleBorder(
+                  side: BorderSide(
+                    color: AppColors.primaryText,
+                    width: 1.0,
+                  ),
+                  borderRadius: BorderRadius.circular(40),
+                ),
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[Column(
+                  children: <Widget>[
+                    CustomText(
+                      content: "$calories",
+                      fontSize: 60,
+                      bold: true,
+                      ),
+                    CustomText(
+                      content: "CALORIES",
+                      fontSize: 30,
+                      color: AppColors.accent,
+                      header: true,
+                      ),
+                    ],
+                ),
+                Column(
+                  children: <Widget>[Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                    CustomText(
+                      content:"FOOD",
+                      fontSize: 20,
+                      header: true,
+                      color: AppColors.accent,
+                      ),
+                    SizedBox(
+                      width: 10,
+                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: _createFoodText(),
+                    ),
+                  ],)]
+                  
+                ),
+                Column(
+                  children: <Widget>[Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                    CustomText(
+                      content:"PROTEIN",
+                      fontSize: 20,
+                      header: true,
+                      color: AppColors.accent,
+                      ), 
+                    CustomText(
+                      content:"CARB",
+                      fontSize: 20,
+                      header: true,
+                      color: AppColors.accent,
+                      ),
+                    CustomText(
+                      content:"FAT",
+                      fontSize: 20,
+                      header: true,
+                      color: AppColors.accent,
+                      ),
+                    ]),
+                    SizedBox(
+                      width: 10,
+                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        CustomText(
+                          content: "$protein",
+                          fontSize: 20,),
+                        CustomText(
+                          content: "$carbonhydrates",
+                          fontSize: 20,),
+                        CustomText(
+                          content: "$fat",
+                          fontSize: 20,),
+                      ]
+                    ),
+                  ],)]
+                  
+                ),
+                ]
+              ),
+              ),
+              
+            );
+  }
+
+}
