@@ -29,12 +29,14 @@ class _HistoryPageState extends State<HistoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.primaryBackground,
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListView.builder(
           itemCount: 2, 
           itemBuilder: (BuildContext context, int index){
             return Card(
+              color: AppColors.white,
               margin: EdgeInsets.all(10),
               shape: RoundedRectangleBorder(
                   side: BorderSide(
@@ -49,25 +51,44 @@ class _HistoryPageState extends State<HistoryPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[Column(
                   children: <Widget>[
-                    Text("Calorie"),
-                    Text("100")
+                    CustomText(
+                      content: "413",
+                      fontSize: 60,
+                      bold: true,
+                      ),
+                    CustomText(
+                      content: "CALORIES",
+                      fontSize: 30,
+                      color: AppColors.accent,
+                      header: true,
+                      ),
                     ],
                 ),
                 Column(
                   children: <Widget>[Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                     CustomText(
-                      content:"Say gex",
-                      fontSize: 14,
+                      content:"FOOD",
+                      fontSize: 20,
                       header: true,
                       color: AppColors.accent,
                       ),
+                    SizedBox(
+                      width: 10,
+                      ),
                     Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text("Food 1"),
-                        Text("Food 2")
+                        CustomText(
+                          content: "Lava Chicken",
+                          fontSize: 20,),
+                        CustomText(
+                          content: "Bún Đậu Mắm Tôm",
+                          fontSize: 20,),
+                        CustomText(
+                          content: "Cajun Chicken",
+                          fontSize: 20,),
                       ]
                     ),
                   ],)]
@@ -75,13 +96,46 @@ class _HistoryPageState extends State<HistoryPage> {
                 ),
                 Column(
                   children: <Widget>[Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                    Text("Say gex"),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                    CustomText(
+                      content:"PROTEIN",
+                      fontSize: 20,
+                      header: true,
+                      color: AppColors.accent,
+                      ), 
+                    CustomText(
+                      content:"CARB",
+                      fontSize: 20,
+                      header: true,
+                      color: AppColors.accent,
+                      ),
+                    CustomText(
+                      content:"FAT",
+                      fontSize: 20,
+                      header: true,
+                      color: AppColors.accent,
+                      ),
+                    ]),
+                    SizedBox(
+                      width: 10,
+                      ),
                     Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text("Food 1"),
-                        Text("Food 2")
+                        CustomText(
+                          content: "892",
+                          fontSize: 20,),
+                        CustomText(
+                          content: "329",
+                          fontSize: 20,),
+                        CustomText(
+                          content: "293",
+                          fontSize: 20,),
                       ]
                     ),
                   ],)]
