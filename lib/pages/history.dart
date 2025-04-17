@@ -1,4 +1,5 @@
 // Page for user's meal history
+import 'package:code/UI/widgets.dart';
 import 'package:flutter/material.dart';
 // import 'package:getwidget/getwidget.dart';
 import '../UI/colors.dart';
@@ -35,116 +36,12 @@ class _HistoryPageState extends State<HistoryPage> {
         child: ListView.builder(
           itemCount: 2, 
           itemBuilder: (BuildContext context, int index){
-            return Card(
-              color: AppColors.white,
-              margin: EdgeInsets.all(10),
-              shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                    color: AppColors.primaryText,
-                    width: 1.0,
-                  ),
-                  borderRadius: BorderRadius.circular(40),
-                ),
-              child: Padding(
-                padding: EdgeInsets.all(10),
-                child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[Column(
-                  children: <Widget>[
-                    CustomText(
-                      content: "413",
-                      fontSize: 60,
-                      bold: true,
-                      ),
-                    CustomText(
-                      content: "CALORIES",
-                      fontSize: 30,
-                      color: AppColors.accent,
-                      header: true,
-                      ),
-                    ],
-                ),
-                Column(
-                  children: <Widget>[Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                    CustomText(
-                      content:"FOOD",
-                      fontSize: 20,
-                      header: true,
-                      color: AppColors.accent,
-                      ),
-                    SizedBox(
-                      width: 10,
-                      ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        CustomText(
-                          content: "Lava Chicken",
-                          fontSize: 20,),
-                        CustomText(
-                          content: "Bún Đậu Mắm Tôm",
-                          fontSize: 20,),
-                        CustomText(
-                          content: "Cajun Chicken",
-                          fontSize: 20,),
-                      ]
-                    ),
-                  ],)]
-                  
-                ),
-                Column(
-                  children: <Widget>[Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                    CustomText(
-                      content:"PROTEIN",
-                      fontSize: 20,
-                      header: true,
-                      color: AppColors.accent,
-                      ), 
-                    CustomText(
-                      content:"CARB",
-                      fontSize: 20,
-                      header: true,
-                      color: AppColors.accent,
-                      ),
-                    CustomText(
-                      content:"FAT",
-                      fontSize: 20,
-                      header: true,
-                      color: AppColors.accent,
-                      ),
-                    ]),
-                    SizedBox(
-                      width: 10,
-                      ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        CustomText(
-                          content: "892",
-                          fontSize: 20,),
-                        CustomText(
-                          content: "329",
-                          fontSize: 20,),
-                        CustomText(
-                          content: "293",
-                          fontSize: 20,),
-                      ]
-                    ),
-                  ],)]
-                  
-                ),
-                ]
-              ),
-              ),
-            );
+            return ThemedHistoryCard(
+              calories: 324,
+              foodList: ["Lava Chicken", "Bún Đậu Mắm Tôm", "Cajun Chicken"],
+              protein: 241,
+              carbonhydrates: 391,
+              fat: 231); 
           }
         )
       )
