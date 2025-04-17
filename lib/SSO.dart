@@ -44,7 +44,19 @@ class _DietPageState extends State<DietPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton.icon(
+            CustomText(
+              content: "Anodrexia",
+              fontSize: 50,
+              header: true
+              ),
+            CustomText(
+              content: "Your personalized Drexel Dining Assistant",
+              fontSize: 30,
+              overflow: TextOverflow.visible,
+              ),
+
+            const SizedBox(height: 16), // spacing between the buttons
+            GFButton(
               onPressed: () async {
                 // Define the action when the Microsoft button is pressed
                 final providerMS = OAuthProvider("microsoft.com");
