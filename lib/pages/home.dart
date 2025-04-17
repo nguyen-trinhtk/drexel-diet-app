@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'filter.dart';
 import '../UI/colors.dart';
-import '../UI/custom_text.dart';
+import '../UI/custom_elements.dart';
 import '../UI/widgets.dart';
 
 class HomePage extends StatefulWidget {
@@ -91,7 +91,7 @@ class _HomepageState extends State<HomePage> {
                     hintText: "Search",
                     hintStyle: WidgetStateProperty.all(
                       TextStyle(
-                        color: const Color(0xFFCACAF6),
+                        color: AppColors.secondaryText,
                         fontFamily: AppFonts.headerFont,
                       ),
                     ),
@@ -111,18 +111,12 @@ class _HomepageState extends State<HomePage> {
               actions: [
                 Container(
                   padding: const EdgeInsets.only(right: 26),
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor: AppColors.primaryText,
-                    ),
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      child: CustomText(
-                        content: "Filters",
-                        fontSize: 18,
-                        color: Colors.white,
-                      ),
-                    ),
+                  child: CustomButton(
+                    text: "Filters",
+                    bold: true,
+                    height: 45,
+                    fontSize: 20, 
+                    padding: EdgeInsets.symmetric(horizontal: 10),
                     onPressed: () {
                       showDialog(
                         context: context,
@@ -166,7 +160,7 @@ class _HomepageState extends State<HomePage> {
             ),
             backgroundColor: AppColors.primaryBackground,
             body: Padding(
-              padding: const EdgeInsets.only(top: 30, bottom: 10, left: 30, right: 30),
+              padding: EdgeInsets.all( isLogBarExpanded ? 15 : 30),
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: findCardsPerRow(viewWidth, 350),
@@ -242,8 +236,7 @@ class _HomepageState extends State<HomePage> {
                       ),
                       Expanded(
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 5, vertical: 10),
+                          padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
                             color: AppColors.white,
                           ),
@@ -388,27 +381,16 @@ class _HomepageState extends State<HomePage> {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 20),
                         child: Center(
-                          child: TextButton(
+                          child: CustomButton(
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            header: true,
                             onPressed: () => setState(() {
                               isLogBarExpanded = false;
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                       content: Text('Meal Logged!')));
                             }),
-                            style: TextButton.styleFrom(
-                              backgroundColor: AppColors.primaryText,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(40),
-                              ),
-                            ),
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              child: CustomText(
-                                content: "Add to meal",
-                                fontSize: 18,
-                                color: Colors.white,
-                              ),
-                            ),
+                            text: 'Log Meal',
                           ),
                         ),
                       ),

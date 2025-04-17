@@ -1,5 +1,5 @@
 // SSO Login Page
-import 'package:code/UI/custom_text.dart';
+import 'package:code/UI/custom_elements.dart';
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
 // import 'package:getwidget/getwidget.dart';

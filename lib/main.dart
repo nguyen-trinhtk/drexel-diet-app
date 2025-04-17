@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 
 import 'UI/widgets.dart';
 import 'UI/colors.dart';
-import 'UI/custom_text.dart';
+import 'UI/custom_elements.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

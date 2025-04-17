@@ -1,12 +1,9 @@
 // Page for user's meal history
 import 'package:code/UI/widgets.dart';
 import 'package:flutter/material.dart';
-// import 'package:getwidget/getwidget.dart';
 import '../UI/colors.dart';
-import '../UI/custom_text.dart';
 
 void main() => runApp(MyApp());
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

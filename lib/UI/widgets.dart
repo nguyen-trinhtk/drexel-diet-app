@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'colors.dart';
-import 'custom_text.dart';
+import 'custom_elements.dart';
 
 class ThemedBoxPainter extends CustomPainter {
   final Color bg;
@@ -379,35 +379,14 @@ class FoodCard extends StatelessWidget {
             const SizedBox(height: 20),
             SizedBox(
               height: fontSize * 2.5,
-              width: fontSize * 6,
-              child: 
-                TextButton(
-                  onPressed: onAddPressed,
-                  style: ButtonStyle(
-                    elevation: WidgetStateProperty.all(0),
-                    shadowColor: WidgetStateProperty.all(Colors.transparent),
-                    surfaceTintColor: WidgetStateProperty.all(Colors.transparent),
-                    backgroundColor: WidgetStateProperty.resolveWith<Color>(
-                      (states) {
-                        if (states.contains(WidgetState.hovered)) {
-                          return AppColors.primaryText;
-                        }
-                        return AppColors.accent;
-                      },
-                    ),
-                    shape: WidgetStateProperty.all(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40),
-                      ),
-                    ),
-                  ),
-                  child: CustomText(
-                    content: "ADD",
-                    fontSize: fontSize,
-                    color: Colors.white,
-                  ),
-                ),
-
+              child: CustomButton(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                fontSize: fontSize,
+                text: 'Add',
+                bold: true,
+                onPressed: onAddPressed, 
+                color: AppColors.accent,
+                hoverColor: AppColors.primaryText)
             ),
           ],
         ),
