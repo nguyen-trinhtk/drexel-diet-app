@@ -1,12 +1,15 @@
 // SSO Login Page
 //Ben Pummer
+import 'package:code/UI/custom_text.dart';
 import 'package:flutter/material.dart';
+import 'package:getwidget/getwidget.dart';
 // import 'package:getwidget/getwidget.dart';
 import '../../../UI/colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'UI/fonts.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,20 +25,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: DietPage(),
+      home: SSOPage(),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
-class DietPage extends StatefulWidget {
-  const DietPage({super.key});
+class SSOPage extends StatefulWidget {
+  const SSOPage({super.key});
 
   @override
-  _DietPageState createState() => _DietPageState();
+  _SSOPageState createState() => _SSOPageState();
 }
 
-class _DietPageState extends State<DietPage> {
+class _SSOPageState extends State<SSOPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
