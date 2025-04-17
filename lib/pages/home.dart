@@ -17,7 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomepageState extends State<HomePage> {
-  bool isDishesContainerExpanded = false;
+  bool isLogBarExpanded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -127,18 +127,18 @@ class _HomepageState extends State<HomePage> {
                     },
                   ),
                 ),
-                if (!isDishesContainerExpanded)
+                if (!isLogBarExpanded)
                   IconButton(
                     icon: Icon(
                       Icons.menu,
                       color: AppColors.primaryText,
                     ),
-                    tooltip: isDishesContainerExpanded
+                    tooltip: isLogBarExpanded
                         ? "Hide Dishes"
                         : "Show Dishes",
                     onPressed: () {
                       setState(() {
-                        isDishesContainerExpanded = !isDishesContainerExpanded;
+                        isLogBarExpanded = !isLogBarExpanded;
                       });
                     },
                   ),
@@ -153,7 +153,7 @@ class _HomepageState extends State<HomePage> {
                   crossAxisCount: findCardsPerRow(viewWidth, 350),
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
-                  childAspectRatio: isDishesContainerExpanded ? 1.15 : 1.75,
+                  childAspectRatio: isLogBarExpanded ? 1.15 : 1.75,
                 ),
                 itemCount: jsonData.length,
                 itemBuilder: (BuildContext context, int index) {
@@ -210,7 +210,7 @@ class _HomepageState extends State<HomePage> {
                           GFButton(
                             onPressed: () {
                               setState(() {
-                                isDishesContainerExpanded = true;
+                                isLogBarExpanded = true;
                               });
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -249,8 +249,9 @@ class _HomepageState extends State<HomePage> {
             ),
           ),
         ),
-        Container(
-          width: isDishesContainerExpanded
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width: isLogBarExpanded
               ? MediaQuery.of(context).size.width * 0.225
               : 0,
           decoration: BoxDecoration(
@@ -262,7 +263,7 @@ class _HomepageState extends State<HomePage> {
           ),
           child: Stack(
             children: [
-              if (isDishesContainerExpanded) // Only show content when expanded
+              if (isLogBarExpanded) // Only show content when expanded
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
@@ -431,7 +432,7 @@ class _HomepageState extends State<HomePage> {
                         child: Center(
                           child: TextButton(
                             onPressed: () => setState(() {
-                              isDishesContainerExpanded = false;
+                              isLogBarExpanded = false;
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                       content: Text('Meal Logged!')));
@@ -462,7 +463,7 @@ class _HomepageState extends State<HomePage> {
                 left: 15,
                 child: IconButton(
                   icon: Icon(
-                    isDishesContainerExpanded
+                    isLogBarExpanded
                         ? Icons.arrow_forward_ios
                         : Icons.arrow_back_ios,
                     color: AppColors.primaryText,
@@ -470,7 +471,7 @@ class _HomepageState extends State<HomePage> {
                   ),
                   onPressed: () {
                     setState(() {
-                      isDishesContainerExpanded = !isDishesContainerExpanded;
+                      isLogBarExpanded = !isLogBarExpanded;
                     });
                   },
                   style: IconButton.styleFrom(
