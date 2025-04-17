@@ -66,17 +66,39 @@ class _DietPageState extends State<DietPage> {
                 await FirebaseAuth.instance.signInWithProvider(providerMS);
               },
               icon: const Icon(FontAwesomeIcons.microsoft),
-              label: const Text("Use a Microsoft account to sign in"),
+              text: "Use a Microsoft account to sign in",
+              color: AppColors.accent,
+              disabledColor: AppColors.accent,
+              hoverColor: AppColors.primaryText,
+              borderShape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(40),
+              ),
+              textStyle: TextStyle(
+                color: Colors.white,
+                fontFamily: AppFonts.textFont,
+                fontSize: 16,
+              ),
             ),
-            const SizedBox(height: 16), // spacing between the buttons
-            ElevatedButton.icon(
+            const SizedBox(height: 10), // spacing between the buttons
+            GFButton(
               onPressed: () async {
                 // Define the action when the Google button is pressed
                 final providerG = OAuthProvider("google.com");
                 await FirebaseAuth.instance.signInWithProvider(providerG);
               },
               icon: const Icon(FontAwesomeIcons.google),
-              label: const Text("Use a Google account to sign in"),
+              text: "Use a Google account to sign in",
+              color: AppColors.accent,
+              disabledColor: AppColors.accent,
+              hoverColor: AppColors.primaryText,
+              borderShape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(40),
+              ),
+              textStyle: TextStyle(
+                color: Colors.white,
+                fontFamily: AppFonts.textFont,
+                fontSize: 16,
+              )
             ),
           ],
         ),
