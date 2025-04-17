@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'colors.dart';
+import 'custom_text.dart';
 
 class ThemedBoxPainter extends CustomPainter {
   final Color bg;
@@ -11,7 +12,8 @@ class ThemedBoxPainter extends CustomPainter {
   final Offset d;
   final bool s;
 
-  ThemedBoxPainter(this.bg, this.bd, this.ds, this.a, this.b, this.s, this.c, this.d);
+  ThemedBoxPainter(
+      this.bg, this.bd, this.ds, this.a, this.b, this.s, this.c, this.d);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -67,22 +69,24 @@ class ThemedBox extends StatelessWidget {
     this.dropShadow = false,
     required this.pointA,
     required this.pointB,
-    this.pointC = const Offset(0,0),
-    this.pointD = const Offset(0,0),
+    this.pointC = const Offset(0, 0),
+    this.pointD = const Offset(0, 0),
   });
 
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      painter: ThemedBoxPainter(background, border, shadow, pointA, pointB, dropShadow, pointC, pointD),
+      painter: ThemedBoxPainter(background, border, shadow, pointA, pointB,
+          dropShadow, pointC, pointD),
       size: MediaQuery.of(context).size,
     );
   }
 }
+
 class ThemedSidebar extends CustomPainter {
   final double width;
 
-  ThemedSidebar({this.width = 200}); 
+  ThemedSidebar({this.width = 200});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -98,4 +102,76 @@ class ThemedSidebar extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+class FoodItemInfo extends StatelessWidget {
+  final String foodName;
+  final int quantity;
+  final Map<String, double> nutritionInfo;
+
+  const FoodItemInfo({
+    Key? key,
+    required this.foodName,
+    required this.quantity,
+    required this.nutritionInfo,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: CustomText(
+                content: foodName,
+                fontSize: 16,
+                header: true,
+              ),
+            ),
+            Container(
+              width: 50,
+              alignment: Alignment.centerRight,
+              child: CustomText(
+                content: 'x $quantity',
+                fontSize: 16,
+                header: true,
+              ),
+            ),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            children: nutritionInfo.entries.map((entry) {
+              return Row(
+                children: [
+                  Expanded(
+                    child: CustomText(
+                      content: entry.key,
+                      fontSize: 16,
+                      color: AppColors.accent,
+                      bold: true,
+                    ),
+                  ),
+                  Container(
+                    width: 50,
+                    alignment: Alignment.centerRight,
+                    child: CustomText(
+                      content: entry.value.toString(),
+                      fontSize: 16,
+                      color: AppColors.accent,
+                      bold: true,
+                    ),
+                  ),
+                ],
+              );
+            }).toList(),
+          ),
+        ),
+        const SizedBox(height: 20),
+      ],
+    );
+  }
 }
