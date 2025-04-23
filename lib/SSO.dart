@@ -8,6 +8,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'UI/fonts.dart';
 
 Future<void> main() async {
@@ -63,7 +65,7 @@ class _SSOPageState extends State<SSOPage> {
                 // Define the action when the Microsoft button is pressed
                 final providerMS = OAuthProvider("microsoft.com");
                 providerMS.setCustomParameters({
-                  "tenant": "f18072f9-04d3-477f-b8aa-7e1ddbaac08e"
+                  "tenant": dotenv.env['SSO_TENANT'] ?? '',
                 });
                 await FirebaseAuth.instance.signInWithPopup(providerMS);
               },
