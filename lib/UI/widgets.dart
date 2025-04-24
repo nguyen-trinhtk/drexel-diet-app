@@ -107,7 +107,7 @@ class ThemedSidebar extends CustomPainter {
 class FoodItemInfo extends StatelessWidget {
   final String foodName;
   final int quantity;
-  final Map<String, double> nutritionInfo;
+  final Map<String, int> nutritionInfo;
 
   const FoodItemInfo({
     Key? key,
@@ -315,11 +315,17 @@ class FoodCard extends StatelessWidget {
   final String calories;
   final VoidCallback onAddPressed;
   final double fontSize;
+  // final String protein;
+  // final String carbs;
+  // final String fat;
 
   const FoodCard({
     Key? key,
     required this.name,
     required this.description,
+    // required this.protein,
+    // required this.carbs,
+    // required this.fat,
     required this.calories,
     required this.onAddPressed,
     this.fontSize = 16,
@@ -337,7 +343,8 @@ class FoodCard extends StatelessWidget {
       ),
       color: AppColors.white,
       child: Padding(
-        padding: const EdgeInsets.only(left: 20, right: 20, top: 15, bottom: 10),
+        padding:
+            const EdgeInsets.only(left: 20, right: 20, top: 15, bottom: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -377,16 +384,15 @@ class FoodCard extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             SizedBox(
-              height: fontSize * 2,
-              child: CustomButton(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                fontSize: fontSize,
-                text: 'Add',
-                bold: true,
-                onPressed: onAddPressed, 
-                color: AppColors.accent,
-                hoverColor: AppColors.primaryText)
-            ),
+                height: fontSize * 2,
+                child: CustomButton(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    fontSize: fontSize,
+                    text: 'Add',
+                    bold: true,
+                    onPressed: onAddPressed,
+                    color: AppColors.accent,
+                    hoverColor: AppColors.primaryText)),
           ],
         ),
       ),

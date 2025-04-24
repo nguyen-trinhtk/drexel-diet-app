@@ -17,7 +17,12 @@ class HomePage extends StatefulWidget {
 
 class _HomepageState extends State<HomePage> {
   bool isLogBarExpanded = false;
-  var jsonData;
+  dynamic jsonData;
+  List<Widget> _logBarCards = [];
+  int _totalCalories = 0;
+  int _totalCarbs = 0;
+  int _totalFat = 0;
+  int _totalProtein = 0;
 
   @override
   void initState() {
@@ -38,32 +43,24 @@ class _HomepageState extends State<HomePage> {
     return viewWidth ~/ minCardWidth;
   }
 
+  void _appendLog(Widget child) {
+    setState(() {
+      _logBarCards.add(child);
+    });
+  }
+
+  void _updateTotal(int calories, int carbs, int fat, int protein) {
+    setState(() {
+      _totalCalories += calories;
+      _totalCarbs += carbs;
+      _totalFat += fat;
+      _totalProtein += protein;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<String> foods = [
-      "lowCarbon",
-      "glutenFree",
-      "vegan",
-      "vegetarian",
-      "wholeGrain",
-      "eatWell",
-      "plantForward"
-    ];
-
-    List<String> filteredFoods = [];
     context.watch<FoodFilterDrawerState>();
-
-    for (FoodPreference filter in foodPreferenceFilters) {
-      for (String food in foods) {
-        if (filter.name.toString() == food) {
-          filteredFoods.add(food);
-        }
-      }
-    }
-
-    if (filteredFoods.isEmpty) {
-      filteredFoods = foods;
-    }
 
     double viewWidth = MediaQuery.sizeOf(context).width;
 
@@ -115,7 +112,7 @@ class _HomepageState extends State<HomePage> {
                     text: "Filters",
                     bold: true,
                     height: 45,
-                    fontSize: 20, 
+                    fontSize: 20,
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     onPressed: () {
                       showDialog(
@@ -160,7 +157,7 @@ class _HomepageState extends State<HomePage> {
             ),
             backgroundColor: AppColors.primaryBackground,
             body: Padding(
-              padding: EdgeInsets.all( isLogBarExpanded ? 15 : 30),
+              padding: EdgeInsets.all(isLogBarExpanded ? 15 : 30),
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: findCardsPerRow(viewWidth, 350),
@@ -171,32 +168,48 @@ class _HomepageState extends State<HomePage> {
                 itemCount: jsonData.length,
                 itemBuilder: (BuildContext context, int index) {
                   String strIndex = index.toString();
-                  String calories =
-                      "Calories ${jsonData[strIndex]['Calories']}";
-                  bool display = false;
-
-                  for (String food in filteredFoods) {
-                    display = true;
-                  }
-
-                  if (display) {
-                    return FoodCard(
-                      name: jsonData[strIndex]['Name'],
-                      description: jsonData[strIndex]['Description'],
-                      calories: calories,
-                      fontSize: isLogBarExpanded ? 14 : 18,
-                      onAddPressed: () {
-                        setState(() {
-                          isLogBarExpanded = true;
-                        });
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Dish Logged')),
-                        );
-                      },
-                    );
-                  } else {
-                    return null;
-                  }
+                  int? calories =
+                      int.tryParse(jsonData[strIndex]['Calories']) ?? 0;
+                  "Calories ${jsonData[strIndex]['Calories']}";
+                  String foodName = jsonData[strIndex]['Name'];
+                  int? protein = int.tryParse(jsonData[strIndex]['protein']
+                          .replaceAll(' g', '')
+                          .replaceAll('less than ', '')
+                          .trim()) ??
+                      0;
+                  int? carbs = int.tryParse(jsonData[strIndex]
+                              ['totalCarbohydrates']
+                          .replaceAll(' g', '')
+                          .replaceAll('less than ', '')
+                          .trim()) ??
+                      0;
+                  int fat = int.tryParse(jsonData[strIndex]['totalFat']
+                          .replaceAll(' g', '')
+                          .replaceAll('less than ', '')
+                          .trim()) ??
+                      0;
+                  return FoodCard(
+                    name: jsonData[strIndex]['Name'],
+                    description: jsonData[strIndex]['Description'],
+                    calories: "Calories $calories",
+                    fontSize: isLogBarExpanded ? 14 : 18,
+                    onAddPressed: () {
+                      _appendLog(FoodItemInfo(
+                          foodName: foodName,
+                          quantity: 1,
+                          nutritionInfo: {
+                            'calories': calories,
+                            'protein': protein,
+                            'carbs': carbs,
+                            'fat': fat,
+                          }));
+                      _updateTotal(calories, carbs, fat, protein);
+                      isLogBarExpanded = true;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Dish Logged')),
+                      );
+                    },
+                  );
                 },
               ),
             ),
@@ -244,58 +257,7 @@ class _HomepageState extends State<HomePage> {
                             thumbVisibility: false,
                             child: SingleChildScrollView(
                               child: Column(
-                                children: [
-                                  FoodItemInfo(
-                                    foodName: 'Old Fashioned Oatmeal',
-                                    quantity: 1,
-                                    nutritionInfo: {
-                                      'Calories': 110,
-                                      'Carbs': 15,
-                                      'Protein': 5,
-                                      'Fat': 0,
-                                    },
-                                  ),
-                                  FoodItemInfo(
-                                    foodName: 'Eggs',
-                                    quantity: 1,
-                                    nutritionInfo: {
-                                      'Calories': 80,
-                                      'Carbs': 2,
-                                      'Protein': 12,
-                                      'Fat': 5,
-                                    },
-                                  ),
-                                  FoodItemInfo(
-                                    foodName: 'Bacon Pieces',
-                                    quantity: 1,
-                                    nutritionInfo: {
-                                      'Calories': 70,
-                                      'Carbs': 0,
-                                      'Protein': 12,
-                                      'Fat': 6,
-                                    },
-                                  ),
-                                  FoodItemInfo(
-                                    foodName: 'Scramble Eggs',
-                                    quantity: 1,
-                                    nutritionInfo: {
-                                      'Calories': 180,
-                                      'Carbs': 2,
-                                      'Protein': 15,
-                                      'Fat': 8,
-                                    },
-                                  ),
-                                  FoodItemInfo(
-                                    foodName: 'Buttermilk Pancake',
-                                    quantity: 1,
-                                    nutritionInfo: {
-                                      'Calories': 160,
-                                      'Carbs': 30,
-                                      'Protein': 10,
-                                      'Fat': 20,
-                                    },
-                                  ),
-                                ],
+                                children: _logBarCards,
                               ),
                             ),
                           ),
@@ -320,27 +282,7 @@ class _HomepageState extends State<HomePage> {
                             width: 50,
                             alignment: Alignment.centerRight,
                             child: CustomText(
-                              content: '600',
-                              fontSize: 14,
-                              header: true,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CustomText(
-                              content: 'Carbs',
-                              fontSize: 14,
-                              header: true,
-                            ),
-                          ),
-                          Container(
-                            width: 50,
-                            alignment: Alignment.centerRight,
-                            child: CustomText(
-                              content: '49',
+                              content: _totalCalories.toString(),
                               fontSize: 14,
                               header: true,
                             ),
@@ -360,7 +302,27 @@ class _HomepageState extends State<HomePage> {
                             width: 50,
                             alignment: Alignment.centerRight,
                             child: CustomText(
-                              content: '54',
+                              content: _totalProtein.toString(),
+                              fontSize: 14,
+                              header: true,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomText(
+                              content: 'Carbs',
+                              fontSize: 14,
+                              header: true,
+                            ),
+                          ),
+                          Container(
+                            width: 50,
+                            alignment: Alignment.centerRight,
+                            child: CustomText(
+                              content: _totalCarbs.toString(),
                               fontSize: 14,
                               header: true,
                             ),
@@ -380,7 +342,7 @@ class _HomepageState extends State<HomePage> {
                             width: 50,
                             alignment: Alignment.centerRight,
                             child: CustomText(
-                              content: '39',
+                              content: _totalFat.toString(),
                               fontSize: 14,
                               header: true,
                             ),
@@ -391,16 +353,38 @@ class _HomepageState extends State<HomePage> {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 20),
                         child: Center(
-                          child: CustomButton(
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                            header: true,
-                            onPressed: () => setState(() {
-                              isLogBarExpanded = false;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('Meal Logged!')));
-                            }),
-                            text: 'Log Meal',
+                          child: Column(
+                            children: [
+                              CustomButton(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 10),
+                                header: true,
+                                onPressed: () => setState(() {
+                                  isLogBarExpanded = false;
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text('Meal Logged!')));
+                                }),
+                                text: 'Log Meal',
+                              ),
+                              const SizedBox(height: 10),
+                              CustomButton(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 10),
+                                header: true,
+                                color: AppColors.white,
+                                borderColor: AppColors.primaryText,
+                                hoverColor: AppColors.tertiaryText,
+                                textColor: AppColors.primaryText,
+                                onPressed: () => setState(() {
+                                  _logBarCards.clear();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text('Log Bar Reset!')));
+                                }),
+                                text: 'Reset',
+                              ),
+                            ],
                           ),
                         ),
                       ),
