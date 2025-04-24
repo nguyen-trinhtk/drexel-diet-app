@@ -47,7 +47,7 @@ class _HomepageState extends State<HomePage> {
     setState(() {
       _logBarCards.add(child);
     });
-  }
+  } // fix duplicating child
 
   void _updateTotal(int calories, int carbs, int fat, int protein) {
     setState(() {
@@ -205,9 +205,6 @@ class _HomepageState extends State<HomePage> {
                           }));
                       _updateTotal(calories, carbs, fat, protein);
                       isLogBarExpanded = true;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Dish Logged')),
-                      );
                     },
                   );
                 },
@@ -253,6 +250,9 @@ class _HomepageState extends State<HomePage> {
                           decoration: BoxDecoration(
                             color: AppColors.white,
                           ),
+                          width: isLogBarExpanded
+                              ? MediaQuery.of(context).size.width * 0.225
+                              : 0,
                           child: Scrollbar(
                             thumbVisibility: false,
                             child: SingleChildScrollView(
@@ -378,9 +378,10 @@ class _HomepageState extends State<HomePage> {
                                 textColor: AppColors.primaryText,
                                 onPressed: () => setState(() {
                                   _logBarCards.clear();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text('Log Bar Reset!')));
+                                  _totalCalories = 0;
+                                  _totalCarbs = 0;
+                                  _totalProtein = 0;
+                                  _totalFat = 0;
                                 }),
                                 text: 'Reset',
                               ),
