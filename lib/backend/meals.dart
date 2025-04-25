@@ -6,10 +6,11 @@ List<Widget> historyCards = [];
 
 void buildHistoryCards() {
   historyCards.clear();
-  // print(mealHistory);
-  mealHistory.forEach((key, value) {
-    // print(value['dishes'].keys.toList());
+  mealHistory.entries.toList().reversed.forEach((entry) {
+    final value = entry.value;
     historyCards.add(ThemedHistoryCard(
+      date: value['date'],
+      time: value['time'],
       meal: value['name'],
       calories: value['totalCalories'],
       foodList: value['dishes'].keys.toList(),

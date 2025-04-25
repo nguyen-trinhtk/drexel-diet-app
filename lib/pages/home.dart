@@ -124,7 +124,7 @@ void logMeal() {
       "totalProtein": totalProtein,
       "totalCarbs": totalCarbs,
       "totalFat": totalFat,
-      "dishes": loggedDishesCopy, // Store the deep copy
+      "dishes": loggedDishesCopy,
     };
 
     mealHistory[mealIndex.toString()] = entry;
