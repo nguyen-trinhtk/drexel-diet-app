@@ -4,21 +4,39 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'filter.dart';
-import 'package:getwidget/getwidget.dart';
 import '../UI/colors.dart';
-import '../UI/custom_text.dart';
+import '../UI/custom_elements.dart';
 import '../UI/widgets.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _HomepageState createState() => _HomepageState();
 }
 
 class _HomepageState extends State<HomePage> {
   bool isLogBarExpanded = false;
+  var jsonData;
+
+  @override
+  void initState() {
+    super.initState();
+    loadJsonAsset();
+  }
+
+  Future<void> loadJsonAsset() async {
+    final String jsonString =
+        await rootBundle.loadString('lib/backend/webscraping/menu.json');
+    var data = jsonDecode(jsonString);
+    setState(() {
+      jsonData = data;
+    });
+  }
+
+  int findCardsPerRow(double viewWidth, double minCardWidth) {
+    return viewWidth ~/ minCardWidth;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +75,7 @@ class _HomepageState extends State<HomePage> {
               scrolledUnderElevation: 0,
               backgroundColor: AppColors.transparentBlack,
               title: Container(
-                padding: const EdgeInsets.only(left: 16),
+                padding: const EdgeInsets.only(left: 20),
                 child: SearchBarTheme(
                   data: SearchBarThemeData(
                     backgroundColor: WidgetStateProperty.all(Colors.white),
@@ -73,7 +91,7 @@ class _HomepageState extends State<HomePage> {
                     hintText: "Search",
                     hintStyle: WidgetStateProperty.all(
                       TextStyle(
-                        color: const Color(0xFFCACAF6),
+                        color: AppColors.secondaryText,
                         fontFamily: AppFonts.headerFont,
                       ),
                     ),
@@ -93,18 +111,12 @@ class _HomepageState extends State<HomePage> {
               actions: [
                 Container(
                   padding: const EdgeInsets.only(right: 26),
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor: AppColors.primaryText,
-                    ),
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      child: CustomText(
-                        content: "Filters",
-                        fontSize: 18,
-                        color: Colors.white,
-                      ),
-                    ),
+                  child: CustomButton(
+                    text: "Filters",
+                    bold: true,
+                    height: 45,
+                    fontSize: 20, 
+                    padding: EdgeInsets.symmetric(horizontal: 10),
                     onPressed: () {
                       showDialog(
                         context: context,
@@ -135,8 +147,8 @@ class _HomepageState extends State<HomePage> {
                       color: AppColors.primaryText,
                     ),
                     tooltip: isLogBarExpanded
-                        ? "Hide Dishes"
-                        : "Show Dishes",
+                        ? "Hide Logged Dishes"
+                        : "Show Logged Dishes",
                     onPressed: () {
                       setState(() {
                         isLogBarExpanded = !isLogBarExpanded;
@@ -148,13 +160,13 @@ class _HomepageState extends State<HomePage> {
             ),
             backgroundColor: AppColors.primaryBackground,
             body: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: EdgeInsets.all( isLogBarExpanded ? 15 : 30),
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: findCardsPerRow(viewWidth, 350),
-                  crossAxisSpacing: 0,
-                  mainAxisSpacing: 00,
-                  childAspectRatio: isLogBarExpanded ? 1 : 1.4,
+                  crossAxisSpacing: 30,
+                  mainAxisSpacing: 20,
+                  childAspectRatio: isLogBarExpanded ? 1.2 : 1.4,
                 ),
                 itemCount: jsonData.length,
                 itemBuilder: (BuildContext context, int index) {
@@ -168,82 +180,19 @@ class _HomepageState extends State<HomePage> {
                   }
 
                   if (display) {
-                    return GFCard(
-                      title: GFListTile(
-                        title: Container(
-                          padding: const EdgeInsets.only(bottom: 4),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                width: 2.5,
-                                color: AppColors.accent,
-                              ),
-                            ),
-                          ),
-                          child: Center(
-                            child: CustomText(
-                              content: jsonData[strIndex]['Name'],
-                              fontSize: 18,
-                              header: true,
-                              textAlign: TextAlign.center,
-                              color: AppColors.accent,
-                            ),
-                          ),
-                        ),
-                        subTitle: Container(
-                          padding: const EdgeInsets.only(top: 4),
-                          child: Center(
-                            child: CustomText(
-                              content: calories,
-                              fontSize: 16,
-                              header: true,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                      ),
-                      content: CustomText(
-                        content: jsonData[strIndex]['Description'],
-                        fontSize: 14,
-                        overflow: TextOverflow.visible,
-                        softWrap: true,
-                        textAlign: TextAlign.center,
-                      ),
-                      buttonBar: GFButtonBar(
-                        children: [
-                          GFButton(
-                            onPressed: () {
-                              setState(() {
-                                isLogBarExpanded = true;
-                              });
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('You got 10% fatter')),
-                              );
-                            },
-                            color: AppColors.accent,
-                            disabledColor: AppColors.accent,
-                            hoverColor: AppColors.primaryText,
-                            borderShape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(40),
-                            ),
-                            text: "Add",
-                            textStyle: TextStyle(
-                              color: Colors.white,
-                              fontFamily: AppFonts.textFont,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
-                      ),
-                      color: AppColors.white,
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: AppColors.primaryText,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(40),
-                      ),
+                    return FoodCard(
+                      name: jsonData[strIndex]['Name'],
+                      description: jsonData[strIndex]['Description'],
+                      calories: calories,
+                      fontSize: isLogBarExpanded ? 14 : 18,
+                      onAddPressed: () {
+                        setState(() {
+                          isLogBarExpanded = true;
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Dish Logged')),
+                        );
+                      },
                     );
                   } else {
                     return null;
@@ -255,9 +204,8 @@ class _HomepageState extends State<HomePage> {
         ),
         AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          width: isLogBarExpanded
-              ? MediaQuery.of(context).size.width * 0.225
-              : 0,
+          width:
+              isLogBarExpanded ? MediaQuery.of(context).size.width * 0.225 : 0,
           decoration: BoxDecoration(
             color: AppColors.secondaryBackground,
             borderRadius: const BorderRadius.only(
@@ -267,7 +215,7 @@ class _HomepageState extends State<HomePage> {
           ),
           child: Stack(
             children: [
-              if (isLogBarExpanded) // Only show content when expanded
+              if (isLogBarExpanded)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
@@ -288,8 +236,7 @@ class _HomepageState extends State<HomePage> {
                       ),
                       Expanded(
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 5, vertical: 10),
+                          padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
                             color: AppColors.white,
                           ),
@@ -299,43 +246,53 @@ class _HomepageState extends State<HomePage> {
                               child: Column(
                                 children: [
                                   FoodItemInfo(
-                                    foodName: 'haiz',
+                                    foodName: 'Old Fashioned Oatmeal',
                                     quantity: 1,
                                     nutritionInfo: {
-                                      'Calories': 127,
-                                      'Carbs': 12,
-                                      'Protein': 30,
-                                      'Fat': 4,
+                                      'Calories': 110,
+                                      'Carbs': 15,
+                                      'Protein': 5,
+                                      'Fat': 0,
                                     },
                                   ),
                                   FoodItemInfo(
-                                    foodName: 'whatttttt',
-                                    quantity: 1,
-                                    nutritionInfo: {
-                                      'Calories': 50,
-                                      'Carbs': 10,
-                                      'Protein': 2,
-                                      'Fat': 1,
-                                    },
-                                  ),
-                                  FoodItemInfo(
-                                    foodName: 'abcdefghijklmnopqrSTFU',
-                                    quantity: 1,
-                                    nutritionInfo: {
-                                      'Calories': 200,
-                                      'Carbs': 45,
-                                      'Protein': 4,
-                                      'Fat': 0.5,
-                                    },
-                                  ),
-                                  FoodItemInfo(
-                                    foodName: 'blah blah blah blah blah',
+                                    foodName: 'Eggs',
                                     quantity: 1,
                                     nutritionInfo: {
                                       'Calories': 80,
-                                      'Carbs': 20,
-                                      'Protein': 1,
-                                      'Fat': 0.5,
+                                      'Carbs': 2,
+                                      'Protein': 12,
+                                      'Fat': 5,
+                                    },
+                                  ),
+                                  FoodItemInfo(
+                                    foodName: 'Bacon Pieces',
+                                    quantity: 1,
+                                    nutritionInfo: {
+                                      'Calories': 70,
+                                      'Carbs': 0,
+                                      'Protein': 12,
+                                      'Fat': 6,
+                                    },
+                                  ),
+                                  FoodItemInfo(
+                                    foodName: 'Scramble Eggs',
+                                    quantity: 1,
+                                    nutritionInfo: {
+                                      'Calories': 180,
+                                      'Carbs': 2,
+                                      'Protein': 15,
+                                      'Fat': 8,
+                                    },
+                                  ),
+                                  FoodItemInfo(
+                                    foodName: 'Buttermilk Pancake',
+                                    quantity: 1,
+                                    nutritionInfo: {
+                                      'Calories': 160,
+                                      'Carbs': 30,
+                                      'Protein': 10,
+                                      'Fat': 20,
                                     },
                                   ),
                                 ],
@@ -363,7 +320,7 @@ class _HomepageState extends State<HomePage> {
                             width: 50,
                             alignment: Alignment.centerRight,
                             child: CustomText(
-                              content: '999',
+                              content: '600',
                               fontSize: 14,
                               header: true,
                             ),
@@ -383,7 +340,7 @@ class _HomepageState extends State<HomePage> {
                             width: 50,
                             alignment: Alignment.centerRight,
                             child: CustomText(
-                              content: '34',
+                              content: '49',
                               fontSize: 14,
                               header: true,
                             ),
@@ -403,7 +360,7 @@ class _HomepageState extends State<HomePage> {
                             width: 50,
                             alignment: Alignment.centerRight,
                             child: CustomText(
-                              content: '22',
+                              content: '54',
                               fontSize: 14,
                               header: true,
                             ),
@@ -423,7 +380,7 @@ class _HomepageState extends State<HomePage> {
                             width: 50,
                             alignment: Alignment.centerRight,
                             child: CustomText(
-                              content: '17',
+                              content: '39',
                               fontSize: 14,
                               header: true,
                             ),
@@ -434,27 +391,16 @@ class _HomepageState extends State<HomePage> {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 20),
                         child: Center(
-                          child: TextButton(
+                          child: CustomButton(
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            header: true,
                             onPressed: () => setState(() {
                               isLogBarExpanded = false;
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                       content: Text('Meal Logged!')));
                             }),
-                            style: TextButton.styleFrom(
-                              backgroundColor: AppColors.primaryText,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(40),
-                              ),
-                            ),
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              child: CustomText(
-                                content: "Add to meal",
-                                fontSize: 18,
-                                color: Colors.white,
-                              ),
-                            ),
+                            text: 'Log Meal',
                           ),
                         ),
                       ),
@@ -488,26 +434,5 @@ class _HomepageState extends State<HomePage> {
         ),
       ],
     );
-  }
-
-  var jsonData;
-
-  Future<void> loadJsonAsset() async {
-    final String jsonString =
-        await rootBundle.loadString('lib/backend/webscraping/menu.json');
-    var data = jsonDecode(jsonString);
-    setState(() {
-      jsonData = data;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    loadJsonAsset();
-  }
-
-  int findCardsPerRow(double viewWidth, double minCardWidth) {
-    return viewWidth ~/ minCardWidth;
   }
 }

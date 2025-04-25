@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../UI/colors.dart';
-import '../UI/custom_text.dart';
+import '../UI/custom_elements.dart';
 
 Set<Station> stationFilters = <Station>{};
 Set<FoodPreference> foodPreferenceFilters = <FoodPreference>{};
@@ -164,50 +164,34 @@ Widget build(BuildContext context) {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextButton(
+                  CustomButton(
                     onPressed: () {
                       Navigator.pop(context);
                       context.read<FoodFilterDrawerState>().notifyListeners();
                     },
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.all(20),
-                      backgroundColor: AppColors.primaryText,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    child: CustomText(
-                      content: 'Apply Filters',
+                      padding: const EdgeInsets.all(10),
+                      text: 'Apply Filters',
                       header: true,
                       fontSize: 12,
-                      color: AppColors.white,
-                    ),
+                      textColor: AppColors.white,
                   ),
                   const SizedBox(width: 10),
-                  TextButton(
+                  CustomButton(
                     onPressed: () {
                       setState(() {
                         stationFilters.clear();
                         foodPreferenceFilters.clear();
                       });
                     },
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.all(20),
-                      backgroundColor: AppColors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        side: BorderSide(
-                          color: AppColors.primaryText,
-                          width: 1,
-                        ),
-                      ),
-                    ),
-                    child: CustomText(
-                      content: '    Reset    ',
+                      padding: const EdgeInsets.all(10),
+                      color: AppColors.white,
+                      borderColor: AppColors.primaryText,
+                      hoverColor: AppColors.tertiaryText,
+                      textColor: AppColors.primaryText,
+                      text: '    Reset    ',
                       fontSize: 12,
                       header: true,
                     ),
-                  ),
                 ],
               ),
             ),

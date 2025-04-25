@@ -3,6 +3,7 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -15,6 +16,7 @@ import 'package:flutter/foundation.dart'
 /// );
 /// ```
 class DefaultFirebaseOptions {
+  
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
       return web;
@@ -46,8 +48,8 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDsVgb1Itu9IlEHjfEHa30GmNcdlckvsFg',
+  static FirebaseOptions web = FirebaseOptions(
+    apiKey: dotenv.env['WEB_API_KEY'] ?? 'default_key',
     appId: '1:1011997121447:web:e8d42badb2a147565fb482',
     messagingSenderId: '1011997121447',
     projectId: 'drexel-dining',
@@ -55,8 +57,8 @@ class DefaultFirebaseOptions {
     storageBucket: 'drexel-dining.firebasestorage.app',
   );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDkRdR2oZRaEguZEl7dTWwyUU-_BJ-qGNs',
+  static FirebaseOptions ios = FirebaseOptions(
+    apiKey: dotenv.env['IOS_API_KEY'] ?? 'default_key',
     appId: '1:1011997121447:ios:d798d283e60d294f5fb482',
     messagingSenderId: '1011997121447',
     projectId: 'drexel-dining',
@@ -64,8 +66,8 @@ class DefaultFirebaseOptions {
     iosBundleId: 'com.example.code',
   );
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDq9Y7VU71cJIStAJ7YS7z854EKAIqazLU',
+  static FirebaseOptions get android => FirebaseOptions(
+    apiKey: dotenv.env['ANDROID_API_KEY'] ?? 'default_key',
     appId: '1:1011997121447:android:7722d895b80cfdd65fb482',
     messagingSenderId: '1011997121447',
     projectId: 'drexel-dining',

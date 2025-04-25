@@ -1,6 +1,5 @@
 // SSO Login Page
-//Ben Pummer
-import 'package:code/UI/custom_text.dart';
+import 'package:code/UI/custom_elements.dart';
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
 // import 'package:getwidget/getwidget.dart';
@@ -66,7 +65,7 @@ class _SSOPageState extends State<SSOPage> {
                 providerMS.setCustomParameters({
                   "tenant": "f18072f9-04d3-477f-b8aa-7e1ddbaac08e"
                 });
-                await FirebaseAuth.instance.signInWithProvider(providerMS);
+                await FirebaseAuth.instance.signInWithPopup(providerMS);
               },
               icon: const Icon(FontAwesomeIcons.microsoft),
               text: "Use a Microsoft account to sign in",
@@ -87,7 +86,7 @@ class _SSOPageState extends State<SSOPage> {
               onPressed: () async {
                 // Define the action when the Google button is pressed
                 final providerG = OAuthProvider("google.com");
-                await FirebaseAuth.instance.signInWithProvider(providerG);
+                await FirebaseAuth.instance.signInWithPopup(providerG);
               },
               icon: const Icon(FontAwesomeIcons.google),
               text: "Use a Google account to sign in",
