@@ -1,9 +1,12 @@
+import 'package:code/SSO.dart';
 import 'package:code/pages/home.dart';
 import 'package:code/pages/profile.dart';
 import 'package:code/pages/history.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'pages/filter.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 
 // import 'package:flutter_svg/flutter_svg.dart';
@@ -186,17 +189,7 @@ class _HomeScreenState extends State<HomeScreen>
                         style: ButtonStyle(
                         overlayColor: WidgetStateColor.transparent
                       ),
-                      child: Row(children: [
-                      Icon(Icons.logout_outlined, color: AppColors.accent, size: 24),
-                      const SizedBox(width: 10),
-                      CustomText(
-                        content: "Logout",
-                        header: true,
-                        fontSize: 16,
-                        color: AppColors.accent, 
-                        bold: true,
-                      ),
-                    ],
+                      child: Row(children: buttonUserLoggedInOut(context),
                     ),
                     )
                   ),
@@ -225,4 +218,39 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
+}
+
+List<Widget> buttonUserLoggedInOut(BuildContext context) {
+  FirebaseAuth auth = FirebaseAuth.instance;
+  String logInOutText = "";
+  auth
+  .authStateChanges()
+  .listen((User? user) {
+    if (user == null) {
+      logInOutText = "Log In";
+    } else {
+      logInOutText = "Log Out";
+    }
+  });
+
+    return [
+                    Icon(Icons.logout_outlined, color: AppColors.accent, size: 24),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => const SSOPage())
+                        );
+                      }, 
+                    child: CustomText(
+                      content: logInOutText,
+                      header: true,
+                      fontSize: 16,
+                      color: AppColors.accent, 
+                      bold: true,
+                    ),)
+                    
+                  
+    ];
+  
 }
