@@ -178,17 +178,19 @@ class FoodItemInfo extends StatelessWidget {
 
 class ThemedHistoryCard extends Card {
   final int calories;
+  final String meal;
   final List<String> foodList;
   final int protein;
-  final int carbonhydrates;
+  final int carbs;
   final int fat;
 
   const ThemedHistoryCard({
     Key? key,
     required this.calories,
+    required this.meal,
     required this.foodList,
     required this.protein,
-    required this.carbonhydrates,
+    required this.carbs,
     required this.fat,
   });
 
@@ -198,6 +200,7 @@ class ThemedHistoryCard extends Card {
       return CustomText(
         content: "$foodName",
         fontSize: 20,
+        softWrap: true,
       );
     });
   }
@@ -239,7 +242,7 @@ class ThemedHistoryCard extends Card {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CustomText(
-                      content: "FOOD",
+                      content: meal,
                       fontSize: 20,
                       header: true,
                       color: AppColors.accent,
@@ -292,7 +295,7 @@ class ThemedHistoryCard extends Card {
                             fontSize: 20,
                           ),
                           CustomText(
-                            content: "$carbonhydrates",
+                            content: "$carbs",
                             fontSize: 20,
                           ),
                           CustomText(

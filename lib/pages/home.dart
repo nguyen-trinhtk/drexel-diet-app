@@ -5,8 +5,17 @@ import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'filter.dart';
 import '../UI/colors.dart';
+import '../backend/meals.dart';
 import '../UI/custom_elements.dart';
 import '../UI/widgets.dart';
+
+Map<String, Map<String, dynamic>> loggedDishes = {};
+List<Widget> logBarCards = [];
+int totalCalories = 0;
+int totalCarbs = 0;
+int totalFat = 0;
+int totalProtein = 0;
+int mealIndex = 0;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,33 +26,21 @@ class HomePage extends StatefulWidget {
 
 class _HomepageState extends State<HomePage> {
   bool isLogBarExpanded = false;
-  dynamic jsonData;
-  Map<String, Map<String, dynamic>> _loggedDishes = {};
-  List<Widget> _logBarCards = [];
-
-  // { foodName :
-  //   {
-  //     quantity : 1
-  //     calories : 000, protein: 00, fat: 00, carbs : 00
-  //   }
-  // }
-  int _totalCalories = 0;
-  int _totalCarbs = 0;
-  int _totalFat = 0;
-  int _totalProtein = 0;
+  Map<String, Map<dynamic, dynamic>> jsonData = {};
 
   @override
   void initState() {
     super.initState();
-    loadJsonAsset();
+    loadJsonAsset('menu');
+    // loadJsonAsset('history');
   }
 
-  Future<void> loadJsonAsset() async {
+  Future<void> loadJsonAsset(filename) async {
     final String jsonString =
-        await rootBundle.loadString('lib/backend/webscraping/menu.json');
+        await rootBundle.loadString('lib/backend/webscraping/$filename.json');
     var data = jsonDecode(jsonString);
     setState(() {
-      jsonData = data;
+      jsonData[filename] = data;
     });
   }
 
@@ -51,22 +48,22 @@ class _HomepageState extends State<HomePage> {
     return viewWidth ~/ minCardWidth;
   }
 
-  void _appendLog(
+  void appendLog(
       String foodName, int calories, int protein, int carbs, int fat) {
     setState(() {
-      if (_loggedDishes.containsKey(foodName)) {
-        _loggedDishes[foodName]!['quantity'] =
-            (_loggedDishes[foodName]!['quantity'] ?? 0) + 1;
-        _loggedDishes[foodName]!['nutritions']['calories'] =
-            (_loggedDishes[foodName]!['nutritions']['calories'] ?? 0) + calories;
-        _loggedDishes[foodName]!['nutritions']['protein'] =
-            (_loggedDishes[foodName]!['nutritions']['protein'] ?? 0) + protein;
-        _loggedDishes[foodName]!['nutritions']['carbs'] =
-            (_loggedDishes[foodName]!['nutritions']['carbs'] ?? 0) + carbs;
-        _loggedDishes[foodName]!['nutritions']['fat'] =
-            (_loggedDishes[foodName]!['nutritions']['fat'] ?? 0) + fat;
+      if (loggedDishes.containsKey(foodName)) {
+        loggedDishes[foodName]!['quantity'] =
+            (loggedDishes[foodName]!['quantity'] ?? 0) + 1;
+        loggedDishes[foodName]!['nutritions']['calories'] =
+            (loggedDishes[foodName]!['nutritions']['calories'] ?? 0) + calories;
+        loggedDishes[foodName]!['nutritions']['protein'] =
+            (loggedDishes[foodName]!['nutritions']['protein'] ?? 0) + protein;
+        loggedDishes[foodName]!['nutritions']['carbs'] =
+            (loggedDishes[foodName]!['nutritions']['carbs'] ?? 0) + carbs;
+        loggedDishes[foodName]!['nutritions']['fat'] =
+            (loggedDishes[foodName]!['nutritions']['fat'] ?? 0) + fat;
       } else {
-        _loggedDishes[foodName] = {
+        loggedDishes[foodName] = {
           'quantity': 1,
           'nutritions': {
             'calories': calories,
@@ -79,22 +76,72 @@ class _HomepageState extends State<HomePage> {
     });
   }
 
-  void _buildLogCards() {
-    _logBarCards.clear();
-    _loggedDishes.forEach((key, value) {
-      _logBarCards.add(FoodItemInfo(
+  void buildLogCards() {
+    logBarCards.clear();
+    loggedDishes.forEach((key, value) {
+      logBarCards.add(FoodItemInfo(
           foodName: key,
           quantity: value['quantity'],
           nutritionInfo: value['nutritions']));
     });
   }
 
-  void _updateTotal(int calories, int carbs, int fat, int protein) {
+  void updateTotal(int calories, int carbs, int fat, int protein) {
     setState(() {
-      _totalCalories += calories;
-      _totalCarbs += carbs;
-      _totalFat += fat;
-      _totalProtein += protein;
+      totalCalories += calories;
+      totalCarbs += carbs;
+      totalFat += fat;
+      totalProtein += protein;
+    });
+  }
+
+void logMeal() {
+  setState(() {
+    final now = DateTime.now();
+    String _date =
+        '${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}-${now.year.toString().padLeft(4, '0')}';
+    String _time =
+        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
+    String _name;
+    if (now.hour >= 16) {
+      _name = "Dinner";
+    } else if (now.hour >= 11) {
+      _name = "Lunch";
+    } else {
+      _name = "Breakfast";
+    }
+
+    Map<String, Map<String, dynamic>> loggedDishesCopy = {};
+    loggedDishes.forEach((key, value) {
+      loggedDishesCopy[key] = Map.from(value);
+    });
+
+    final entry = <String, dynamic>{
+      "name": _name,
+      "date": _date,
+      "time": _time,
+      "totalCalories": totalCalories,
+      "totalProtein": totalProtein,
+      "totalCarbs": totalCarbs,
+      "totalFat": totalFat,
+      "dishes": loggedDishesCopy, // Store the deep copy
+    };
+
+    mealHistory[mealIndex.toString()] = entry;
+    buildHistoryCards();
+    mealIndex += 1;
+    resetLog();
+  });
+}
+
+  void resetLog() {
+    setState(() {
+      loggedDishes.clear();
+      logBarCards.clear();
+      totalCalories = 0;
+      totalCarbs = 0;
+      totalProtein = 0;
+      totalFat = 0;
     });
   }
 
@@ -205,39 +252,44 @@ class _HomepageState extends State<HomePage> {
                   mainAxisSpacing: 20,
                   childAspectRatio: isLogBarExpanded ? 1.2 : 1.4,
                 ),
-                itemCount: jsonData.length,
+                itemCount: jsonData['menu']?.length ?? 0,
                 itemBuilder: (BuildContext context, int index) {
+                  if (jsonData['menu'] == null) return SizedBox();
+
                   String strIndex = index.toString();
-                  int? calories =
-                      int.tryParse(jsonData[strIndex]['Calories']) ?? 0;
-                  "Calories ${jsonData[strIndex]['Calories']}";
-                  String foodName = jsonData[strIndex]['Name'];
-                  int? protein = int.tryParse(jsonData[strIndex]['protein']
+                  final item = jsonData['menu']?[strIndex];
+                  if (item == null) return SizedBox();
+
+                  int? calories = int.tryParse(item['Calories']) ?? 0;
+                  String foodName = item['Name'];
+                  int? protein = int.tryParse(item['protein']
                           .replaceAll(' g', '')
                           .replaceAll('less than ', '')
                           .trim()) ??
                       0;
-                  int? carbs = int.tryParse(jsonData[strIndex]
-                              ['totalCarbohydrates']
+                  int? carbs = int.tryParse(item['totalCarbohydrates']
                           .replaceAll(' g', '')
                           .replaceAll('less than ', '')
                           .trim()) ??
                       0;
-                  int fat = int.tryParse(jsonData[strIndex]['totalFat']
+                  int fat = int.tryParse(item['totalFat']
                           .replaceAll(' g', '')
                           .replaceAll('less than ', '')
                           .trim()) ??
                       0;
+
                   return FoodCard(
                     name: foodName,
-                    description: jsonData[strIndex]['Description'],
+                    description: item['Description'],
                     calories: "Calories $calories",
                     fontSize: isLogBarExpanded ? 14 : 18,
                     onAddPressed: () {
-                      _appendLog(foodName, calories, protein, carbs, fat);
-                      _buildLogCards();
-                      _updateTotal(calories, carbs, fat, protein);
-                      isLogBarExpanded = true;
+                      appendLog(foodName, calories, protein, carbs, fat);
+                      buildLogCards();
+                      updateTotal(calories, carbs, fat, protein);
+                      setState(() {
+                        isLogBarExpanded = true;
+                      });
                     },
                   );
                 },
@@ -290,7 +342,7 @@ class _HomepageState extends State<HomePage> {
                             thumbVisibility: false,
                             child: SingleChildScrollView(
                               child: Column(
-                                children: _logBarCards,
+                                children: logBarCards,
                               ),
                             ),
                           ),
@@ -315,7 +367,7 @@ class _HomepageState extends State<HomePage> {
                             width: 50,
                             alignment: Alignment.centerRight,
                             child: CustomText(
-                              content: _totalCalories.toString(),
+                              content: totalCalories.toString(),
                               fontSize: 14,
                               header: true,
                             ),
@@ -335,7 +387,7 @@ class _HomepageState extends State<HomePage> {
                             width: 50,
                             alignment: Alignment.centerRight,
                             child: CustomText(
-                              content: _totalProtein.toString(),
+                              content: totalProtein.toString(),
                               fontSize: 14,
                               header: true,
                             ),
@@ -355,7 +407,7 @@ class _HomepageState extends State<HomePage> {
                             width: 50,
                             alignment: Alignment.centerRight,
                             child: CustomText(
-                              content: _totalCarbs.toString(),
+                              content: totalCarbs.toString(),
                               fontSize: 14,
                               header: true,
                             ),
@@ -375,7 +427,7 @@ class _HomepageState extends State<HomePage> {
                             width: 50,
                             alignment: Alignment.centerRight,
                             child: CustomText(
-                              content: _totalFat.toString(),
+                              content: totalFat.toString(),
                               fontSize: 14,
                               header: true,
                             ),
@@ -393,6 +445,7 @@ class _HomepageState extends State<HomePage> {
                                     horizontal: 20, vertical: 10),
                                 header: true,
                                 onPressed: () => setState(() {
+                                  logMeal();
                                   isLogBarExpanded = false;
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
@@ -409,14 +462,7 @@ class _HomepageState extends State<HomePage> {
                                 borderColor: AppColors.primaryText,
                                 hoverColor: AppColors.tertiaryText,
                                 textColor: AppColors.primaryText,
-                                onPressed: () => setState(() {
-                                  _loggedDishes.clear();
-                                  _logBarCards.clear();
-                                  _totalCalories = 0;
-                                  _totalCarbs = 0;
-                                  _totalProtein = 0;
-                                  _totalFat = 0;
-                                }),
+                                onPressed: resetLog,
                                 text: 'Reset',
                               ),
                             ],
