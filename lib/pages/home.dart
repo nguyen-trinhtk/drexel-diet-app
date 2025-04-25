@@ -18,7 +18,15 @@ class HomePage extends StatefulWidget {
 class _HomepageState extends State<HomePage> {
   bool isLogBarExpanded = false;
   dynamic jsonData;
+  Map<String, Map<String, dynamic>> _loggedDishes = {};
   List<Widget> _logBarCards = [];
+
+  // { foodName :
+  //   {
+  //     quantity : 1
+  //     calories : 000, protein: 00, fat: 00, carbs : 00
+  //   }
+  // }
   int _totalCalories = 0;
   int _totalCarbs = 0;
   int _totalFat = 0;
@@ -43,11 +51,43 @@ class _HomepageState extends State<HomePage> {
     return viewWidth ~/ minCardWidth;
   }
 
-  void _appendLog(Widget child) {
+  void _appendLog(
+      String foodName, int calories, int protein, int carbs, int fat) {
     setState(() {
-      _logBarCards.add(child);
+      if (_loggedDishes.containsKey(foodName)) {
+        _loggedDishes[foodName]!['quantity'] =
+            (_loggedDishes[foodName]!['quantity'] ?? 0) + 1;
+        _loggedDishes[foodName]!['nutritions']['calories'] =
+            (_loggedDishes[foodName]!['nutritions']['calories'] ?? 0) + calories;
+        _loggedDishes[foodName]!['nutritions']['protein'] =
+            (_loggedDishes[foodName]!['nutritions']['protein'] ?? 0) + protein;
+        _loggedDishes[foodName]!['nutritions']['carbs'] =
+            (_loggedDishes[foodName]!['nutritions']['carbs'] ?? 0) + carbs;
+        _loggedDishes[foodName]!['nutritions']['fat'] =
+            (_loggedDishes[foodName]!['nutritions']['fat'] ?? 0) + fat;
+      } else {
+        _loggedDishes[foodName] = {
+          'quantity': 1,
+          'nutritions': {
+            'calories': calories,
+            'protein': protein,
+            'carbs': carbs,
+            'fat': fat,
+          }
+        };
+      }
     });
-  } // fix duplicating child
+  }
+
+  void _buildLogCards() {
+    _logBarCards.clear();
+    _loggedDishes.forEach((key, value) {
+      _logBarCards.add(FoodItemInfo(
+          foodName: key,
+          quantity: value['quantity'],
+          nutritionInfo: value['nutritions']));
+    });
+  }
 
   void _updateTotal(int calories, int carbs, int fat, int protein) {
     setState(() {
@@ -189,20 +229,13 @@ class _HomepageState extends State<HomePage> {
                           .trim()) ??
                       0;
                   return FoodCard(
-                    name: jsonData[strIndex]['Name'],
+                    name: foodName,
                     description: jsonData[strIndex]['Description'],
                     calories: "Calories $calories",
                     fontSize: isLogBarExpanded ? 14 : 18,
                     onAddPressed: () {
-                      _appendLog(FoodItemInfo(
-                          foodName: foodName,
-                          quantity: 1,
-                          nutritionInfo: {
-                            'calories': calories,
-                            'protein': protein,
-                            'carbs': carbs,
-                            'fat': fat,
-                          }));
+                      _appendLog(foodName, calories, protein, carbs, fat);
+                      _buildLogCards();
                       _updateTotal(calories, carbs, fat, protein);
                       isLogBarExpanded = true;
                     },
@@ -377,6 +410,7 @@ class _HomepageState extends State<HomePage> {
                                 hoverColor: AppColors.tertiaryText,
                                 textColor: AppColors.primaryText,
                                 onPressed: () => setState(() {
+                                  _loggedDishes.clear();
                                   _logBarCards.clear();
                                   _totalCalories = 0;
                                   _totalCarbs = 0;
