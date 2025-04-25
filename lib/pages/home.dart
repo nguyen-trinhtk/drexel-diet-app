@@ -95,44 +95,49 @@ class _HomepageState extends State<HomePage> {
     });
   }
 
-void logMeal() {
-  setState(() {
-    final now = DateTime.now();
-    String _date =
-        '${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}-${now.year.toString().padLeft(4, '0')}';
-    String _time =
-        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
-    String _name;
-    if (now.hour >= 16) {
-      _name = "Dinner";
-    } else if (now.hour >= 11) {
-      _name = "Lunch";
-    } else {
-      _name = "Breakfast";
-    }
+  void logMeal() {
+    setState(() {
+      final now = DateTime.now();
+      String _date =
+          '${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}-${now.year.toString().padLeft(4, '0')}';
+      String _time =
+          '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
+      String _name;
+      if (now.hour >= 16) {
+        _name = "Dinner";
+      } else if (now.hour >= 11) {
+        _name = "Lunch";
+      } else {
+        _name = "Breakfast";
+      }
 
-    Map<String, Map<String, dynamic>> loggedDishesCopy = {};
-    loggedDishes.forEach((key, value) {
-      loggedDishesCopy[key] = Map.from(value);
+      Map<String, Map<String, dynamic>> loggedDishesCopy = {};
+      loggedDishes.forEach((key, value) {
+        loggedDishesCopy[key] = Map.from(value);
+      });
+
+      final entry = <String, dynamic>{
+        "name": _name,
+        "date": _date,
+        "time": _time,
+        "totalCalories": totalCalories,
+        "totalProtein": totalProtein,
+        "totalCarbs": totalCarbs,
+        "totalFat": totalFat,
+        "dishes": loggedDishesCopy,
+      };
+
+      dailyTotalCalories += totalCalories;
+      dailyTotalProtein += totalProtein;
+      dailyTotalCarbs += totalCarbs;
+      dailyTotalFat += totalFat;
+
+      mealHistory[mealIndex.toString()] = entry;
+      buildHistoryCards();
+      mealIndex += 1;
+      resetLog();
     });
-
-    final entry = <String, dynamic>{
-      "name": _name,
-      "date": _date,
-      "time": _time,
-      "totalCalories": totalCalories,
-      "totalProtein": totalProtein,
-      "totalCarbs": totalCarbs,
-      "totalFat": totalFat,
-      "dishes": loggedDishesCopy,
-    };
-
-    mealHistory[mealIndex.toString()] = entry;
-    buildHistoryCards();
-    mealIndex += 1;
-    resetLog();
-  });
-}
+  }
 
   void resetLog() {
     setState(() {

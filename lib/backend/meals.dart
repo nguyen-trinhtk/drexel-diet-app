@@ -4,6 +4,11 @@ import 'package:code/UI/widgets.dart';
 Map<String, dynamic> mealHistory = {};
 List<Widget> historyCards = [];
 
+int dailyTotalCalories = 0;
+int dailyTotalProtein = 0;
+int dailyTotalCarbs = 0;
+int dailyTotalFat = 0;
+
 void buildHistoryCards() {
   historyCards.clear();
   mealHistory.entries.toList().reversed.forEach((entry) {

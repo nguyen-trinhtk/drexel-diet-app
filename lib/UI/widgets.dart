@@ -216,13 +216,13 @@ class ThemedHistoryCard extends Card {
         CustomText(content: '$meal ($date $time)', fontSize: 16, textAlign: TextAlign.left, header: true, color: AppColors.accent),
         Card(
           color: AppColors.white,
-          margin: EdgeInsets.all(10),
+          margin: EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
           shape: RoundedRectangleBorder(
             side: BorderSide(
               color: AppColors.primaryText,
               width: 1.0,
             ),
-            borderRadius: BorderRadius.circular(40),
+            borderRadius: BorderRadius.circular(20),
           ),
           child: Padding(
             padding: EdgeInsets.all(10),

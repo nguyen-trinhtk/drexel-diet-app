@@ -3,6 +3,7 @@ import 'package:code/pages/profile.dart';
 import 'package:code/pages/history.dart';
 import 'package:flutter/material.dart';
 import 'pages/filter.dart';
+import 'pages/report.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
@@ -141,14 +142,14 @@ class _HomeScreenState extends State<HomeScreen>
                         'Profile',
                         'Diet Plans',
                         'History',
-                        'Settings'
+                        'Report'
                       ];
                       final icons = [
                         Icons.home_outlined,
                         Icons.person_outlined,
                         Icons.bookmark_outline,
                         Icons.history_outlined,
-                        Icons.settings_outlined
+                        Icons.assignment_outlined,
                       ];
                       final label = labels[index - 1];
                       return Padding(
@@ -255,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen>
                 const ProfilePage(),
                 Center(child: Text("Blank")),
                 const HistoryPage(),
-                Center(child: Text("Blank")),
+                const ReportPage(),
                 Center(child: Text("Blank")),
               ],
             ),

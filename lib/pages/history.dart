@@ -1,5 +1,4 @@
 // Page for user's meal history
-import 'package:code/UI/widgets.dart';
 import 'package:flutter/material.dart';
 import '../UI/colors.dart';
 import '../backend/meals.dart';
