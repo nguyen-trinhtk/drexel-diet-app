@@ -13,6 +13,7 @@ import 'UI/widgets.dart';
 import 'UI/colors.dart';
 import 'UI/custom_elements.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'pages/no_account.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensure Flutter is initialized
@@ -248,7 +249,30 @@ class _HomeScreenState extends State<HomeScreen>
             child: TabBarView(
               controller: _tabController,
               physics: const NeverScrollableScrollPhysics(),
-              children: [
+              children: navigationBarPages(context, widget.loginState),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Return a list of pages for navigation bar depending on user login state
+List<Widget> navigationBarPages(BuildContext context, User? user) {
+  if (user == null){
+    return [
+                Center(child: Text("Blank")),
+                const HomePage(),
+                const NoAccountPage(),
+                const NoAccountPage(),
+                const NoAccountPage(),
+                const NoAccountPage(),
+                Center(child: Text("Blank")),
+              ];
+  }
+  else {
+  return [
                 Center(child: Text("Blank")),
                 const HomePage(),
                 const ProfilePage(),
@@ -256,12 +280,7 @@ class _HomeScreenState extends State<HomeScreen>
                 const HistoryPage(),
                 Center(child: Text("Blank")),
                 Center(child: Text("Blank")),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+              ];
   }
 }
 
