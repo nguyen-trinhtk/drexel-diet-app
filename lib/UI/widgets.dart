@@ -2,83 +2,41 @@ import 'package:flutter/material.dart';
 import 'colors.dart';
 import 'custom_elements.dart';
 
-class ThemedBoxPainter extends CustomPainter {
-  final Color bg;
-  final Color bd;
-  final Color ds;
-  final Offset a;
-  final Offset b;
-  final Offset c;
-  final Offset d;
-  final bool s;
+class ThemedCard extends StatelessWidget {
+  final double wFactor;
+  final double hFactor;
+  final List<Widget> content;
 
-  ThemedBoxPainter(
-      this.bg, this.bd, this.ds, this.a, this.b, this.s, this.c, this.d);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final bgColor = Paint()
-      ..color = bg
-      ..style = PaintingStyle.fill;
-
-    final bdColor = Paint()
-      ..color = bd
-      ..strokeWidth = 1.5
-      ..style = PaintingStyle.stroke;
-
-    final dsColor = Paint()
-      ..color = ds
-      ..style = PaintingStyle.fill;
-
-    if (s) {
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(Rect.fromPoints(c, d), Radius.circular(40)),
-        dsColor,
-      );
-    }
-    // Draw the background
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(Rect.fromPoints(a, b), Radius.circular(40)),
-      bgColor,
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(Rect.fromPoints(a, b), Radius.circular(40)),
-      bdColor,
-    );
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
-}
-
-class ThemedBox extends StatelessWidget {
-  final Color background;
-  final Color border;
-  final Color shadow;
-  final bool dropShadow;
-  final Offset pointA;
-  final Offset pointB;
-  final Offset pointC;
-  final Offset pointD;
-
-  const ThemedBox({
+  const ThemedCard({
     super.key,
-    this.background = AppColors.white,
-    this.border = AppColors.primaryText,
-    this.shadow = AppColors.accent,
-    this.dropShadow = false,
-    required this.pointA,
-    required this.pointB,
-    this.pointC = const Offset(0, 0),
-    this.pointD = const Offset(0, 0),
+    required this.wFactor,
+    required this.hFactor,
+    required this.content
   });
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: ThemedBoxPainter(background, border, shadow, pointA, pointB,
-          dropShadow, pointC, pointD),
-      size: MediaQuery.of(context).size,
+    return Card (
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(
+          width: 1,
+          color: AppColors.primaryText
+        ),
+        borderRadius: BorderRadius.circular(40)
+      ),
+      semanticContainer: true,
+      child: Padding(
+        padding: EdgeInsets.all(32),
+        child:FractionallySizedBox(
+          widthFactor: wFactor,
+          heightFactor: hFactor,
+          child:Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: content,
+          )
+        )
+      )
     );
   }
 }
@@ -103,6 +61,7 @@ class ThemedSidebar extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
+
 
 class FoodItemInfo extends StatelessWidget {
   final String foodName;
