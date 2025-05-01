@@ -5,7 +5,6 @@ import 'package:code/pages/history.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'pages/filter.dart';
-import 'pages/report.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
@@ -16,8 +15,8 @@ import 'UI/custom_elements.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
+  WidgetsFlutterBinding.ensureInitialized(); // Ensure Flutter is initialized
+  await dotenv.load(fileName: ".env"); // Load environment variables
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
@@ -34,14 +33,25 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const HomeScreen(),
-      debugShowCheckedModeBanner: false,
+        home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.active) {
+            return HomeScreen(loginState: snapshot.data);
+            }
+          return CircularProgressIndicator();
+        },),
+        debugShowCheckedModeBanner: false,
     );
   }
 }
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final User? loginState;
+  const HomeScreen({
+    super.key,
+    this.loginState
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -145,14 +155,14 @@ class _HomeScreenState extends State<HomeScreen>
                         'Profile',
                         'Diet Plans',
                         'History',
-                        'Report'
+                        'Settings'
                       ];
                       final icons = [
                         Icons.home_outlined,
                         Icons.person_outlined,
                         Icons.bookmark_outline,
                         Icons.history_outlined,
-                        Icons.assignment_outlined,
+                        Icons.settings_outlined
                       ];
                       final label = labels[index - 1];
                       return Padding(
@@ -224,9 +234,9 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                       style: ButtonStyle(
                         overlayColor:
-                            WidgetStateProperty.all(Colors.transparent),
+                            MaterialStateProperty.all(Colors.transparent),
                       ),
-                      child: Row(children: buttonUserLoggedInOut(context)
+                      child: Row(children: buttonUserLoggedInOut(context, widget.loginState),
                     ),
                     )
                   ),
@@ -244,7 +254,7 @@ class _HomeScreenState extends State<HomeScreen>
                 const ProfilePage(),
                 Center(child: Text("Blank")),
                 const HistoryPage(),
-                const ReportPage(),
+                Center(child: Text("Blank")),
                 Center(child: Text("Blank")),
               ],
             ),
@@ -255,28 +265,51 @@ class _HomeScreenState extends State<HomeScreen>
   }
 }
 
-List<Widget> buttonUserLoggedInOut(BuildContext context) {
-  FirebaseAuth auth = FirebaseAuth.instance;
+// Return Login/Logout Button based on user login state and redirect to SSO page
+List<Widget> buttonUserLoggedInOut(BuildContext context, User? user) {
   String logInOutText = "";
-  auth
-  .authStateChanges()
-  .listen((User? user) {
+  Icon logIcon;
+  
     if (user == null) {
       logInOutText = "Log In";
+      logIcon = Icon(Icons.login_outlined, color: AppColors.accent, size: 24);
     } else {
       logInOutText = "Log Out";
+      logIcon = Icon(Icons.logout_outlined, color: AppColors.accent, size: 24);
     }
-  });
 
-    return [
-                    Icon(Icons.logout_outlined, color: AppColors.accent, size: 24),
+    return [  
+                    // Login/Logout Icon
+                    logIcon,
+                    // Spacing
                     const SizedBox(width: 10),
+                    // Login/Logout button 
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        if (user == null) {
                         Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => const SSOPage())
+                          // Redirect to SSO page
+                          MaterialPageRoute(builder: (context) =>(const SSOPage()))
                         );
-                      }, 
+                      }
+                      else{
+                        // Asking if user wants to log out
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text('Are you sure you want to log out?'),
+                            actions: [
+                              TextButton(onPressed: () {}, child: Text('No')),
+                              TextButton(onPressed: () async {
+                                await FirebaseAuth.instance.signOut();
+                                Navigator.of(context).pop(); // Dismiss dialog after clicked
+                                },
+                                child: Text('Yes'))
+                            ]
+                          )
+                        );
+                      } 
+                      },
                     child: CustomText(
                       content: logInOutText,
                       header: true,
@@ -289,3 +322,4 @@ List<Widget> buttonUserLoggedInOut(BuildContext context) {
     ];
   
 }
+
