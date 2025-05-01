@@ -9,6 +9,8 @@ import 'firebase_options.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'main.dart';
+import 'package:universal_html/html.dart' as html; // For refreshing web page
 
 import 'UI/fonts.dart';
 
@@ -68,6 +70,7 @@ class _SSOPageState extends State<SSOPage> {
                   "tenant": dotenv.env['SSO_TENANT'] ?? '',
                 });
                 await FirebaseAuth.instance.signInWithPopup(providerMS);
+                html.window.location.reload();
               },
               icon: const Icon(FontAwesomeIcons.microsoft),
               text: "Use a Microsoft account to sign in",
@@ -89,6 +92,7 @@ class _SSOPageState extends State<SSOPage> {
                 // Define the action when the Google button is pressed
                 final providerG = OAuthProvider("google.com");
                 await FirebaseAuth.instance.signInWithPopup(providerG);
+                html.window.location.reload();
               },
               icon: const Icon(FontAwesomeIcons.google),
               text: "Use a Google account to sign in",
