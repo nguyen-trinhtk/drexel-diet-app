@@ -107,7 +107,7 @@ class ThemedSidebar extends CustomPainter {
 class FoodItemInfo extends StatelessWidget {
   final String foodName;
   final int quantity;
-  final Map<String, double> nutritionInfo;
+  final Map<String, int> nutritionInfo;
 
   const FoodItemInfo({
     Key? key,
@@ -178,17 +178,23 @@ class FoodItemInfo extends StatelessWidget {
 
 class ThemedHistoryCard extends Card {
   final int calories;
+  final String meal;
   final List<String> foodList;
   final int protein;
-  final int carbonhydrates;
+  final int carbs;
   final int fat;
+  final String date;
+  final String time;
 
   const ThemedHistoryCard({
     Key? key,
     required this.calories,
+    required this.meal,
+    required this.date,
+    required this.time,
     required this.foodList,
     required this.protein,
-    required this.carbonhydrates,
+    required this.carbs,
     required this.fat,
   });
 
@@ -198,113 +204,119 @@ class ThemedHistoryCard extends Card {
       return CustomText(
         content: "$foodName",
         fontSize: 20,
+        softWrap: true,
       );
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: AppColors.white,
-      margin: EdgeInsets.all(10),
-      shape: RoundedRectangleBorder(
-        side: BorderSide(
-          color: AppColors.primaryText,
-          width: 1.0,
-        ),
-        borderRadius: BorderRadius.circular(40),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(10),
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Column(
+    return Column(
+      children: [
+        CustomText(content: '$meal ($date $time)', fontSize: 16, textAlign: TextAlign.left, header: true, color: AppColors.accent),
+        Card(
+          color: AppColors.white,
+          margin: EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
+          shape: RoundedRectangleBorder(
+            side: BorderSide(
+              color: AppColors.primaryText,
+              width: 1.0,
+            ),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(10),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  CustomText(
-                    content: "$calories",
-                    fontSize: 60,
-                    bold: true,
+                  Column(
+                    children: <Widget>[
+                      CustomText(
+                        content: "$calories",
+                        fontSize: 60,
+                        bold: true,
+                      ),
+                      CustomText(
+                        content: "CALORIES",
+                        fontSize: 30,
+                        color: AppColors.accent,
+                        header: true,
+                      ),
+                    ],
                   ),
-                  CustomText(
-                    content: "CALORIES",
-                    fontSize: 30,
-                    color: AppColors.accent,
-                    header: true,
-                  ),
-                ],
-              ),
-              Column(children: <Widget>[
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomText(
-                      content: "FOOD",
-                      fontSize: 20,
-                      header: true,
-                      color: AppColors.accent,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Column(
+                  Column(children: <Widget>[
+                    Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: _createFoodText(),
-                    ),
-                  ],
-                )
-              ]),
-              Column(children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          CustomText(
-                            content: "PROTEIN",
-                            fontSize: 20,
-                            header: true,
-                            color: AppColors.accent,
-                          ),
-                          CustomText(
-                            content: "CARB",
-                            fontSize: 20,
-                            header: true,
-                            color: AppColors.accent,
-                          ),
-                          CustomText(
-                            content: "FAT",
-                            fontSize: 20,
-                            header: true,
-                            color: AppColors.accent,
-                          ),
-                        ]),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          CustomText(
-                            content: "$protein",
-                            fontSize: 20,
-                          ),
-                          CustomText(
-                            content: "$carbonhydrates",
-                            fontSize: 20,
-                          ),
-                          CustomText(
-                            content: "$fat",
-                            fontSize: 20,
-                          ),
-                        ]),
-                  ],
-                )
-              ]),
-            ]),
-      ),
+                      children: [
+                        CustomText(
+                          content: 'FOOD',
+                          fontSize: 20,
+                          header: true,
+                          color: AppColors.accent,
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: _createFoodText(),
+                        ),
+                      ],
+                    )
+                  ]),
+                  Column(children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              CustomText(
+                                content: "PROTEIN",
+                                fontSize: 20,
+                                header: true,
+                                color: AppColors.accent,
+                              ),
+                              CustomText(
+                                content: "CARB",
+                                fontSize: 20,
+                                header: true,
+                                color: AppColors.accent,
+                              ),
+                              CustomText(
+                                content: "FAT",
+                                fontSize: 20,
+                                header: true,
+                                color: AppColors.accent,
+                              ),
+                            ]),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              CustomText(
+                                content: "$protein",
+                                fontSize: 20,
+                              ),
+                              CustomText(
+                                content: "$carbs",
+                                fontSize: 20,
+                              ),
+                              CustomText(
+                                content: "$fat",
+                                fontSize: 20,
+                              ),
+                            ]),
+                      ],
+                    )
+                  ]),
+                ]),
+          ),
+        )
+      ],
     );
   }
 }
@@ -315,11 +327,17 @@ class FoodCard extends StatelessWidget {
   final String calories;
   final VoidCallback onAddPressed;
   final double fontSize;
+  // final String protein;
+  // final String carbs;
+  // final String fat;
 
   const FoodCard({
     Key? key,
     required this.name,
     required this.description,
+    // required this.protein,
+    // required this.carbs,
+    // required this.fat,
     required this.calories,
     required this.onAddPressed,
     this.fontSize = 16,
@@ -337,7 +355,8 @@ class FoodCard extends StatelessWidget {
       ),
       color: AppColors.white,
       child: Padding(
-        padding: const EdgeInsets.only(left: 20, right: 20, top: 15, bottom: 10),
+        padding:
+            const EdgeInsets.only(left: 20, right: 20, top: 15, bottom: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -377,16 +396,15 @@ class FoodCard extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             SizedBox(
-              height: fontSize * 2,
-              child: CustomButton(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                fontSize: fontSize,
-                text: 'Add',
-                bold: true,
-                onPressed: onAddPressed, 
-                color: AppColors.accent,
-                hoverColor: AppColors.primaryText)
-            ),
+                height: fontSize * 2,
+                child: CustomButton(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    fontSize: fontSize,
+                    text: 'Add',
+                    bold: true,
+                    onPressed: onAddPressed,
+                    color: AppColors.accent,
+                    hoverColor: AppColors.primaryText)),
           ],
         ),
       ),

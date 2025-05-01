@@ -5,6 +5,7 @@ import 'package:code/pages/history.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'pages/filter.dart';
+import 'pages/report.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
@@ -15,8 +16,8 @@ import 'UI/custom_elements.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Ensure Flutter is initialized
-  await dotenv.load(fileName: ".env"); // Load environment variables
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
@@ -144,14 +145,14 @@ class _HomeScreenState extends State<HomeScreen>
                         'Profile',
                         'Diet Plans',
                         'History',
-                        'Settings'
+                        'Report'
                       ];
                       final icons = [
                         Icons.home_outlined,
                         Icons.person_outlined,
                         Icons.bookmark_outline,
                         Icons.history_outlined,
-                        Icons.settings_outlined
+                        Icons.assignment_outlined,
                       ];
                       final label = labels[index - 1];
                       return Padding(
@@ -223,7 +224,7 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                       style: ButtonStyle(
                         overlayColor:
-                            MaterialStateProperty.all(Colors.transparent),
+                            WidgetStateProperty.all(Colors.transparent),
                       ),
                       child: Row(children: buttonUserLoggedInOut(context)
                     ),
@@ -243,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen>
                 const ProfilePage(),
                 Center(child: Text("Blank")),
                 const HistoryPage(),
-                Center(child: Text("Blank")),
+                const ReportPage(),
                 Center(child: Text("Blank")),
               ],
             ),

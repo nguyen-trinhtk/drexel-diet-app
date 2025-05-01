@@ -49,7 +49,7 @@ class DefaultFirebaseOptions {
   }
 
   static FirebaseOptions web = FirebaseOptions(
-    apiKey: dotenv.env['WEB_API_KEY'] ?? 'default_key',
+    apiKey: dotenv.env['WEB_API_KEY'] ?? '',
     appId: '1:1011997121447:web:e8d42badb2a147565fb482',
     messagingSenderId: '1011997121447',
     projectId: 'drexel-dining',
@@ -58,7 +58,7 @@ class DefaultFirebaseOptions {
   );
 
   static FirebaseOptions ios = FirebaseOptions(
-    apiKey: dotenv.env['IOS_API_KEY'] ?? 'default_key',
+    apiKey: dotenv.env['IOS_API_KEY'] ?? '',
     appId: '1:1011997121447:ios:d798d283e60d294f5fb482',
     messagingSenderId: '1011997121447',
     projectId: 'drexel-dining',
@@ -67,7 +67,7 @@ class DefaultFirebaseOptions {
   );
 
   static FirebaseOptions get android => FirebaseOptions(
-    apiKey: dotenv.env['ANDROID_API_KEY'] ?? 'default_key',
+    apiKey: dotenv.env['ANDROID_API_KEY'] ?? '',
     appId: '1:1011997121447:android:7722d895b80cfdd65fb482',
     messagingSenderId: '1011997121447',
     projectId: 'drexel-dining',
