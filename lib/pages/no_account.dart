@@ -18,16 +18,24 @@ class NoAccountPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+
         CustomText(
-          content: "Login to plan meals, track data, and more!",
+          content: 'Uh-oh :(', 
+          fontSize: 40,
+        ),
+        SizedBox(height: 16),
+
+        CustomText(
+          content: "Log in to plan meals, track data, and more!",
           header: true,
         ),
+        SizedBox(height: 16),
         CustomButton(onPressed: () {
           Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => SSOPage())
           );
         },
-          text: "Login Now"),
+          text: "Login now"),
     ]
     ))
     );

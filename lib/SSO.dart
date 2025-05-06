@@ -9,30 +9,29 @@ import 'firebase_options.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'main.dart';
 import 'package:universal_html/html.dart' as html; // For refreshing web page
 
 import 'UI/fonts.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  runApp(const MyApp());
-}
+// Future<void> main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await Firebase.initializeApp(
+//     options: DefaultFirebaseOptions.currentPlatform,
+//   );
+//   runApp(const MyApp());
+// }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
   
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: SSOPage(),
-      debugShowCheckedModeBanner: false,
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: SSOPage(),
+//       debugShowCheckedModeBanner: false,
+//     );
+//   }
+// }
 
 class SSOPage extends StatefulWidget {
   const SSOPage({super.key});
@@ -50,18 +49,22 @@ class _SSOPageState extends State<SSOPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Image.asset(
+              '../assets/colored-logo.png', 
+              width: 200, 
+            ),
             CustomText(
               content: "Anodrexia",
-              fontSize: 50,
+              fontSize: 40,
               header: true
               ),
+            SizedBox(height: 5),
             CustomText(
+              fontSize: 20,
               content: "Your personalized Drexel Dining Assistant",
-              fontSize: 30,
-              overflow: TextOverflow.visible,
               ),
 
-            const SizedBox(height: 16), // spacing between the buttons
+            const SizedBox(height: 15), // spacing between the buttons
             GFButton(
               onPressed: () async {
                 // Define the action when the Microsoft button is pressed
@@ -73,7 +76,7 @@ class _SSOPageState extends State<SSOPage> {
                 html.window.location.reload();
               },
               icon: const Icon(FontAwesomeIcons.microsoft),
-              text: "Use a Microsoft account to sign in",
+              text: "Log in with Microsoft",
               color: AppColors.accent,
               disabledColor: AppColors.accent,
               hoverColor: AppColors.primaryText,
@@ -95,7 +98,7 @@ class _SSOPageState extends State<SSOPage> {
                 html.window.location.reload();
               },
               icon: const Icon(FontAwesomeIcons.google),
-              text: "Use a Google account to sign in",
+              text: "Log in with Google",
               color: AppColors.accent,
               disabledColor: AppColors.accent,
               hoverColor: AppColors.primaryText,
