@@ -152,7 +152,32 @@ class _HomepageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+  
+
+  List<String> foods = [
+  "lowCarbon",
+  "glutenFree",
+  "vegan",
+  "vegetarian",
+  "wholeGrain",
+  "eatWell",
+  "plantForward"
+  ];
+
+    List<String> filteredFoods = [];
     context.watch<FoodFilterDrawerState>();
+
+    for (FoodPreference filter in foodPreferenceFilters) {
+      for (String food in foods) {
+        if (filter.name.toString() == food){
+          filteredFoods.add(food);
+        }
+      }
+    }
+
+    if (filteredFoods.isEmpty) {
+      filteredFoods = foods;
+    }
 
     double viewWidth = MediaQuery.sizeOf(context).width;
 
@@ -283,6 +308,19 @@ class _HomepageState extends State<HomePage> {
                           .trim()) ??
                       0;
 
+                  bool display =  false;
+                  for (String food in filteredFoods){
+                    print("Pref in filter: $food");
+                    print(item);
+                    if (item[food] == 1) {
+                      display = true;
+                      print("Food added to be displayed");
+                  }
+                  }
+                  
+
+
+                  if (display){
                   return FoodCard(
                     name: foodName,
                     description: item['Description'],
@@ -294,9 +332,17 @@ class _HomepageState extends State<HomePage> {
                       updateTotal(calories, carbs, fat, protein);
                       setState(() {
                         isLogBarExpanded = true;
-                      });
+                      }
+                      );
                     },
                   );
+                  }
+                  
+                  else{
+                    return SizedBox(
+                      child: Text("$item"),
+                    );
+                  }
                 },
               ),
             ),
