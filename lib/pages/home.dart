@@ -178,8 +178,23 @@ class _HomepageState extends State<HomePage> {
     if (filteredFoods.isEmpty) {
       filteredFoods = foods;
     }
-
-    double viewWidth = MediaQuery.sizeOf(context).width;
+  
+    // Map variable to apply filters on JSON menu and store new menu
+    Map<String, Map<dynamic, dynamic>>? filteredMenu = {};
+    
+    var indexNum = 0; // Food item index for filteredMenu
+    
+    // Loop through each menu item
+    jsonData['menu']?.forEach((index, item){
+      // Loop through each criterion
+      for (String preference in appliedFoodPref){
+        if (item[preference] == 1) {
+          filteredMenu[indexNum.toString()] = item;
+          indexNum += 1; // Increase index for filteredMenu items
+          break; // Stop adding same item if one criterion met
+        }
+      }
+    });
 
     return Row(
       children: [
@@ -282,12 +297,11 @@ class _HomepageState extends State<HomePage> {
                   mainAxisSpacing: 20,
                   childAspectRatio: isLogBarExpanded ? 1.2 : 1.4,
                 ),
-                itemCount: jsonData['menu']?.length ?? 0,
+                itemCount: filteredMenu.length,
                 itemBuilder: (BuildContext context, int index) {
-                  if (jsonData['menu'] == null) return SizedBox();
-
+                  if (filteredMenu == null) return SizedBox();
                   String strIndex = index.toString();
-                  final item = jsonData['menu']?[strIndex];
+                  final item = filteredMenu[strIndex];
                   if (item == null) return SizedBox();
 
                   int? calories = int.tryParse(item['Calories']) ?? 0;
