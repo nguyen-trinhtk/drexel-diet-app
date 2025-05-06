@@ -152,31 +152,39 @@ class _HomepageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    
+    // Viewport width
+    double viewWidth = MediaQuery.sizeOf(context).width;
   
+    // Default filter list
+    List<String> foodPref = [
+    "lowCarbon",
+    "glutenFree",
+    "vegan",
+    "vegetarian",
+    "wholeGrain",
+    "eatWell",
+    "plantForward"
+    ];
 
-  List<String> foods = [
-  "lowCarbon",
-  "glutenFree",
-  "vegan",
-  "vegetarian",
-  "wholeGrain",
-  "eatWell",
-  "plantForward"
-  ];
+    // Applied filter list
+    List<String> appliedFoodPref = [];
 
-    List<String> filteredFoods = [];
+    // Listener for food filter changes
     context.watch<FoodFilterDrawerState>();
 
+    // Add food pref filters to filter list
     for (FoodPreference filter in foodPreferenceFilters) {
-      for (String food in foods) {
-        if (filter.name.toString() == food){
-          filteredFoods.add(food);
+      for (String preference in foodPref) {
+        if (filter.name.toString() == preference){
+          appliedFoodPref.add(preference);
         }
       }
     }
 
-    if (filteredFoods.isEmpty) {
-      filteredFoods = foods;
+    // No filters applied
+    if (appliedFoodPref.isEmpty) {
+      appliedFoodPref = foodPref;
     }
   
     // Map variable to apply filters on JSON menu and store new menu
@@ -290,6 +298,8 @@ class _HomepageState extends State<HomePage> {
             backgroundColor: AppColors.primaryBackground,
             body: Padding(
               padding: EdgeInsets.all(isLogBarExpanded ? 15 : 30),
+
+              // Generate food cards dynamically
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: findCardsPerRow(viewWidth, 350),
@@ -303,7 +313,8 @@ class _HomepageState extends State<HomePage> {
                   String strIndex = index.toString();
                   final item = filteredMenu[strIndex];
                   if (item == null) return SizedBox();
-
+                  
+                  // Clean up text in nutrient data
                   int? calories = int.tryParse(item['Calories']) ?? 0;
                   String foodName = item['Name'];
                   int? protein = int.tryParse(item['protein']
@@ -322,19 +333,8 @@ class _HomepageState extends State<HomePage> {
                           .trim()) ??
                       0;
 
-                  bool display =  false;
-                  for (String food in filteredFoods){
-                    print("Pref in filter: $food");
-                    print(item);
-                    if (item[food] == 1) {
-                      display = true;
-                      print("Food added to be displayed");
-                  }
-                  }
-                  
 
 
-                  if (display){
                   return FoodCard(
                     name: foodName,
                     description: item['Description'],
@@ -350,13 +350,6 @@ class _HomepageState extends State<HomePage> {
                       );
                     },
                   );
-                  }
-                  
-                  else{
-                    return SizedBox(
-                      child: Text("$item"),
-                    );
-                  }
                 },
               ),
             ),
