@@ -1,4 +1,5 @@
 import 'package:code/SSO.dart';
+import 'package:code/pages/diet.dart';
 import 'package:code/pages/home.dart';
 import 'package:code/pages/profile.dart';
 import 'package:code/pages/history.dart';
@@ -265,9 +266,11 @@ List<Widget> navigationBarPages(BuildContext context, User? user) {
                 Center(child: Text("Blank")),
                 const HomePage(),
                 const NoAccountPage(),
+                // const NoAccountPage(),
+                const DietPage(),
                 const NoAccountPage(),
-                const NoAccountPage(),
-                const NoAccountPage(),
+                // const NoAccountPage(),
+                const ReportPage(),
                 Center(child: Text("Blank")),
               ];
   }
@@ -276,7 +279,7 @@ List<Widget> navigationBarPages(BuildContext context, User? user) {
                 Center(child: Text("Blank")),
                 const HomePage(),
                 const ProfilePage(),
-                Center(child: Text("Blank")),
+                const DietPage(),
                 const HistoryPage(),
                 const ReportPage(),
                 Center(child: Text("Blank")),
