@@ -266,11 +266,9 @@ List<Widget> navigationBarPages(BuildContext context, User? user) {
                 Center(child: Text("Blank")),
                 const HomePage(),
                 const NoAccountPage(),
-                // const NoAccountPage(),
-                const DietPage(),
                 const NoAccountPage(),
-                // const NoAccountPage(),
-                const ReportPage(),
+                const NoAccountPage(),
+                const NoAccountPage(),
                 Center(child: Text("Blank")),
               ];
   }
