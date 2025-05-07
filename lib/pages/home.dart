@@ -155,54 +155,33 @@ class _HomepageState extends State<HomePage> {
     
     // Viewport width
     double viewWidth = MediaQuery.sizeOf(context).width;
-  
-    // Default filter list
-    List<String> foodPref = [
-    "lowCarbon",
-    "glutenFree",
-    "vegan",
-    "vegetarian",
-    "wholeGrain",
-    "eatWell",
-    "plantForward"
-    ];
-
-    // Applied filter list
-    List<String> appliedFoodPref = [];
 
     // Listener for food filter changes
     context.watch<FoodFilterDrawerState>();
 
-    // Add food pref filters to filter list
-    for (FoodPreference filter in foodPreferenceFilters) {
-      for (String preference in foodPref) {
-        if (filter.name.toString() == preference){
-          appliedFoodPref.add(preference);
-        }
-      }
-    }
+    // Map variable to apply filters on JSON menu and store new menu
+    Map<dynamic, dynamic>? filteredMenu = {};
 
     // No filters applied
-    if (appliedFoodPref.isEmpty) {
-      appliedFoodPref = foodPref;
+    if (foodPreferenceFilters.isEmpty) {
+      filteredMenu = jsonData['menu'];
     }
-  
-    // Map variable to apply filters on JSON menu and store new menu
-    Map<String, Map<dynamic, dynamic>>? filteredMenu = {};
-    
-    var indexNum = 0; // Food item index for filteredMenu
-    
-    // Loop through each menu item
-    jsonData['menu']?.forEach((index, item){
-      // Loop through each criterion
-      for (String preference in appliedFoodPref){
-        if (item[preference] == 1) {
-          filteredMenu[indexNum.toString()] = item;
-          indexNum += 1; // Increase index for filteredMenu items
-          break; // Stop adding same item if one criterion met
+    else {
+      var indexNum = 0; // Food item index for filteredMenu
+      
+      // Loop through each menu item
+      jsonData['menu']?.forEach((index, item){
+        // Loop through each criterion
+        for (FoodPreference preference in foodPreferenceFilters){
+          if (item[preference.name] == 1) {
+            filteredMenu?[indexNum.toString()] = item;
+            indexNum += 1; // Increase index for filteredMenu items
+            break; // Stop adding same item if one criterion met
+          }
         }
-      }
-    });
+      });
+
+    }
 
     return Row(
       children: [
@@ -307,7 +286,7 @@ class _HomepageState extends State<HomePage> {
                   mainAxisSpacing: 20,
                   childAspectRatio: isLogBarExpanded ? 1.2 : 1.4,
                 ),
-                itemCount: filteredMenu.length,
+                itemCount: filteredMenu != null ? filteredMenu.length : 0,
                 itemBuilder: (BuildContext context, int index) {
                   if (filteredMenu == null) return SizedBox();
                   String strIndex = index.toString();
@@ -332,8 +311,6 @@ class _HomepageState extends State<HomePage> {
                           .replaceAll('less than ', '')
                           .trim()) ??
                       0;
-
-
 
                   return FoodCard(
                     name: foodName,
