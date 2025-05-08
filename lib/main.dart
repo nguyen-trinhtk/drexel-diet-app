@@ -351,14 +351,16 @@ List<Widget> buttonUserLoggedInOut(BuildContext context, User? user) {
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
-                            title: Text('Are you sure you want to log out?'),
+                            title: CustomText(content: 'Are you sure you want to log out?', color: AppColors.accent, header: true, fontSize: 24),
+                            backgroundColor: AppColors.white,
+                            iconColor: AppColors.accent,
                             actions: [
-                              TextButton(onPressed: () {}, child: Text('No')),
-                              TextButton(onPressed: () async {
+                              CustomButton(onPressed: () {}, text: 'NO', header: true,),
+                              CustomButton(onPressed: () async {
                                 await FirebaseAuth.instance.signOut();
                                 Navigator.of(context).pop(); // Dismiss dialog after clicked
                                 },
-                                child: Text('Yes'))
+                                text: 'YES', header: true,)
                             ]
                           )
                         );
