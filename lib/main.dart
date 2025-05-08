@@ -74,6 +74,7 @@ class MyApp extends StatelessWidget {
                   'height': null,
                   'sex': null,
                   'activityLevel': null,
+                  'email': user.email,
                 });
               });
             }
