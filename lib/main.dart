@@ -15,6 +15,7 @@ import 'UI/colors.dart';
 import 'UI/custom_elements.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'pages/no_account.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensure Flutter is initialized
@@ -32,6 +33,21 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  Future<void> dataCheck(String userId, Map<String, dynamic> newUserData) async {
+    DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(userId);
+    try {
+      DocumentSnapshot snapshot = await userRef.get();
+      if (!snapshot.exists) {
+        await userRef.set(newUserData);
+        print('User data created successfully for $userId.');
+      } else {
+        print('User data already exists for $userId.');
+      }
+    } catch (error) {
+      print('Error checking or creating user data: $error');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -39,7 +55,24 @@ class MyApp extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.active) {
-            return HomeScreen(loginState: snapshot.data);
+            User? user = snapshot.data;
+
+            if (user != null) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                dataCheck(user.uid, {
+                  'uid': user.uid,
+                  'name': user.displayName ?? '',
+                  'picture': user.photoURL ?? '',
+                  'age': null,  
+                  'weight': null,  
+                  'height': null,  
+                  'sex': null,  
+                  'activityLevel': null, 
+              });
+            });
+            }
+            return HomeScreen(loginState: user);
+            
             }
           return CircularProgressIndicator();
         },),
