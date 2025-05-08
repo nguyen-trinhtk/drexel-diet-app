@@ -3,38 +3,34 @@ import 'colors.dart';
 import 'custom_elements.dart';
 
 class ThemedCard extends StatelessWidget {
-  final double wFactor;
-  final double hFactor;
-  final List<Widget> content;
+  //final double wFactor;
+  //final double hFactor;
+  final EdgeInsets padding;
+  final Widget child;
 
   const ThemedCard({
     super.key,
-    required this.wFactor,
-    required this.hFactor,
-    required this.content
+    //required this.wFactor,
+    required this.padding,
+    required this.child
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card (
-      color: Colors.white,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(
-          width: 1,
-          color: AppColors.primaryText
+    return Flexible(
+      child: Card (
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(
+            width: 1,
+            color: AppColors.primaryText
+          ),
+          borderRadius: BorderRadius.circular(40)
         ),
-        borderRadius: BorderRadius.circular(40)
-      ),
-      semanticContainer: true,
-      child: Padding(
-        padding: EdgeInsets.all(32),
-        child:FractionallySizedBox(
-          widthFactor: wFactor,
-          heightFactor: hFactor,
-          child:Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: content,
-          )
+        semanticContainer: true,
+        child: Padding(
+          padding: padding,
+          child: child,
         )
       )
     );
