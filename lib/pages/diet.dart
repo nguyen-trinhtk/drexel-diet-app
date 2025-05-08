@@ -3,7 +3,7 @@ import 'package:code/UI/custom_elements.dart';
 import 'package:flutter/material.dart';
 import '../UI/colors.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:code/backend/userdata.dart'; // Import the weightProgress map
+import 'package:code/backend/userdata.dart';
 
 class DietPage extends StatefulWidget {
   const DietPage({super.key});

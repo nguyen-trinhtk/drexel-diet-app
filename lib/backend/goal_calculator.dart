@@ -47,3 +47,15 @@ int calculateCaloricGoal(
       bmr - ((currentWeight - goalWeight) * 7700 / daysToGoal);
   return goalCalories.toInt();
 }
+
+int proteinGoal(int calories) {
+  return (calories * 0.3 / 4).toInt();
+}
+
+int carbsGoal(int calories) {
+  return (calories * 0.45 / 4).toInt();
+}
+
+int fatGoal(int calories) {
+  return (calories * 0.25 / 9).toInt();
+}
