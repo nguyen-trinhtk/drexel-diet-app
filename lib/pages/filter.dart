@@ -107,7 +107,8 @@ class FoodFilterDrawerState extends State<FoodFilterDrawer>
               ),
               RangeSlider(
                 values: _currentRangeValues,
-                labels: RangeLabels('Min: $lowerBound', 'Max: $upperBound'),
+                labels: RangeLabels(
+                    'Min: ${lowerBound.toInt()}', 'Max: ${upperBound.toInt()}'),
                 activeColor: AppColors.accent,
                 inactiveColor: AppColors.secondaryBackground,
                 min: minCalories.toDouble(),
