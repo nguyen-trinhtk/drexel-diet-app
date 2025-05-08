@@ -238,7 +238,9 @@ class _HomeScreenState extends State<HomeScreen>
                         overlayColor:
                             MaterialStateProperty.all(Colors.transparent),
                       ),
-                      child: Row(children: buttonUserLoggedInOut(context, widget.loginState),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: buttonUserLoggedInOut(context, widget.loginState),
                     ),
                     )
                   ),
@@ -300,11 +302,7 @@ List<Widget> buttonUserLoggedInOut(BuildContext context, User? user) {
       logIcon = Icon(Icons.logout_outlined, color: AppColors.accent, size: 24);
     }
 
-    return [  
-                    // Login/Logout Icon
-                    logIcon,
-                    // Spacing
-                    const SizedBox(width: 10),
+    return [ 
                     // Login/Logout button 
                     ElevatedButton(
                       onPressed: () async {
@@ -332,13 +330,19 @@ List<Widget> buttonUserLoggedInOut(BuildContext context, User? user) {
                         );
                       } 
                       },
-                    child: CustomText(
+                    child: Row(
+                      children: [  
+                      // Login/Logout Icon
+                      //logIcon,
+                      CustomText(
                       content: logInOutText,
                       header: true,
                       fontSize: 16,
                       color: AppColors.accent, 
                       bold: true,
-                    ),)
+                    ),
+                    ])
+                    )
                     
                   
     ];
