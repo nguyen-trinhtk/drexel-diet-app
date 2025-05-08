@@ -3,7 +3,7 @@ import 'package:code/UI/custom_elements.dart';
 import 'package:flutter/material.dart';
 import '../UI/colors.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:code/backend/userdata.dart'; // Import the weightProgress map
+import 'package:code/backend/userdata.dart';
 
 class DietPage extends StatefulWidget {
   const DietPage({super.key});
@@ -52,7 +52,7 @@ class _DietPageState extends State<DietPage> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 CustomText(
-                                  content: '1800',
+                                  content: '$goalCalories',
                                   header: true,
                                   color: AppColors.white,
                                   fontSize: 40,
@@ -111,7 +111,7 @@ class _DietPageState extends State<DietPage> {
                                     ),
                                     child: Center(
                                       child: CustomText(
-                                        content: '120 lbs',
+                                        content: '$goalWeight lbs',
                                         header: true,
                                         color: AppColors.primaryText,
                                       ),
@@ -169,7 +169,7 @@ class _DietPageState extends State<DietPage> {
                                     ),
                                     child: Center(
                                       child: CustomText(
-                                        content: 'MM-DD-YYYY',
+                                        content: '07-07-2025',
                                         header: true,
                                         color: AppColors.primaryText,
                                       ),

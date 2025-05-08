@@ -17,6 +17,9 @@ int totalFat = 0;
 int totalProtein = 0;
 int mealIndex = 0;
 
+double minCalories = 0;
+double maxCalories = 0;
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -32,7 +35,6 @@ class _HomepageState extends State<HomePage> {
   void initState() {
     super.initState();
     loadJsonAsset('menu');
-    // loadJsonAsset('history');
   }
 
   Future<void> loadJsonAsset(filename) async {
@@ -41,11 +43,32 @@ class _HomepageState extends State<HomePage> {
     var data = jsonDecode(jsonString);
     setState(() {
       jsonData[filename] = data;
+
+      if (jsonData['menu'] != null) {
+        minCalories = findMinCalories(jsonData['menu']).toDouble();
+        maxCalories = findMaxCalories(jsonData['menu']).toDouble();
+      }
     });
   }
 
   int findCardsPerRow(double viewWidth, double minCardWidth) {
     return viewWidth ~/ minCardWidth;
+  }
+
+  int findMinCalories(Map<dynamic, dynamic>? menu) {
+    if (menu == null || menu.isEmpty) return 0;
+
+    return menu.values
+        .map((item) => int.tryParse(item['Calories'] ?? '0') ?? 0)
+        .reduce((a, b) => a < b ? a : b);
+  }
+
+  int findMaxCalories(Map<dynamic, dynamic>? menu) {
+    if (menu == null || menu.isEmpty) return 0;
+
+    return menu.values
+        .map((item) => int.tryParse(item['Calories'] ?? '0') ?? 0)
+        .reduce((a, b) => a > b ? a : b);
   }
 
   void appendLog(
@@ -127,10 +150,15 @@ class _HomepageState extends State<HomePage> {
         "dishes": loggedDishesCopy,
       };
 
-      dailyTotalCalories += totalCalories;
-      dailyTotalProtein += totalProtein;
-      dailyTotalCarbs += totalCarbs;
-      dailyTotalFat += totalFat;
+      // Use MealsProvider to update daily totals
+      final mealsProvider = Provider.of<MealsProvider>(context, listen: false);
+      mealsProvider.updateDailyTotalCalories(
+          mealsProvider.dailyTotalCalories + totalCalories);
+      mealsProvider.updateDailyTotalProtein(
+          mealsProvider.dailyTotalProtein + totalProtein);
+      mealsProvider
+          .updateDailyTotalCarbs(mealsProvider.dailyTotalCarbs + totalCarbs);
+      mealsProvider.updateDailyTotalFat(mealsProvider.dailyTotalFat + totalFat);
 
       mealHistory[mealIndex.toString()] = entry;
       buildHistoryCards();
@@ -152,35 +180,26 @@ class _HomepageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    
-    // Viewport width
     double viewWidth = MediaQuery.sizeOf(context).width;
 
-    // Listener for food filter changes
     context.watch<FoodFilterDrawerState>();
 
-    // Map variable to apply filters on JSON menu and store new menu
     Map<dynamic, dynamic>? filteredMenu = {};
 
-    // No filters applied
     if (foodPreferenceFilters.isEmpty) {
       filteredMenu = jsonData['menu'];
-    }
-    else {
-      var indexNum = 0; // Food item index for filteredMenu
-      
-      // Loop through each menu item
-      jsonData['menu']?.forEach((index, item){
-        // Loop through each criterion
-        for (FoodPreference preference in foodPreferenceFilters){
+    } else {
+      var indexNum = 0;
+
+      jsonData['menu']?.forEach((index, item) {
+        for (FoodPreference preference in foodPreferenceFilters) {
           if (item[preference.name] == 1) {
             filteredMenu?[indexNum.toString()] = item;
-            indexNum += 1; // Increase index for filteredMenu items
-            break; // Stop adding same item if one criterion met
+            indexNum += 1;
+            break;
           }
         }
       });
-
     }
 
     return Row(
@@ -277,8 +296,6 @@ class _HomepageState extends State<HomePage> {
             backgroundColor: AppColors.primaryBackground,
             body: Padding(
               padding: EdgeInsets.all(isLogBarExpanded ? 15 : 30),
-
-              // Generate food cards dynamically
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: findCardsPerRow(viewWidth, 350),
@@ -292,8 +309,7 @@ class _HomepageState extends State<HomePage> {
                   String strIndex = index.toString();
                   final item = filteredMenu[strIndex];
                   if (item == null) return SizedBox();
-                  
-                  // Clean up text in nutrient data
+
                   int? calories = int.tryParse(item['Calories']) ?? 0;
                   String foodName = item['Name'];
                   int? protein = int.tryParse(item['protein']
@@ -323,8 +339,7 @@ class _HomepageState extends State<HomePage> {
                       updateTotal(calories, carbs, fat, protein);
                       setState(() {
                         isLogBarExpanded = true;
-                      }
-                      );
+                      });
                     },
                   );
                 },
