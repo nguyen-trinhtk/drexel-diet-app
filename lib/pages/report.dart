@@ -1,46 +1,35 @@
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../UI/colors.dart';
 import '../backend/meals.dart';
+import '../backend/userdata.dart';
 import '../UI/custom_elements.dart';
 
-class ReportPage extends StatefulWidget {
-  const ReportPage({super.key});
-
-  @override
-  _ReportPageState createState() => _ReportPageState();
-}
-
-class _ReportPageState extends State<ReportPage> {
-  final int totalCalories = 1050;
-  final int consumedCalories = 675;
-
-  final int totalProtein = 100;
-  final int consumedProtein = 67;
-
-  final int totalCarbs = 145;
-  final int consumedCarbs = 70;
-
-  final int totalFat = 32;
-  final int consumedFat = 7;
-
+class ReportPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final int leftCalories = totalCalories - consumedCalories;
-    final double consumedCaloriesProportion = consumedCalories / totalCalories;
-    final double leftCaloriesProportion = leftCalories / totalCalories;
+    final mealsProvider = Provider.of<MealsProvider>(context);
 
-    final int leftProtein = totalProtein - consumedProtein;
-    final double consumedProteinProportion = consumedProtein / totalProtein;
-    final double leftProteinProportion = leftProtein / totalProtein;
+    int dailyTotalCalories = mealsProvider.dailyTotalCalories;
+    int dailyTotalProtein = mealsProvider.dailyTotalProtein;
+    int dailyTotalCarbs = mealsProvider.dailyTotalCarbs;
+    int dailyTotalFat = mealsProvider.dailyTotalFat;
 
-    final int leftCarbs = totalCarbs - consumedCarbs;
-    final double consumedCarbsProportion = consumedCarbs / totalCarbs;
-    final double leftCarbsProportion = leftCarbs / totalCarbs;
+    int leftCalories = goalCalories - dailyTotalCalories;
+    int leftProtein = goalProtein - dailyTotalProtein;
+    int leftCarbs = goalCarbs - dailyTotalCarbs;
+    int leftFat = goalFat - dailyTotalFat;
 
-    final int leftFat = totalFat - consumedFat;
-    final double consumedFatProportion = consumedFat / totalFat;
-    final double leftFatProportion = leftFat / totalFat;
+    double consumedCaloriesProportion =
+        dailyTotalCalories / goalCalories;
+    double consumedProteinProportion = dailyTotalProtein / goalProtein;
+    double consumedCarbsProportion = dailyTotalCarbs / goalCarbs;
+    double consumedFatProportion = dailyTotalFat / goalFat;
+
+    double leftCaloriesProportion = leftCalories / goalCalories;
+    double leftProteinProportion = leftProtein / goalProtein;
+    double leftCarbsProportion = leftCarbs / goalCarbs;
+    double leftFatProportion = leftFat / goalFat;
 
     return Scaffold(
       backgroundColor: AppColors.primaryBackground,
@@ -56,44 +45,41 @@ class _ReportPageState extends State<ReportPage> {
             SizedBox(height: 50),
             _buildNutrientRow(
               label: 'Calories',
-              consumed: consumedCalories,
-              left: leftCalories,
+              consumed: dailyTotalCalories,
+              total:goalCalories,
               consumedProportion: consumedCaloriesProportion,
               leftProportion: leftCaloriesProportion,
               consumedColor: AppColors.accent,
               leftColor: AppColors.white,
               unit: 'kcal',
             ),
-            SizedBox(height: 30),
             _buildNutrientRow(
               label: 'Protein',
-              consumed: consumedProtein,
-              left: leftProtein,
+              consumed: dailyTotalProtein,
+              total:goalProtein,
               consumedProportion: consumedProteinProportion,
               leftProportion: leftProteinProportion,
-              consumedColor: AppColors.secondaryBackground,
+              consumedColor: AppColors.accent,
               leftColor: AppColors.white,
               unit: 'g',
             ),
-            SizedBox(height: 30),
             _buildNutrientRow(
               label: 'Carbs',
-              consumed: consumedCarbs,
-              left: leftCarbs,
+              consumed: dailyTotalCarbs,
+              total:goalCarbs,
               consumedProportion: consumedCarbsProportion,
               leftProportion: leftCarbsProportion,
-              consumedColor: AppColors.secondaryBackground,
+              consumedColor: AppColors.accent,
               leftColor: AppColors.white,
               unit: 'g',
             ),
-            SizedBox(height: 30),
             _buildNutrientRow(
               label: 'Fat',
-              consumed: consumedFat,
-              left: leftFat,
+              consumed: dailyTotalFat,
+              total:goalFat,
               consumedProportion: consumedFatProportion,
               leftProportion: leftFatProportion,
-              consumedColor: AppColors.secondaryBackground,
+              consumedColor: AppColors.accent,
               leftColor: AppColors.white,
               unit: 'g',
             ),
@@ -106,15 +92,17 @@ class _ReportPageState extends State<ReportPage> {
   Widget _buildNutrientRow({
     required String label,
     required int consumed,
-    required int left,
+    required int total,
     required double consumedProportion,
     required double leftProportion,
     required Color consumedColor,
     required Color leftColor,
     required String unit,
   }) {
-    return Expanded(
-      flex: 2,
+    return Column(
+      children: [
+      Container(
+      height: 50,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -154,7 +142,7 @@ class _ReportPageState extends State<ReportPage> {
                         content: '$consumed$unit',
                         header: true,
                         fontSize: 15,
-                        color: AppColors.primaryText,
+                        color: AppColors.white,
                         textAlign: TextAlign.right,
                       ),
                     ),
@@ -176,7 +164,7 @@ class _ReportPageState extends State<ReportPage> {
                     child: Padding(
                       padding: EdgeInsets.only(right: 10),
                       child: CustomText(
-                        content: '$left$unit',
+                        content: '$total$unit',
                         header: true,
                         fontSize: 16,
                         color: AppColors.secondaryText,
@@ -190,6 +178,7 @@ class _ReportPageState extends State<ReportPage> {
           ),
         ],
       ),
-    );
+    ), 
+    SizedBox(height: 30)]);
   }
 }

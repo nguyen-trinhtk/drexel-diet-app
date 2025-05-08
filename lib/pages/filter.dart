@@ -75,19 +75,14 @@ class FoodFilterDrawerState extends State<FoodFilterDrawer>
                 height: 40,
                 alignment: Alignment.center,
                 child: CustomText(
-                  content: 'Nutrient Range',
+                  content: 'Calorie Range',
                   fontSize: 16,
-                  bold: true,
+                  header: true,
                 ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  CustomText(
-                    content: 'Min: ${minCalories.toInt()}',
-                    fontSize: 12,
-                    bold: true,
-                  ),
                   CustomText(
                     content: 'Lower: ${lowerBound.toInt()}',
                     fontSize: 12,
@@ -98,17 +93,15 @@ class FoodFilterDrawerState extends State<FoodFilterDrawer>
                     fontSize: 12,
                     bold: true,
                   ),
-                  CustomText(
-                    content: 'Max: ${maxCalories.toInt()}',
-                    fontSize: 12,
-                    bold: true,
-                  ),
+                  // CustomText(
+                  //   content: 'Max: ${maxCalories.toInt()}',
+                  //   fontSize: 12,
+                  //   bold: true,
+                  // ),
                 ],
               ),
               RangeSlider(
                 values: _currentRangeValues,
-                labels: RangeLabels(
-                    'Min: ${lowerBound.toInt()}', 'Max: ${upperBound.toInt()}'),
                 activeColor: AppColors.accent,
                 inactiveColor: AppColors.secondaryBackground,
                 min: minCalories.toDouble(),
@@ -124,14 +117,14 @@ class FoodFilterDrawerState extends State<FoodFilterDrawer>
                   });
                 },
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 40),
               Container(
                 height: 40,
                 alignment: Alignment.center,
                 child: CustomText(
                   content: 'Food Preferences',
                   fontSize: 16,
-                  bold: true,
+                  header: true,
                 ),
               ),
               Wrap(
@@ -172,7 +165,7 @@ class FoodFilterDrawerState extends State<FoodFilterDrawer>
                   );
                 }).toList(),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 80),
               Center(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

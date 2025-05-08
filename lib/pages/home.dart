@@ -150,10 +150,15 @@ class _HomepageState extends State<HomePage> {
         "dishes": loggedDishesCopy,
       };
 
-      dailyTotalCalories += totalCalories;
-      dailyTotalProtein += totalProtein;
-      dailyTotalCarbs += totalCarbs;
-      dailyTotalFat += totalFat;
+      // Use MealsProvider to update daily totals
+      final mealsProvider = Provider.of<MealsProvider>(context, listen: false);
+      mealsProvider.updateDailyTotalCalories(
+          mealsProvider.dailyTotalCalories + totalCalories);
+      mealsProvider.updateDailyTotalProtein(
+          mealsProvider.dailyTotalProtein + totalProtein);
+      mealsProvider
+          .updateDailyTotalCarbs(mealsProvider.dailyTotalCarbs + totalCarbs);
+      mealsProvider.updateDailyTotalFat(mealsProvider.dailyTotalFat + totalFat);
 
       mealHistory[mealIndex.toString()] = entry;
       buildHistoryCards();
@@ -291,7 +296,6 @@ class _HomepageState extends State<HomePage> {
             backgroundColor: AppColors.primaryBackground,
             body: Padding(
               padding: EdgeInsets.all(isLogBarExpanded ? 15 : 30),
-
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: findCardsPerRow(viewWidth, 350),
