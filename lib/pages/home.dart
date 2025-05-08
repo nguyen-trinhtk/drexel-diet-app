@@ -17,6 +17,9 @@ int totalFat = 0;
 int totalProtein = 0;
 int mealIndex = 0;
 
+double minCalories = 0;
+double maxCalories = 0;
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -32,7 +35,6 @@ class _HomepageState extends State<HomePage> {
   void initState() {
     super.initState();
     loadJsonAsset('menu');
-    // loadJsonAsset('history');
   }
 
   Future<void> loadJsonAsset(filename) async {
@@ -41,11 +43,32 @@ class _HomepageState extends State<HomePage> {
     var data = jsonDecode(jsonString);
     setState(() {
       jsonData[filename] = data;
+
+      if (jsonData['menu'] != null) {
+        minCalories = findMinCalories(jsonData['menu']).toDouble();
+        maxCalories = findMaxCalories(jsonData['menu']).toDouble();
+      }
     });
   }
 
   int findCardsPerRow(double viewWidth, double minCardWidth) {
     return viewWidth ~/ minCardWidth;
+  }
+
+  int findMinCalories(Map<dynamic, dynamic>? menu) {
+    if (menu == null || menu.isEmpty) return 0;
+
+    return menu.values
+        .map((item) => int.tryParse(item['Calories'] ?? '0') ?? 0)
+        .reduce((a, b) => a < b ? a : b);
+  }
+
+  int findMaxCalories(Map<dynamic, dynamic>? menu) {
+    if (menu == null || menu.isEmpty) return 0;
+
+    return menu.values
+        .map((item) => int.tryParse(item['Calories'] ?? '0') ?? 0)
+        .reduce((a, b) => a > b ? a : b);
   }
 
   void appendLog(
@@ -127,10 +150,15 @@ class _HomepageState extends State<HomePage> {
         "dishes": loggedDishesCopy,
       };
 
-      dailyTotalCalories += totalCalories;
-      dailyTotalProtein += totalProtein;
-      dailyTotalCarbs += totalCarbs;
-      dailyTotalFat += totalFat;
+      // Use MealsProvider to update daily totals
+      final mealsProvider = Provider.of<MealsProvider>(context, listen: false);
+      mealsProvider.updateDailyTotalCalories(
+          mealsProvider.dailyTotalCalories + totalCalories);
+      mealsProvider.updateDailyTotalProtein(
+          mealsProvider.dailyTotalProtein + totalProtein);
+      mealsProvider
+          .updateDailyTotalCarbs(mealsProvider.dailyTotalCarbs + totalCarbs);
+      mealsProvider.updateDailyTotalFat(mealsProvider.dailyTotalFat + totalFat);
 
       mealHistory[mealIndex.toString()] = entry;
       buildHistoryCards();
@@ -152,9 +180,27 @@ class _HomepageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    double viewWidth = MediaQuery.sizeOf(context).width;
+
     context.watch<FoodFilterDrawerState>();
 
-    double viewWidth = MediaQuery.sizeOf(context).width;
+    Map<dynamic, dynamic>? filteredMenu = {};
+
+    if (foodPreferenceFilters.isEmpty) {
+      filteredMenu = jsonData['menu'];
+    } else {
+      var indexNum = 0;
+
+      jsonData['menu']?.forEach((index, item) {
+        for (FoodPreference preference in foodPreferenceFilters) {
+          if (item[preference.name] == 1) {
+            filteredMenu?[indexNum.toString()] = item;
+            indexNum += 1;
+            break;
+          }
+        }
+      });
+    }
 
     return Row(
       children: [
@@ -257,12 +303,11 @@ class _HomepageState extends State<HomePage> {
                   mainAxisSpacing: 20,
                   childAspectRatio: isLogBarExpanded ? 1.2 : 1.4,
                 ),
-                itemCount: jsonData['menu']?.length ?? 0,
+                itemCount: filteredMenu != null ? filteredMenu.length : 0,
                 itemBuilder: (BuildContext context, int index) {
-                  if (jsonData['menu'] == null) return SizedBox();
-
+                  if (filteredMenu == null) return SizedBox();
                   String strIndex = index.toString();
-                  final item = jsonData['menu']?[strIndex];
+                  final item = filteredMenu[strIndex];
                   if (item == null) return SizedBox();
 
                   int? calories = int.tryParse(item['Calories']) ?? 0;

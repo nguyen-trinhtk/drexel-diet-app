@@ -1,11 +1,11 @@
 import 'package:code/SSO.dart';
+import 'package:code/pages/diet.dart';
 import 'package:code/pages/home.dart';
 import 'package:code/pages/profile.dart';
 import 'package:code/pages/history.dart';
+import 'package:code/pages/report.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'pages/filter.dart';
-import 'pages/report.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
@@ -14,15 +14,21 @@ import 'UI/widgets.dart';
 import 'UI/colors.dart';
 import 'UI/custom_elements.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'pages/no_account.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'backend/meals.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
+  WidgetsFlutterBinding.ensureInitialized(); // Ensure Flutter is initialized
+  await dotenv.load(fileName: ".env"); // Load environment variables
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => FoodFilterDrawerState(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => FoodFilterDrawerState()),
+        ChangeNotifierProvider(create: (context) => MealsProvider()),
+      ],
       child: const MyApp(),
     ),
   );
@@ -31,17 +37,59 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  Future<void> dataCheck(
+      String userId, Map<String, dynamic> newUserData) async {
+    DocumentReference userRef =
+        FirebaseFirestore.instance.collection('users').doc(userId);
+    try {
+      DocumentSnapshot snapshot = await userRef.get();
+      if (!snapshot.exists) {
+        await userRef.set(newUserData);
+        print('User data created successfully for $userId.');
+      } else {
+        print('User data already exists for $userId.');
+      }
+    } catch (error) {
+      print('Error checking or creating user data: $error');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const HomeScreen(),
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.active) {
+            User? user = snapshot.data;
+
+            if (user != null) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                dataCheck(user.uid, {
+                  'uid': user.uid,
+                  'name': user.displayName ?? '',
+                  'picture': user.photoURL ?? '',
+                  'age': null,
+                  'weight': null,
+                  'height': null,
+                  'sex': null,
+                  'activityLevel': null,
+                });
+              });
+            }
+            return HomeScreen(loginState: user);
+          }
+          return CircularProgressIndicator();
+        },
+      ),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final User? loginState;
+  const HomeScreen({super.key, this.loginState});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -114,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen>
                         child: Column(
                           children: [
                             Image.asset(
-                              '../assets/logo.png',
+                              '../assets/colored-logo.png',
                               width: 150,
                               height: 150,
                             ),
@@ -152,7 +200,7 @@ class _HomeScreenState extends State<HomeScreen>
                         Icons.person_outlined,
                         Icons.bookmark_outline,
                         Icons.history_outlined,
-                        Icons.assignment_outlined,
+                        Icons.assignment_outlined
                       ];
                       final label = labels[index - 1];
                       return Padding(
@@ -211,25 +259,26 @@ class _HomeScreenState extends State<HomeScreen>
                 Positioned(
                   bottom: 35,
                   child: Container(
-                    height: 50,
-                    width: 200,
-                    color: AppColors.secondaryBackground,
-                    alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.only(left: 30),
-                    child: TextButton(
-                      onPressed: () =>
-                          ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Logged out or some action')),
-                      ),
-                      style: ButtonStyle(
-                        overlayColor:
-                            WidgetStateProperty.all(Colors.transparent),
-                      ),
-                      child: Row(children: buttonUserLoggedInOut(context)
-                    ),
-                    )
-                  ),
+                      height: 50,
+                      width: 200,
+                      color: AppColors.secondaryBackground,
+                      alignment: Alignment.centerLeft,
+                      padding: const EdgeInsets.only(left: 30),
+                      child: TextButton(
+                        onPressed: () =>
+                            ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Logged out or some action')),
+                        ),
+                        style: ButtonStyle(
+                          overlayColor:
+                              MaterialStateProperty.all(Colors.transparent),
+                        ),
+                        child: Row(
+                          children:
+                              buttonUserLoggedInOut(context, widget.loginState),
+                        ),
+                      )),
                 ),
               ],
             ),
@@ -238,15 +287,7 @@ class _HomeScreenState extends State<HomeScreen>
             child: TabBarView(
               controller: _tabController,
               physics: const NeverScrollableScrollPhysics(),
-              children: [
-                Center(child: Text("Blank")),
-                const HomePage(),
-                const ProfilePage(),
-                Center(child: Text("Blank")),
-                const HistoryPage(),
-                const ReportPage(),
-                Center(child: Text("Blank")),
-              ],
+              children: navigationBarPages(context, widget.loginState),
             ),
           ),
         ],
@@ -255,37 +296,81 @@ class _HomeScreenState extends State<HomeScreen>
   }
 }
 
-List<Widget> buttonUserLoggedInOut(BuildContext context) {
-  FirebaseAuth auth = FirebaseAuth.instance;
-  String logInOutText = "";
-  auth
-  .authStateChanges()
-  .listen((User? user) {
-    if (user == null) {
-      logInOutText = "Log In";
-    } else {
-      logInOutText = "Log Out";
-    }
-  });
-
+// Return a list of pages for navigation bar depending on user login state
+List<Widget> navigationBarPages(BuildContext context, User? user) {
+  if (user == null) {
     return [
-                    Icon(Icons.logout_outlined, color: AppColors.accent, size: 24),
-                    const SizedBox(width: 10),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => const SSOPage())
-                        );
-                      }, 
-                    child: CustomText(
-                      content: logInOutText,
-                      header: true,
-                      fontSize: 16,
-                      color: AppColors.accent, 
-                      bold: true,
-                    ),)
-                    
-                  
+      Center(child: Text("Blank")),
+      const HomePage(),
+      const NoAccountPage(),
+      const NoAccountPage(),
+      const NoAccountPage(),
+      const NoAccountPage(),
+      Center(child: Text("Blank")),
     ];
-  
+  } else {
+    return [
+      Center(child: Text("Blank")),
+      const HomePage(),
+      const ProfilePage(),
+      const DietPage(),
+      const HistoryPage(),
+      ReportPage(),
+      Center(child: Text("Blank")),
+    ];
+  }
+}
+
+// Return Login/Logout Button based on user login state and redirect to SSO page
+List<Widget> buttonUserLoggedInOut(BuildContext context, User? user) {
+  String logInOutText = "";
+  Icon logIcon;
+
+  if (user == null) {
+    logInOutText = "Log In";
+    logIcon = Icon(Icons.login_outlined, color: AppColors.accent, size: 24);
+  } else {
+    logInOutText = "Log Out";
+    logIcon = Icon(Icons.logout_outlined, color: AppColors.accent, size: 24);
+  }
+
+  return [
+    // Login/Logout Icon
+    logIcon,
+    // Spacing
+    const SizedBox(width: 10),
+    // Login/Logout button
+    ElevatedButton(
+      onPressed: () async {
+        if (user == null) {
+          Navigator.of(context).push(
+              // Redirect to SSO page
+              MaterialPageRoute(builder: (context) => (const SSOPage())));
+        } else {
+          // Asking if user wants to log out
+          showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                      title: Text('Are you sure you want to log out?'),
+                      actions: [
+                        TextButton(onPressed: () {}, child: Text('No')),
+                        TextButton(
+                            onPressed: () async {
+                              await FirebaseAuth.instance.signOut();
+                              Navigator.of(context)
+                                  .pop(); // Dismiss dialog after clicked
+                            },
+                            child: Text('Yes'))
+                      ]));
+        }
+      },
+      child: CustomText(
+        content: logInOutText,
+        header: true,
+        fontSize: 16,
+        color: AppColors.accent,
+        bold: true,
+      ),
+    )
+  ];
 }
