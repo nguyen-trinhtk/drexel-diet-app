@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import '../UI/widgets.dart';
-import '../UI/custom_elements.dart';
-import '../UI/colors.dart';
-import '../UI/fonts.dart';
+import 'package:code/themes/constants.dart';
+import 'package:code/themes/widgets.dart';
+// import 'package:code/user-data/meals.dart';
 
 enum Genders { male, female, nonbinary }
 

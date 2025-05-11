@@ -1,13 +1,12 @@
 // Page for user's meal Diet
-import 'package:code/UI/custom_elements.dart';
 import 'package:flutter/material.dart';
-import '../UI/colors.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:code/backend/userdata.dart';
+import 'package:code/themes/widgets.dart';
+import 'package:code/themes/constants.dart';
+import 'package:code/user-data/userdata.dart';
 
 class DietPage extends StatefulWidget {
   const DietPage({super.key});
-
   @override
   _DietPageState createState() => _DietPageState();
 }

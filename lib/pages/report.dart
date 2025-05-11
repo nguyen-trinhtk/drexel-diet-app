@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../UI/colors.dart';
-import '../backend/meals.dart';
-import '../backend/userdata.dart';
-import '../UI/custom_elements.dart';
+import 'package:code/themes/constants.dart';
+import 'package:code/themes/widgets.dart';
+import 'package:code/user-data/meals.dart';
+import 'package:code/user-data/userdata.dart';
 
 class ReportPage extends StatelessWidget {
   @override
