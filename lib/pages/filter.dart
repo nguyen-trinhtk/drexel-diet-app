@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../UI/colors.dart';
-import '../UI/custom_elements.dart';
-import '../pages/home.dart';
+import 'package:code/themes/widgets.dart';
+import 'package:code/themes/constants.dart';
+import 'package:code/data_provider.dart';
 
 Set<FoodPreference> foodPreferenceFilters = <FoodPreference>{};
 
@@ -23,8 +23,7 @@ class FoodFilterDrawer extends StatefulWidget {
   State<FoodFilterDrawer> createState() => FoodFilterDrawerState();
 }
 
-class FoodFilterDrawerState extends State<FoodFilterDrawer>
-    with ChangeNotifier {
+class FoodFilterDrawerState extends State<FoodFilterDrawer> with ChangeNotifier {
   late RangeValues _currentRangeValues;
   late double lowerBound;
   late double upperBound;
@@ -32,8 +31,10 @@ class FoodFilterDrawerState extends State<FoodFilterDrawer>
   @override
   void initState() {
     super.initState();
-    lowerBound = minCalories.toDouble();
-    upperBound = maxCalories.toDouble();
+    // Accessing minCalories and maxCalories from GlobalDataProvider
+    final globalData = Provider.of<GlobalDataProvider>(context, listen: false);
+    lowerBound = globalData.minCalories;
+    upperBound = globalData.maxCalories;
     _currentRangeValues = RangeValues(lowerBound, upperBound);
   }
 
@@ -53,6 +54,9 @@ class FoodFilterDrawerState extends State<FoodFilterDrawer>
 
   @override
   Widget build(BuildContext context) {
+    // Accessing globalData to update values on build
+    final globalData = Provider.of<GlobalDataProvider>(context);
+
     return Stack(
       children: [
         Padding(
@@ -93,26 +97,21 @@ class FoodFilterDrawerState extends State<FoodFilterDrawer>
                     fontSize: 12,
                     bold: true,
                   ),
-                  // CustomText(
-                  //   content: 'Max: ${maxCalories.toInt()}',
-                  //   fontSize: 12,
-                  //   bold: true,
-                  // ),
                 ],
               ),
               RangeSlider(
                 values: _currentRangeValues,
                 activeColor: AppColors.accent,
                 inactiveColor: AppColors.secondaryBackground,
-                min: minCalories.toDouble(),
-                max: maxCalories.toDouble(),
-                divisions: (maxCalories - minCalories).toInt(),
+                min: globalData.minCalories,
+                max: globalData.maxCalories,
+                divisions: (globalData.maxCalories - globalData.minCalories).toInt(),
                 onChanged: (RangeValues values) {
                   setState(() {
                     lowerBound = values.start
-                        .clamp(minCalories.toDouble(), maxCalories.toDouble());
+                        .clamp(globalData.minCalories, globalData.maxCalories);
                     upperBound = values.end
-                        .clamp(minCalories.toDouble(), maxCalories.toDouble());
+                        .clamp(globalData.minCalories, globalData.maxCalories);
                     _currentRangeValues = RangeValues(lowerBound, upperBound);
                   });
                 },
@@ -186,8 +185,8 @@ class FoodFilterDrawerState extends State<FoodFilterDrawer>
                       onPressed: () {
                         setState(() {
                           foodPreferenceFilters.clear();
-                          lowerBound = minCalories.toDouble();
-                          upperBound = maxCalories.toDouble();
+                          lowerBound = globalData.minCalories;
+                          upperBound = globalData.maxCalories;
                           _currentRangeValues =
                               RangeValues(lowerBound, upperBound);
                         });

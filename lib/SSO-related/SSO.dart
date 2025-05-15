@@ -1,37 +1,12 @@
 // SSO Login Page
-import 'package:code/UI/custom_elements.dart';
+import 'package:code/themes/widgets.dart';
+import 'package:code/themes/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
-// import 'package:getwidget/getwidget.dart';
-import '../../../UI/colors.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:universal_html/html.dart' as html; // For refreshing web page
-
-import 'UI/fonts.dart';
-
-// Future<void> main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   await Firebase.initializeApp(
-//     options: DefaultFirebaseOptions.currentPlatform,
-//   );
-//   runApp(const MyApp());
-// }
-
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-  
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: SSOPage(),
-//       debugShowCheckedModeBanner: false,
-//     );
-//   }
-// }
+import 'package:universal_html/html.dart' as html;
 
 class SSOPage extends StatefulWidget {
   const SSOPage({super.key});
@@ -63,11 +38,9 @@ class _SSOPageState extends State<SSOPage> {
               fontSize: 20,
               content: "Your personalized Drexel Dining Assistant",
               ),
-
-            const SizedBox(height: 15), // spacing between the buttons
+            const SizedBox(height: 15),
             GFButton(
               onPressed: () async {
-                // Define the action when the Microsoft button is pressed
                 final providerMS = OAuthProvider("microsoft.com");
                 providerMS.setCustomParameters({
                   "tenant": dotenv.env['SSO_TENANT'] ?? '',
@@ -89,10 +62,9 @@ class _SSOPageState extends State<SSOPage> {
                 fontSize: 16,
               ),
             ),
-            const SizedBox(height: 10), // spacing between the buttons
+            const SizedBox(height: 10),
             GFButton(
               onPressed: () async {
-                // Define the action when the Google button is pressed
                 final providerG = OAuthProvider("google.com");
                 await FirebaseAuth.instance.signInWithPopup(providerG);
                 html.window.location.reload();
@@ -115,11 +87,5 @@ class _SSOPageState extends State<SSOPage> {
         ),
       ),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // Additional init code if needed
   }
 }

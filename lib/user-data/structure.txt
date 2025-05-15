@@ -1,0 +1,24 @@
+1. User Data
+user_list = {
+    'id' : String id, 
+    'name' : String name, 
+    'DOB' : String 'MM-DD-YYYY', 
+    'gender' : String (female/male/not specified), 
+    'height' : int 1XX (in inches, user input in ft + in -> convert with parse int), 
+    'weight-progress' : {
+        DateTime date : double Weight, 
+        DateTime date : double Weight,
+        DateTime date : double Weight, -> this is the current weight
+    },
+    'goal weight' : int XXX, -> pounds
+    'start date' : 'MM-DD-YYYY',
+    'goal date' : 'MM-DD-YYYY' -> convert to days to goal, 
+    'goal calories' : int XXXX,
+    'goal protein' : int, 
+    'goal carbs' : int, 
+    'goal fat' : int,
+    'meal history' : Map of meal history,
+}
+
+
+

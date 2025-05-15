@@ -1,24 +1,12 @@
-import 'package:code/UI/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'filter.dart';
-import '../UI/colors.dart';
-import '../backend/meals.dart';
-import '../UI/custom_elements.dart';
-import '../UI/widgets.dart';
-
-Map<String, Map<String, dynamic>> loggedDishes = {};
-List<Widget> logBarCards = [];
-int totalCalories = 0;
-int totalCarbs = 0;
-int totalFat = 0;
-int totalProtein = 0;
-int mealIndex = 0;
-
-double minCalories = 0;
-double maxCalories = 0;
+import 'package:code/themes/constants.dart';
+import 'package:code/themes/widgets.dart';
+import 'package:code/user-data/meals.dart';
+import 'package:code/data_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,7 +17,12 @@ class HomePage extends StatefulWidget {
 
 class _HomepageState extends State<HomePage> {
   bool isLogBarExpanded = false;
-  Map<String, Map<dynamic, dynamic>> jsonData = {};
+  final Map<String, Map<String, dynamic>> _loggedDishes = {};
+  int _totalCalories = 0;
+  int _totalCarbs = 0;
+  int _totalFat = 0;
+  int _totalProtein = 0;
+  int _mealIndex = 0;
 
   @override
   void initState() {
@@ -37,161 +30,127 @@ class _HomepageState extends State<HomePage> {
     loadJsonAsset('menu');
   }
 
-  Future<void> loadJsonAsset(filename) async {
+  Future<void> loadJsonAsset(String filename) async {
+    final globalData = Provider.of<GlobalDataProvider>(context, listen: false);
     final String jsonString =
         await rootBundle.loadString('lib/backend/webscraping/$filename.json');
-    var data = jsonDecode(jsonString);
-    setState(() {
-      jsonData[filename] = data;
-
-      if (jsonData['menu'] != null) {
-        minCalories = findMinCalories(jsonData['menu']).toDouble();
-        maxCalories = findMaxCalories(jsonData['menu']).toDouble();
-      }
-    });
+    final data = jsonDecode(jsonString);
+    if (filename == 'menu') {
+      globalData.setMenuData(data);
+    }
   }
 
   int findCardsPerRow(double viewWidth, double minCardWidth) {
     return viewWidth ~/ minCardWidth;
   }
 
-  int findMinCalories(Map<dynamic, dynamic>? menu) {
-    if (menu == null || menu.isEmpty) return 0;
-
-    return menu.values
-        .map((item) => int.tryParse(item['Calories'] ?? '0') ?? 0)
-        .reduce((a, b) => a < b ? a : b);
-  }
-
-  int findMaxCalories(Map<dynamic, dynamic>? menu) {
-    if (menu == null || menu.isEmpty) return 0;
-
-    return menu.values
-        .map((item) => int.tryParse(item['Calories'] ?? '0') ?? 0)
-        .reduce((a, b) => a > b ? a : b);
-  }
-
   void appendLog(
       String foodName, int calories, int protein, int carbs, int fat) {
-    setState(() {
-      if (loggedDishes.containsKey(foodName)) {
-        loggedDishes[foodName]!['quantity'] =
-            (loggedDishes[foodName]!['quantity'] ?? 0) + 1;
-        loggedDishes[foodName]!['nutritions']['calories'] =
-            (loggedDishes[foodName]!['nutritions']['calories'] ?? 0) + calories;
-        loggedDishes[foodName]!['nutritions']['protein'] =
-            (loggedDishes[foodName]!['nutritions']['protein'] ?? 0) + protein;
-        loggedDishes[foodName]!['nutritions']['carbs'] =
-            (loggedDishes[foodName]!['nutritions']['carbs'] ?? 0) + carbs;
-        loggedDishes[foodName]!['nutritions']['fat'] =
-            (loggedDishes[foodName]!['nutritions']['fat'] ?? 0) + fat;
-      } else {
-        loggedDishes[foodName] = {
-          'quantity': 1,
-          'nutritions': {
-            'calories': calories,
-            'protein': protein,
-            'carbs': carbs,
-            'fat': fat,
-          }
-        };
-      }
-    });
-  }
+    final previous = Map<String, dynamic>.from(_loggedDishes[foodName] ?? {});
+    final previousQuantity = previous['quantity'] ?? 0;
+    final previousNutritions = Map<String, int>.from(previous['nutritions'] ??
+        {
+          'calories': 0,
+          'protein': 0,
+          'carbs': 0,
+          'fat': 0,
+        });
 
-  void buildLogCards() {
-    logBarCards.clear();
-    loggedDishes.forEach((key, value) {
-      logBarCards.add(FoodItemInfo(
-          foodName: key,
-          quantity: value['quantity'],
-          nutritionInfo: value['nutritions']));
-    });
-  }
+    final newQuantity = previousQuantity + 1;
+    final newNutritions = {
+      'calories': previousNutritions['calories']! + calories,
+      'protein': previousNutritions['protein']! + protein,
+      'carbs': previousNutritions['carbs']! + carbs,
+      'fat': previousNutritions['fat']! + fat,
+    };
 
-  void updateTotal(int calories, int carbs, int fat, int protein) {
     setState(() {
-      totalCalories += calories;
-      totalCarbs += carbs;
-      totalFat += fat;
-      totalProtein += protein;
+      _loggedDishes[foodName] = {
+        'quantity': newQuantity,
+        'nutritions': newNutritions,
+      };
+      _totalCalories += calories;
+      _totalProtein += protein;
+      _totalCarbs += carbs;
+      _totalFat += fat;
     });
   }
 
   void logMeal() {
+    final globalData = Provider.of<GlobalDataProvider>(context, listen: false);
+    final mealsProvider = Provider.of<MealsProvider>(context, listen: false);
+
+    final now = DateTime.now();
+    final _date =
+        "${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}-${now.year}";
+    final _time =
+        "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}";
+    final _name = now.hour >= 16
+        ? "Dinner"
+        : now.hour >= 11
+            ? "Lunch"
+            : "Breakfast";
+
+    final loggedCopy = Map<String, Map<String, dynamic>>.from(_loggedDishes);
+    final entry = {
+      "name": _name,
+      "date": _date,
+      "time": _time,
+      "totalCalories": _totalCalories,
+      "totalProtein": _totalProtein,
+      "totalCarbs": _totalCarbs,
+      "totalFat": _totalFat,
+      "dishes": loggedCopy,
+    };
+
+    mealsProvider.updateDailyTotalCalories(
+        mealsProvider.dailyTotalCalories + _totalCalories);
+    mealsProvider.updateDailyTotalProtein(
+        mealsProvider.dailyTotalProtein + _totalProtein);
+    mealsProvider
+        .updateDailyTotalCarbs(mealsProvider.dailyTotalCarbs + _totalCarbs);
+    mealsProvider.updateDailyTotalFat(mealsProvider.dailyTotalFat + _totalFat);
+
+    globalData.addMealEntry(_mealIndex.toString(), entry);
+
     setState(() {
-      final now = DateTime.now();
-      String _date =
-          '${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}-${now.year.toString().padLeft(4, '0')}';
-      String _time =
-          '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
-      String _name;
-      if (now.hour >= 16) {
-        _name = "Dinner";
-      } else if (now.hour >= 11) {
-        _name = "Lunch";
-      } else {
-        _name = "Breakfast";
-      }
-
-      Map<String, Map<String, dynamic>> loggedDishesCopy = {};
-      loggedDishes.forEach((key, value) {
-        loggedDishesCopy[key] = Map.from(value);
-      });
-
-      final entry = <String, dynamic>{
-        "name": _name,
-        "date": _date,
-        "time": _time,
-        "totalCalories": totalCalories,
-        "totalProtein": totalProtein,
-        "totalCarbs": totalCarbs,
-        "totalFat": totalFat,
-        "dishes": loggedDishesCopy,
-      };
-
-      // Use MealsProvider to update daily totals
-      final mealsProvider = Provider.of<MealsProvider>(context, listen: false);
-      mealsProvider.updateDailyTotalCalories(
-          mealsProvider.dailyTotalCalories + totalCalories);
-      mealsProvider.updateDailyTotalProtein(
-          mealsProvider.dailyTotalProtein + totalProtein);
-      mealsProvider
-          .updateDailyTotalCarbs(mealsProvider.dailyTotalCarbs + totalCarbs);
-      mealsProvider.updateDailyTotalFat(mealsProvider.dailyTotalFat + totalFat);
-
-      mealHistory[mealIndex.toString()] = entry;
-      buildHistoryCards();
-      mealIndex += 1;
-      resetLog();
+      _mealIndex += 1;
+      _resetLog();
     });
   }
 
-  void resetLog() {
-    setState(() {
-      loggedDishes.clear();
-      logBarCards.clear();
-      totalCalories = 0;
-      totalCarbs = 0;
-      totalProtein = 0;
-      totalFat = 0;
-    });
+  void _resetLog() {
+    _loggedDishes.clear();
+    _totalCalories = 0;
+    _totalCarbs = 0;
+    _totalProtein = 0;
+    _totalFat = 0;
+  }
+
+  List<Widget> get logBarCards {
+    return _loggedDishes.entries.map((entry) {
+      return FoodItemInfo(
+        foodName: entry.key,
+        quantity: entry.value['quantity'],
+        nutritionInfo: entry.value['nutritions'],
+      );
+    }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    double viewWidth = MediaQuery.sizeOf(context).width;
-
+    final globalData = context.watch<GlobalDataProvider>();
+    final viewWidth = MediaQuery.of(context).size.width;
     context.watch<FoodFilterDrawerState>();
 
     Map<dynamic, dynamic>? filteredMenu = {};
+    final menuData = globalData.menuData;
 
     if (foodPreferenceFilters.isEmpty) {
-      filteredMenu = jsonData['menu'];
+      filteredMenu = menuData;
     } else {
       var indexNum = 0;
-
-      jsonData['menu']?.forEach((index, item) {
+      menuData.forEach((index, item) {
         for (FoodPreference preference in foodPreferenceFilters) {
           if (item[preference.name] == 1) {
             filteredMenu?[indexNum.toString()] = item;
@@ -207,89 +166,71 @@ class _HomepageState extends State<HomePage> {
         Expanded(
           child: Scaffold(
             appBar: AppBar(
+              backgroundColor: AppColors.primaryBackground,
               scrolledUnderElevation: 0,
-              backgroundColor: AppColors.transparentBlack,
-              title: Container(
-                padding: const EdgeInsets.only(left: 20),
-                child: SearchBarTheme(
-                  data: SearchBarThemeData(
-                    backgroundColor: WidgetStateProperty.all(Colors.white),
-                    overlayColor: WidgetStateProperty.all(Colors.transparent),
-                    elevation: WidgetStateProperty.all(0),
-                    side: WidgetStateProperty.all(
-                      BorderSide(width: 1, color: AppColors.primaryText),
-                    ),
-                    constraints:
-                        BoxConstraints.expand(width: viewWidth, height: 45),
-                  ),
-                  child: SearchBar(
-                    hintText: "Search",
-                    hintStyle: WidgetStateProperty.all(
-                      TextStyle(
-                        color: AppColors.secondaryText,
-                        fontFamily: AppFonts.headerFont,
-                      ),
-                    ),
-                    textStyle: WidgetStateProperty.all(
-                      TextStyle(
-                        color: AppColors.primaryText,
-                        fontFamily: AppFonts.headerFont,
-                      ),
-                    ),
-                    leading: Icon(
-                      Icons.search,
-                      color: AppColors.primaryText,
-                    ),
-                  ),
+              title: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: SearchBar(
+                  hintText: "Search",
+                  hintStyle: WidgetStateProperty.all(TextStyle(
+                    color: AppColors.secondaryText,
+                    fontFamily: AppFonts.headerFont,
+                  )),
+                  textStyle: WidgetStateProperty.all(TextStyle(
+                    color: AppColors.primaryText,
+                    fontFamily: AppFonts.headerFont,
+                  )),
+                  backgroundColor: WidgetStateProperty.all(AppColors.white),
+                  overlayColor: WidgetStateProperty.all(AppColors.transparentWhite),
+                  autoFocus: false,
+                  elevation: WidgetStateProperty.all(0),
+                  leading: Icon(Icons.search, color: AppColors.primaryText),
+                  shape: WidgetStateProperty.all(RoundedRectangleBorder(side: BorderSide(color: AppColors.primaryText, width: 1.0), borderRadius: BorderRadius.circular(100))),
                 ),
               ),
               actions: [
-                Container(
+                Padding(
                   padding: const EdgeInsets.only(right: 26),
                   child: CustomButton(
                     text: "Filters",
                     bold: true,
                     height: 45,
                     fontSize: 20,
-                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     onPressed: () {
                       showDialog(
                         context: context,
-                        builder: (BuildContext context) {
-                          return Dialog(
-                            backgroundColor: AppColors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
-                              side: BorderSide(
-                                color: AppColors.primaryText,
-                                width: 1.5,
-                              ),
-                            ),
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.45,
-                              child: FoodFilterDrawer(),
-                            ),
-                          );
-                        },
+                        builder: (_) => Dialog(
+                          backgroundColor: AppColors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                            side: BorderSide(
+                                color: AppColors.primaryText, width: 1.5),
+                          ),
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.45,
+                            child: FoodFilterDrawer(),
+                          ),
+                        ),
                       );
                     },
                   ),
                 ),
-                if (!isLogBarExpanded)
-                  IconButton(
-                    icon: Icon(
-                      Icons.menu,
-                      color: AppColors.primaryText,
-                    ),
-                    tooltip: isLogBarExpanded
-                        ? "Hide Logged Dishes"
-                        : "Show Logged Dishes",
-                    onPressed: () {
-                      setState(() {
-                        isLogBarExpanded = !isLogBarExpanded;
-                      });
-                    },
+                // Collapsible Log Dish Bar
+                IconButton(
+                  icon: Icon(
+                    isLogBarExpanded ? Icons.close : Icons.menu,
+                    color: AppColors.primaryText,
                   ),
+                  tooltip: isLogBarExpanded
+                      ? "Close Logged Dishes"
+                      : "Show Logged Dishes",
+                  onPressed: () {
+                    setState(() {
+                      isLogBarExpanded = !isLogBarExpanded;
+                    });
+                  },
+                ),
                 const SizedBox(width: 16),
               ],
             ),
@@ -303,29 +244,25 @@ class _HomepageState extends State<HomePage> {
                   mainAxisSpacing: 20,
                   childAspectRatio: isLogBarExpanded ? 1.2 : 1.4,
                 ),
-                itemCount: filteredMenu != null ? filteredMenu.length : 0,
-                itemBuilder: (BuildContext context, int index) {
-                  if (filteredMenu == null) return SizedBox();
-                  String strIndex = index.toString();
-                  final item = filteredMenu[strIndex];
-                  if (item == null) return SizedBox();
+                itemCount: filteredMenu.length,
+                itemBuilder: (context, index) {
+                  final strIndex = index.toString();
+                  final item = filteredMenu?[strIndex];
+                  if (item == null) return const SizedBox();
 
-                  int? calories = int.tryParse(item['Calories']) ?? 0;
-                  String foodName = item['Name'];
-                  int? protein = int.tryParse(item['protein']
-                          .replaceAll(' g', '')
-                          .replaceAll('less than ', '')
-                          .trim()) ??
+                  final foodName = item['Name'];
+                  final calories = int.tryParse(item['Calories']) ?? 0;
+                  final protein = int.tryParse(
+                          item['protein']?.replaceAll(RegExp(r'[^\d]'), '') ??
+                              '0') ??
                       0;
-                  int? carbs = int.tryParse(item['totalCarbohydrates']
-                          .replaceAll(' g', '')
-                          .replaceAll('less than ', '')
-                          .trim()) ??
+                  final carbs = int.tryParse(item['totalCarbohydrates']
+                              ?.replaceAll(RegExp(r'[^\d]'), '') ??
+                          '0') ??
                       0;
-                  int fat = int.tryParse(item['totalFat']
-                          .replaceAll(' g', '')
-                          .replaceAll('less than ', '')
-                          .trim()) ??
+                  final fat = int.tryParse(
+                          item['totalFat']?.replaceAll(RegExp(r'[^\d]'), '') ??
+                              '0') ??
                       0;
 
                   return FoodCard(
@@ -335,11 +272,7 @@ class _HomepageState extends State<HomePage> {
                     fontSize: isLogBarExpanded ? 14 : 18,
                     onAddPressed: () {
                       appendLog(foodName, calories, protein, carbs, fat);
-                      buildLogCards();
-                      updateTotal(calories, carbs, fat, protein);
-                      setState(() {
-                        isLogBarExpanded = true;
-                      });
+                      setState(() => isLogBarExpanded = true);
                     },
                   );
                 },
@@ -358,194 +291,62 @@ class _HomepageState extends State<HomePage> {
               bottomLeft: Radius.circular(25),
             ),
           ),
-          child: Stack(
-            children: [
-              if (isLogBarExpanded)
-                Padding(
+          child: isLogBarExpanded
+              ? Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 20),
                       Center(
-                        child: CustomText(
-                          content: 'Dishes',
-                          fontSize: 24,
-                          header: true,
-                        ),
-                      ),
+                          child: CustomText(
+                              content: 'Dishes', fontSize: 24, header: true)),
                       const SizedBox(height: 10),
-                      Container(
-                        height: 2,
-                        color: AppColors.primaryText,
-                      ),
+                      Container(height: 2, color: AppColors.primaryText),
                       Expanded(
                         child: Container(
                           padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                          ),
-                          width: isLogBarExpanded
-                              ? MediaQuery.of(context).size.width * 0.225
-                              : 0,
+                          color: AppColors.white,
+                          width: double.infinity,
                           child: Scrollbar(
                             thumbVisibility: false,
                             child: SingleChildScrollView(
-                              child: Column(
-                                children: logBarCards,
-                              ),
-                            ),
+                                child: Column(children: logBarCards)),
                           ),
                         ),
                       ),
                       const SizedBox(height: 10),
-                      Container(
-                        height: 2,
-                        color: AppColors.primaryText,
-                      ),
+                      Container(height: 2, color: AppColors.primaryText),
                       const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CustomText(
-                              content: 'Calories',
-                              fontSize: 14,
-                              header: true,
-                            ),
-                          ),
-                          Container(
-                            width: 50,
-                            alignment: Alignment.centerRight,
-                            child: CustomText(
-                              content: totalCalories.toString(),
-                              fontSize: 14,
-                              header: true,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CustomText(
-                              content: 'Protein',
-                              fontSize: 14,
-                              header: true,
-                            ),
-                          ),
-                          Container(
-                            width: 50,
-                            alignment: Alignment.centerRight,
-                            child: CustomText(
-                              content: totalProtein.toString(),
-                              fontSize: 14,
-                              header: true,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CustomText(
-                              content: 'Carbs',
-                              fontSize: 14,
-                              header: true,
-                            ),
-                          ),
-                          Container(
-                            width: 50,
-                            alignment: Alignment.centerRight,
-                            child: CustomText(
-                              content: totalCarbs.toString(),
-                              fontSize: 14,
-                              header: true,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CustomText(
-                              content: 'Fat',
-                              fontSize: 14,
-                              header: true,
-                            ),
-                          ),
-                          Container(
-                            width: 50,
-                            alignment: Alignment.centerRight,
-                            child: CustomText(
-                              content: totalFat.toString(),
-                              fontSize: 14,
-                              header: true,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 20),
-                        child: Center(
-                          child: Column(
+                      ...[
+                        ['Calories', _totalCalories],
+                        ['Protein', _totalProtein],
+                        ['Carbs', _totalCarbs],
+                        ['Fat', _totalFat],
+                      ].map((e) => Row(
                             children: [
-                              CustomButton(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 10),
-                                header: true,
-                                onPressed: () => setState(() {
-                                  logMeal();
-                                  isLogBarExpanded = false;
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text('Meal Logged!')));
-                                }),
-                                text: 'Log Meal',
-                              ),
-                              const SizedBox(height: 10),
-                              CustomButton(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 10),
-                                header: true,
-                                color: AppColors.white,
-                                borderColor: AppColors.primaryText,
-                                hoverColor: AppColors.tertiaryText,
-                                textColor: AppColors.primaryText,
-                                onPressed: resetLog,
-                                text: 'Reset',
-                              ),
+                              Expanded(
+                                  child: CustomText(
+                                      content: e[0] as String,
+                                      fontSize: 14,
+                                      header: true)),
+                              SizedBox(
+                                  width: 50,
+                                  child: CustomText(
+                                      content: e[1].toString(),
+                                      fontSize: 14,
+                                      header: true)),
                             ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
+                          )),
+                      const SizedBox(height: 12),
+                      Center(
+                          child: CustomButton(
+                              text: "Log Meal", onPressed: logMeal)),
+                      const SizedBox(height: 12),
                     ],
                   ),
-                ),
-              Positioned(
-                top: 15,
-                left: 15,
-                child: IconButton(
-                  icon: Icon(
-                    isLogBarExpanded
-                        ? Icons.arrow_forward_ios
-                        : Icons.arrow_back_ios,
-                    color: AppColors.primaryText,
-                    size: 20,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      isLogBarExpanded = !isLogBarExpanded;
-                    });
-                  },
-                  style: IconButton.styleFrom(
-                    overlayColor: (Colors.transparent),
-                  ),
-                ),
-              ),
-            ],
-          ),
+                )
+              : null,
         ),
       ],
     );
