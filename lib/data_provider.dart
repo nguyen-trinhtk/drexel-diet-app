@@ -3,13 +3,13 @@ import 'package:code/themes/widgets.dart';
 
 class GlobalDataProvider with ChangeNotifier {
   Map<String, dynamic> _menuData = {};
-  Map<String, dynamic> _mealHistory = {};
+  final List<Map<String, dynamic>> _mealHistory = [];
   List<Widget> _historyCards = [];
   double _minCalories = 0;
   double _maxCalories = 0;
 
   Map<String, dynamic> get menuData => _menuData;
-  Map<String, dynamic> get mealHistory => _mealHistory;
+  List<Map<String, dynamic>> get mealHistory => _mealHistory;
   List<Widget> get historyCards => _historyCards;
   double get minCalories => _minCalories;
   double get maxCalories => _maxCalories;
@@ -21,15 +21,16 @@ class GlobalDataProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void addMealEntry(String key, Map<String, dynamic> entry) {
-    _mealHistory[key] = entry;
+  void addMealEntry(Map<String, dynamic> entry) {
+    _mealHistory.add(entry);
     buildHistoryCards();
     notifyListeners();
   }
+
   void buildHistoryCards() {
     _historyCards.clear();
-    _mealHistory.entries.toList().reversed.forEach((entry) {
-      final value = entry.value;
+    _mealHistory.toList().reversed.forEach((entry) {
+      final value = entry;
       _historyCards.add(ThemedHistoryCard(
         date: value['date'],
         time: value['time'],

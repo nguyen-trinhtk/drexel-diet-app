@@ -22,8 +22,7 @@ class _HomepageState extends State<HomePage> {
   int _totalCarbs = 0;
   int _totalFat = 0;
   int _totalProtein = 0;
-  int _mealIndex = 0;
-
+  
   @override
   void initState() {
     super.initState();
@@ -111,10 +110,9 @@ class _HomepageState extends State<HomePage> {
         .updateDailyTotalCarbs(mealsProvider.dailyTotalCarbs + _totalCarbs);
     mealsProvider.updateDailyTotalFat(mealsProvider.dailyTotalFat + _totalFat);
 
-    globalData.addMealEntry(_mealIndex.toString(), entry);
+    globalData.addMealEntry(entry); // Updated to add directly to a list
 
     setState(() {
-      _mealIndex += 1;
       _resetLog();
     });
   }
@@ -181,11 +179,15 @@ class _HomepageState extends State<HomePage> {
                     fontFamily: AppFonts.headerFont,
                   )),
                   backgroundColor: WidgetStateProperty.all(AppColors.white),
-                  overlayColor: WidgetStateProperty.all(AppColors.transparentWhite),
+                  overlayColor:
+                      WidgetStateProperty.all(AppColors.transparentWhite),
                   autoFocus: false,
                   elevation: WidgetStateProperty.all(0),
                   leading: Icon(Icons.search, color: AppColors.primaryText),
-                  shape: WidgetStateProperty.all(RoundedRectangleBorder(side: BorderSide(color: AppColors.primaryText, width: 1.0), borderRadius: BorderRadius.circular(100))),
+                  shape: WidgetStateProperty.all(RoundedRectangleBorder(
+                      side:
+                          BorderSide(color: AppColors.primaryText, width: 1.0),
+                      borderRadius: BorderRadius.circular(100))),
                 ),
               ),
               actions: [
