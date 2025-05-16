@@ -35,6 +35,9 @@ class _ProfilePageState extends State<ProfilePage> {
             spacing: 24,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              SizedBox(
+              height: MediaQuery.of(context).size.height*0.35,
+              child:
               Expanded(
               flex: 10,
               child:
@@ -75,8 +78,10 @@ class _ProfilePageState extends State<ProfilePage> {
                           )
                         )
                       ]
-                  ),),),
-                  
+                  ),),)),
+                  SizedBox(
+                  height: MediaQuery.of(context).size.height*0.50,
+                  child:
                   Expanded(
                   flex: 15,
                   child:
@@ -87,6 +92,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   padding:EdgeInsets.only(left:54, right:54,),
                   child: 
                   Column(
+                    mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Row(
@@ -133,7 +139,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             trackHeight: 2,
                             trackShape: RectangularSliderTrackShape()
                           ), 
-                          child:Slider(
+                          child:RepaintBoundary(child:Slider(
                             value: selectedIndex.toDouble(),
                             min: 0,
                             max: 5,
@@ -144,7 +150,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     selectedIndex = value.toInt();
                               });
                             },
-                          ),
+                          )),
                         )
                       ]
                     ),
@@ -152,6 +158,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children:[
                         CustomText(content:"Gender", fontSize: 24, ),
+                        RepaintBoundary(
+                        child:
                         SegmentedButton<Genders>(
                           showSelectedIcon: false,
                           style: SegmentedButton.styleFrom(
@@ -175,11 +183,11 @@ class _ProfilePageState extends State<ProfilePage> {
                               selection = newSelection;
                             });
                           },
-                        )
+                        ))
                       ]
                     )
                   ])
-              )))
+              ))))
             ],)
           ),
           Flexible(
@@ -188,9 +196,12 @@ class _ProfilePageState extends State<ProfilePage> {
               spacing: 24,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children:[
-
+              
               Expanded(
               flex:25,
+              child:
+              Container(
+              decoration: BoxDecoration(boxShadow:[BoxShadow(color: AppColors.accent, offset: Offset(10, 10)),], borderRadius: BorderRadius.circular(40)),
               child:
               ThemedCard(
                 padding: EdgeInsets.all(8),
@@ -220,10 +231,13 @@ class _ProfilePageState extends State<ProfilePage> {
                           )
                         
                       ]
-                  ),),),
+                  ),),)),
               Expanded(
               flex:25,
               child:
+              Container(
+                decoration: BoxDecoration(boxShadow:[BoxShadow(color: AppColors.accent, offset: Offset(10, 10)),], borderRadius: BorderRadius.circular(40)),
+                child:
               ThemedCard(
                 padding: EdgeInsets.all(8),
                 child: 
@@ -252,10 +266,13 @@ class _ProfilePageState extends State<ProfilePage> {
                           )
                         
                       ]
-                  ),),),
+                  ),),)),
               Expanded(
               flex:25,
               child:
+              Container(
+                decoration: BoxDecoration(boxShadow:[BoxShadow(color: AppColors.accent, offset: Offset(10, 10)),], borderRadius: BorderRadius.circular(40)),
+                child:
               ThemedCard(
                 padding: EdgeInsets.all(8),
                 child: 
@@ -284,10 +301,13 @@ class _ProfilePageState extends State<ProfilePage> {
                           )
                         
                       ]
-                  ),),),
+                  ),),)),
               Expanded(
               flex:25,
               child:
+              Container(
+                decoration: BoxDecoration(boxShadow:[BoxShadow(color: AppColors.accent, offset: Offset(10, 10)),], borderRadius: BorderRadius.circular(40)),
+                child:
               ThemedCard(
                 padding: EdgeInsets.all(8),
                 child: 
@@ -316,7 +336,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           )
                         
                       ]
-                  ),),)
+                  ),),))
 
               ]
             )
