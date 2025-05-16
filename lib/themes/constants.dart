@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 
+class AppFonts {
+  static const String headerFont = 'KronaOne';
+  static const String textFont = 'Kodchasan';
+  static const regularWeight = FontWeight.w400;
+  static const boldWeight = FontWeight.w700; // Kodchasan 700 for buttons
+}
+
 class AppColors {
   static const primaryBackground = Color(0xFFFFECED);
   static const secondaryBackground = Color(0xFFFFCDD0);
