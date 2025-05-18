@@ -61,12 +61,12 @@ class FoodFilterDrawerState extends State<FoodFilterDrawer> with ChangeNotifier 
     return Stack(
       children: [
         Padding(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(MediaQuery.of(context).size.height*0.1),
           child: Column(
+            spacing: MediaQuery.of(context).size.height*0.02,
             children: [
-              const SizedBox(height: 10),
               Container(
-                height: 40,
+                height: MediaQuery.of(context).size.height*0.04,
                 alignment: Alignment.center,
                 child: CustomText(
                   content: 'Filters',
@@ -77,7 +77,7 @@ class FoodFilterDrawerState extends State<FoodFilterDrawer> with ChangeNotifier 
                 ),
               ),
               Container(
-                height: 40,
+                height: MediaQuery.of(context).size.height*0.04,
                 alignment: Alignment.center,
                 child: CustomText(
                   content: 'Calorie Range',
@@ -117,9 +117,8 @@ class FoodFilterDrawerState extends State<FoodFilterDrawer> with ChangeNotifier 
                   });
                 },
               ),
-              const SizedBox(height: 40),
               Container(
-                height: 40,
+                height: MediaQuery.of(context).size.height*0.04,
                 alignment: Alignment.center,
                 child: CustomText(
                   content: 'Food Preferences',
@@ -165,7 +164,6 @@ class FoodFilterDrawerState extends State<FoodFilterDrawer> with ChangeNotifier 
                   );
                 }).toList(),
               ),
-              const SizedBox(height: 80),
               Center(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -175,13 +173,12 @@ class FoodFilterDrawerState extends State<FoodFilterDrawer> with ChangeNotifier 
                         Navigator.pop(context);
                         context.read<FoodFilterDrawerState>().notifyListeners();
                       },
-                      padding: const EdgeInsets.all(10),
+                      padding: EdgeInsets.all(MediaQuery.of(context).size.height*0.01),
                       text: 'Apply Filters',
                       header: true,
                       fontSize: 12,
                       textColor: AppColors.white,
                     ),
-                    const SizedBox(width: 10),
                     CustomButton(
                       onPressed: () {
                         setState(() {
@@ -192,7 +189,7 @@ class FoodFilterDrawerState extends State<FoodFilterDrawer> with ChangeNotifier 
                               RangeValues(lowerBound, upperBound);
                         });
                       },
-                      padding: const EdgeInsets.all(10),
+                      padding: EdgeInsets.all(MediaQuery.of(context).size.height*0.01),
                       color: AppColors.white,
                       borderColor: AppColors.primaryText,
                       hoverColor: AppColors.tertiaryText,
