@@ -17,8 +17,9 @@ class _DietPageState extends State<DietPage> {
     return Scaffold(
       backgroundColor: AppColors.primaryBackground,
       body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 50),
+        padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height*.04, horizontal: MediaQuery.of(context).size.width*.04,),
         child: Column(
+          spacing: MediaQuery.of(context).size.height*0.02,
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -27,14 +28,15 @@ class _DietPageState extends State<DietPage> {
               header: true,
               fontSize: 30,
             ),
-            const SizedBox(height: 30),
             Expanded(
               child: Row(
+                spacing: MediaQuery.of(context).size.width*0.02,
                 children: [
                   // Left Column
                   Expanded(
                     flex: 2,
                     child: Column(
+                      spacing: MediaQuery.of(context).size.height*.02,
                       children: [
                         // Calories Container
                         Expanded(
@@ -65,7 +67,6 @@ class _DietPageState extends State<DietPage> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 10),
                         Expanded(
                           flex: 1,
                           child: Container(
@@ -121,8 +122,6 @@ class _DietPageState extends State<DietPage> {
                             ),
                           ),
                         ),
-
-                        const SizedBox(height: 10),
                         // Achieve By Container
                         Expanded(
                           flex: 1,
@@ -182,7 +181,6 @@ class _DietPageState extends State<DietPage> {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 10),
                   // Right Container
                   Expanded(
                     flex: 5,
@@ -193,18 +191,20 @@ class _DietPageState extends State<DietPage> {
                         border: Border.all(color: AppColors.primaryText),
                       ),
                       child: Column(
+                        spacing: MediaQuery.of(context).size.height*.02,
                         children: [
-                          const SizedBox(height: 10),
-                          CustomText(
-                            content:
-                                'Current weight: ${weightProgress.values.last} lbs',
-                            header: true,
-                            color: AppColors.accent,
+                          Padding(
+                            padding: EdgeInsets.only(top:MediaQuery.of(context).size.height*0.01),
+                            child:CustomText(
+                              content:
+                                  'Current weight: ${weightProgress.values.last} lbs',
+                              header: true,
+                              color: AppColors.accent,
+                            ),
                           ),
-                          const SizedBox(height: 10),
                           Expanded(
                             child: Padding(
-                              padding: const EdgeInsets.all(16.0),
+                              padding: EdgeInsets.all(MediaQuery.of(context).size.height*.025),
                               child: LineChart(
                                 LineChartData(
                                   gridData: FlGridData(
@@ -297,24 +297,22 @@ class _DietPageState extends State<DietPage> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
             Row(
               children: [
                 Expanded(
                   flex: 1,
                   child: CustomButton(
                     text: 'Update current weight',
-                    padding: const EdgeInsets.all(10),
+                    padding: EdgeInsets.all(MediaQuery.of(context).size.height*0.02),
                     header: true,
                     onPressed: () => print('Update current weight pressed'),
                   ),
                 ),
-                const SizedBox(width: 30),
                 Expanded(
                   flex: 1,
                   child: CustomButton(
                     text: 'Reset goal',
-                    padding: const EdgeInsets.all(10),
+                    padding:EdgeInsets.all(MediaQuery.of(context).size.height*0.02),
                     header: true,
                     color: AppColors.white,
                     textColor: AppColors.primaryText,
