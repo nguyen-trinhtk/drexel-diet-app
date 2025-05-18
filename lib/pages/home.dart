@@ -26,7 +26,7 @@ class _HomepageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    loadJsonAsset('menu');
+    loadJsonAsset('urban');
   }
 
   Future<void> loadJsonAsset(String filename) async {
@@ -34,7 +34,7 @@ class _HomepageState extends State<HomePage> {
     final String jsonString =
         await rootBundle.loadString('lib/backend/webscraping/$filename.json');
     final data = jsonDecode(jsonString);
-    if (filename == 'menu') {
+    if (filename == 'urban') {
       globalData.setMenuData(data);
     }
   }
