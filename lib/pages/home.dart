@@ -167,7 +167,7 @@ class _HomepageState extends State<HomePage> {
               backgroundColor: AppColors.primaryBackground,
               scrolledUnderElevation: 0,
               title: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.height*0.02),
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width*0.8,
                   height: MediaQuery.of(context).size.height*0.06,
@@ -195,13 +195,13 @@ class _HomepageState extends State<HomePage> {
               ),
               actions: [
                 Padding(
-                  padding: const EdgeInsets.only(right: 26),
+                  padding: EdgeInsets.only(right: MediaQuery.of(context).size.width*0.015),
                   child: CustomButton(
                     text: "Filters",
                     bold: true,
-                    height: 45,
+                    height: MediaQuery.of(context).size.height*0.045,
                     fontSize: 20,
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width*0.01),
                     onPressed: () {
                       showDialog(
                         context: context,
@@ -236,17 +236,17 @@ class _HomepageState extends State<HomePage> {
                     });
                   },
                 ),
-                const SizedBox(width: 16),
+                SizedBox(width: MediaQuery.of(context).size.width*0.015),
               ],
             ),
             backgroundColor: AppColors.primaryBackground,
             body: Padding(
-              padding: EdgeInsets.all(isLogBarExpanded ? 15 : 30),
+              padding: EdgeInsets.all(isLogBarExpanded ? MediaQuery.of(context).size.height*0.015 : MediaQuery.of(context).size.height*0.03),
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: findCardsPerRow(viewWidth, 350),
-                  crossAxisSpacing: 30,
-                  mainAxisSpacing: 20,
+                  crossAxisCount: findCardsPerRow(viewWidth, MediaQuery.of(context).size.width*0.25),
+                  crossAxisSpacing: MediaQuery.of(context).size.height*0.02,
+                  mainAxisSpacing: MediaQuery.of(context).size.width*0.01,
                   childAspectRatio: isLogBarExpanded ? 1.2 : 1.4,
                 ),
                 itemCount: filteredMenu.length,
@@ -298,19 +298,18 @@ class _HomepageState extends State<HomePage> {
           ),
           child: isLogBarExpanded
               ? Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.height*0.02),
                   child: Column(
+                    spacing: MediaQuery.of(context).size.height*0.01,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 20),
                       Center(
                           child: CustomText(
                               content: 'Dishes', fontSize: 24, header: true)),
-                      const SizedBox(height: 10),
                       Container(height: 2, color: AppColors.primaryText),
                       Expanded(
                         child: Container(
-                          padding: const EdgeInsets.all(10),
+                          padding: EdgeInsets.all(MediaQuery.of(context).size.width*0.01),
                           color: AppColors.white,
                           width: double.infinity,
                           child: Scrollbar(
@@ -320,9 +319,7 @@ class _HomepageState extends State<HomePage> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 10),
                       Container(height: 2, color: AppColors.primaryText),
-                      const SizedBox(height: 10),
                       ...[
                         ['Calories', _totalCalories],
                         ['Protein', _totalProtein],
@@ -336,18 +333,19 @@ class _HomepageState extends State<HomePage> {
                                       fontSize: 14,
                                       header: true)),
                               SizedBox(
-                                  width: 50,
+                                  width: MediaQuery.of(context).size.width*0.05,
                                   child: CustomText(
                                       content: e[1].toString(),
                                       fontSize: 14,
                                       header: true)),
                             ],
                           )),
-                      const SizedBox(height: 12),
                       Center(
-                          child: CustomButton(
+                          child: Padding(
+                            padding: EdgeInsets.only(bottom:MediaQuery.of(context).size.height*.01),
+                            child:CustomButton(
                               text: "Log Meal", onPressed: logMeal)),
-                      const SizedBox(height: 12),
+                      )
                     ],
                   ),
                 )
