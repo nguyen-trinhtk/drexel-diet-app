@@ -11,7 +11,7 @@ class HistoryPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.primaryBackground,
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: EdgeInsets.all(MediaQuery.of(context).size.height*0.01),
         child: Consumer<GlobalDataProvider>(
           builder: (context, globalData, child) {
             return ListView(
