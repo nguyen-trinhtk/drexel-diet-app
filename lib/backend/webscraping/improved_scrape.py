@@ -6,7 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.expected_conditions import visibility_of_element_located
 
 optionsFirefox = Options()
-#optionsFirefox.add_argument("--headless") # don't display firefox window
+optionsFirefox.add_argument("--headless") # don't display firefox window
 
 browser = webdriver.Firefox(options=optionsFirefox)  # start a web browser
 browser.get("https://drexel.campusdish.com/LocationsAndMenus/UrbanEatery")  # navigate to URL
@@ -51,6 +51,36 @@ for button in buttons:
         menuItem["totalSugars"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE'][5]/ul[1]/li[2]/span[1]").text
         menuItem["addedSugars"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE'][5]/ul[1]/li[2]/ul[1]/li[1]/span[1]").text
         menuItem["protein"] = browser.find_element(By.XPATH, "//li[@class='sc-fiCwlc gsLNwE'][6]/span[1]").text
+        try:
+            browser.find_element(By.XPATH, "//div[@class='sc-dLMFU jUaoIl']/div[@class='sc-kAkpmW gpcgIg ModalBodyItem']/div[@class='sc-dSCufp fUeeLo']/div[@class='sc-jxOSlx hhDekA ItemAllergens']/div[@class='sc-lcIPJg fpEabH ItemAllergen']/img[contains(@alt, 'Vegan')]")
+            menuItem["vegan"] = True
+        except:
+            menuItem["vegan"] = False
+        try:
+            browser.find_element(By.XPATH, "//div[@class='sc-dLMFU jUaoIl']/div[@class='sc-kAkpmW gpcgIg ModalBodyItem']/div[@class='sc-dSCufp fUeeLo']/div[@class='sc-jxOSlx hhDekA ItemAllergens']/div[@class='sc-lcIPJg fpEabH ItemAllergen']/img[contains(@alt, 'Made Without Gluten')]")
+            menuItem["glutenFree"] = True
+        except:
+            menuItem["glutenFree"] = False
+        try:
+            browser.find_element(By.XPATH, "//div[@class='sc-dLMFU jUaoIl']/div[@class='sc-kAkpmW gpcgIg ModalBodyItem']/div[@class='sc-dSCufp fUeeLo']/div[@class='sc-jxOSlx hhDekA ItemAllergens']/div[@class='sc-lcIPJg fpEabH ItemAllergen']/img[contains(@alt, 'Plant Forward')]")
+            menuItem["plantForward"] = True
+        except:
+            menuItem["plantForward"] = False
+        try:
+            browser.find_element(By.XPATH, "//div[@class='sc-dLMFU jUaoIl']/div[@class='sc-kAkpmW gpcgIg ModalBodyItem']/div[@class='sc-dSCufp fUeeLo']/div[@class='sc-jxOSlx hhDekA ItemAllergens']/div[@class='sc-lcIPJg fpEabH ItemAllergen']/img[contains(@alt, 'Eat Well')]")
+            menuItem["eatWell"] = True
+        except:
+            menuItem["eatWell"] = False
+        try:
+            browser.find_element(By.XPATH, "//div[@class='sc-dLMFU jUaoIl']/div[@class='sc-kAkpmW gpcgIg ModalBodyItem']/div[@class='sc-dSCufp fUeeLo']/div[@class='sc-jxOSlx hhDekA ItemAllergens']/div[@class='sc-lcIPJg fpEabH ItemAllergen']/img[contains(@alt, 'Vegetarian')]")
+            menuItem["vegetarian"] = True
+        except:
+            menuItem["vegetarian"] = False
+        try:
+            browser.find_element(By.XPATH, "//div[@class='sc-dLMFU jUaoIl']/div[@class='sc-kAkpmW gpcgIg ModalBodyItem']/div[@class='sc-dSCufp fUeeLo']/div[@class='sc-jxOSlx hhDekA ItemAllergens']/div[@class='sc-lcIPJg fpEabH ItemAllergen']/img[contains(@alt, 'Low Carbon Certified')]")
+            menuItem["lowCarbon"] = True
+        except:
+            menuItem["lowCarbon"] = False
         closeButton = browser.find_element(By.XPATH, "//*[@class='sc-eDPEul ldupur']")
         closeButton.click()
         menuItems.append(menuItem)
@@ -58,7 +88,7 @@ for button in buttons:
         pass
 browser.close()
 
-db = open("menu1.json", "r+")
+db = open("menu.json", "r+")
 db.truncate(0)
 db.write("{\n")
 for menuItem in menuItems:
@@ -77,7 +107,13 @@ for menuItem in menuItems:
         db.write("\t\t\"dietaryFiber\": " + "\"" + menuItem["dietaryFiber"] + "\"" + ",\n")
         db.write("\t\t\"totalSugars\": " + "\"" + menuItem["totalSugars"] + "\"" + ",\n")
         db.write("\t\t\"addedSugars\": " + "\"" + menuItem["addedSugars"] + "\"" + ",\n")
-        db.write("\t\t\"protein\": " + "\"" + menuItem["protein"] + "\"" + "\n")
+        db.write("\t\t\"protein\": " + "\"" + menuItem["protein"] + "\"" + ",\n")
+        db.write("\t\t\"vegan\": " + "\"" + str(menuItem["vegan"]) + "\"" + ",\n")
+        db.write("\t\t\"eatWell\": " + "\"" + str(menuItem["eatWell"]) + "\"" + ",\n")
+        db.write("\t\t\"plantForward\": " + "\"" + str(menuItem["plantForward"]) + "\"" + ",\n")
+        db.write("\t\t\"vegetarian\": " + "\"" + str(menuItem["vegetarian"]) + "\"" + ",\n")
+        db.write("\t\t\"lowCarbon\": " + "\"" + str(menuItem["lowCarbon"]) + "\"" + ",\n")
+        db.write("\t\t\"glutenFree\": " + "\"" + str(menuItem["glutenFree"]) + "\"" + "\n")
         if index != (len(menuItems)-1):
             db.write("\t},\n")
 db.write("\t}\n")
