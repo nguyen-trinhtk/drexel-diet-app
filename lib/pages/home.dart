@@ -3,6 +3,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'filter.dart';
+import 'package:code/UI/custom_elements.dart';
 import 'package:code/themes/constants.dart';
 import 'package:code/themes/widgets.dart';
 import 'package:code/user-data/meals.dart';
@@ -168,7 +169,10 @@ class _HomepageState extends State<HomePage> {
               scrolledUnderElevation: 0,
               title: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: SearchBar(
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width*0.8,
+                  height: MediaQuery.of(context).size.height*0.06,
+                  child:SearchBar(
                   hintText: "Search",
                   hintStyle: WidgetStateProperty.all(TextStyle(
                     color: AppColors.secondaryText,
@@ -188,7 +192,7 @@ class _HomepageState extends State<HomePage> {
                       side:
                           BorderSide(color: AppColors.primaryText, width: 1.0),
                       borderRadius: BorderRadius.circular(100))),
-                ),
+                )),
               ),
               actions: [
                 Padding(

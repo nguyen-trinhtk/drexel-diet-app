@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:code/themes/widgets.dart';
 import 'package:code/themes/constants.dart';
 import 'package:code/data_provider.dart';
+import 'package:code/UI/custom_elements.dart';
+
 
 Set<FoodPreference> foodPreferenceFilters = <FoodPreference>{};
 

@@ -1,5 +1,4 @@
 // SSO Login Page
-import 'package:code/themes/widgets.dart';
 import 'package:code/themes/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
@@ -7,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:universal_html/html.dart' as html;
+import 'package:code/UI/custom_elements.dart';
 
 class SSOPage extends StatefulWidget {
   const SSOPage({super.key});

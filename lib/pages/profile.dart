@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:code/themes/constants.dart';
+import 'package:code/UI/custom_elements.dart';
 import 'package:code/themes/widgets.dart';
 // import 'package:code/user-data/meals.dart';
 
@@ -106,21 +107,35 @@ class _ProfilePageState extends State<ProfilePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children:[
                         CustomText(content:"Age", fontSize: 24,),
-                        CustomText(content: "18 yrs", fontSize: 24,)
+                        SizedBox(
+                        width: MediaQuery.of(context).size.width*.055,
+
+                        //height: 60,
+                        child:
+                        TextField(style: TextStyle(fontSize: 24, color: AppColors.primaryText, fontFamily: AppFonts.textFont), decoration:InputDecoration(disabledBorder: UnderlineInputBorder(borderSide: BorderSide(color:AppColors.primaryText)), enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color:AppColors.primaryText)), focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color:AppColors.primaryText)),hintText: "18", suffix: CustomText(content:"yrs", color:AppColors.primaryText, fontSize: 24,), hintStyle: TextStyle(color: AppColors.secondaryText, fontSize: 24, fontFamily: AppFonts.textFont), floatingLabelBehavior: FloatingLabelBehavior.always))),
                       ]
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children:[
                         CustomText(content:"Height", fontSize: 24,),
-                        CustomText(content: "182 cm", fontSize: 24,)
+                        SizedBox(
+                        width: MediaQuery.of(context).size.width*.055,
+                        //height: 60,
+                        child:
+                        TextField(style: TextStyle(fontSize: 24, color: AppColors.primaryText, fontFamily: AppFonts.textFont), decoration:InputDecoration(disabledBorder: UnderlineInputBorder(borderSide: BorderSide(color:AppColors.primaryText)), enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color:AppColors.primaryText)), focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color:AppColors.primaryText)),hintText: "180", suffix: CustomText(content:"cm", color:AppColors.primaryText, fontSize: 24,), hintStyle: TextStyle(color: AppColors.secondaryText, fontSize: 24, fontFamily: AppFonts.textFont), floatingLabelBehavior: FloatingLabelBehavior.always))),
                       ]
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children:[
                         CustomText(content:"Current Weight", fontSize: 24,),
-                        CustomText(content:"50 kg", fontSize: 24,),
+                        SizedBox(
+                        width: MediaQuery.of(context).size.width*.055,
+                        //height: 60,
+                        child:
+                        TextField(style: TextStyle(fontSize: 24, color: AppColors.primaryText, fontFamily: AppFonts.textFont), decoration:InputDecoration(disabledBorder: UnderlineInputBorder(borderSide: BorderSide(color:AppColors.primaryText)), enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color:AppColors.primaryText)), focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color:AppColors.primaryText)),hintText: "100", suffix: CustomText(content:"kg", color:AppColors.primaryText, fontSize: 24,), hintStyle: TextStyle(color: AppColors.secondaryText, fontSize: 24, fontFamily: AppFonts.textFont), floatingLabelBehavior: FloatingLabelBehavior.always))),
+                        //CustomText(content:"50 kg", fontSize: 24,),
                       ]
                     ),
                     Row(
@@ -220,12 +235,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                 fontSize: 24,
                                 header: true,
                               ),
-                              CustomText(
-                                content: "45",
-                                header: true,
-                                color: AppColors.accent,
-                                fontSize: 48
-                              )
+                              SizedBox(
+                              height: MediaQuery.of(context).size.height*.1,
+                              width: MediaQuery.of(context).size.width*.1,
+                              child:TextField(cursorColor:AppColors.accent, style: TextStyle(fontSize: 48, color: AppColors.accent, fontFamily: AppFonts.headerFont), textAlign: TextAlign.center, decoration:InputDecoration(disabledBorder: UnderlineInputBorder(borderSide: BorderSide(color:AppColors.accent)), enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color:AppColors.accent)), focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color:AppColors.accent)),hintText: "90", hintStyle: TextStyle(color: const Color.fromARGB(148, 230, 109, 141), fontSize: 48, fontFamily: AppFonts.headerFont), floatingLabelBehavior: FloatingLabelBehavior.always))),
                             ]
                           )
                         
@@ -318,6 +331,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           Column(
                             spacing: 2,
                             mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.max,
                             children: [
                               CustomText(
                                 content: "Days Achieved",

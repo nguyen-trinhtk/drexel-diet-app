@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'colors.dart';
-import 'fonts.dart';
+import '../themes/constants.dart';
 
 class CustomText extends StatelessWidget {
   final String content;
@@ -34,7 +33,8 @@ class CustomText extends StatelessWidget {
       return Stack(
         alignment: Alignment.centerLeft,
         children: [
-          Text(
+          SizedBox(
+            child:Text(
             content,
             textAlign: textAlign,
             softWrap: softWrap,
@@ -45,7 +45,7 @@ class CustomText extends StatelessWidget {
               color: color,
               fontWeight: fontWeight,
             ),
-          ),
+          )),
           if (underline)
             Positioned(
               left: 0,

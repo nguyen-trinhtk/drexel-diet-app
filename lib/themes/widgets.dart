@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'constants.dart';
+import '../UI/custom_elements.dart';
 
 class ThemedCard extends StatelessWidget {
   //final double wFactor;
@@ -364,7 +365,7 @@ class FoodCard extends StatelessWidget {
     );
   }
 }
-
+/*
 class CustomText extends StatelessWidget {
   final String content;
   final bool header;
@@ -426,7 +427,8 @@ class CustomText extends StatelessWidget {
     );
   }
 }
-
+*/
+/*
 class CustomButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
@@ -505,3 +507,4 @@ class CustomButton extends StatelessWidget {
   }
 }
 
+*/

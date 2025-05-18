@@ -1,8 +1,8 @@
 // Page for user's meal Diet
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:code/themes/widgets.dart';
 import 'package:code/themes/constants.dart';
+import 'package:code/UI/custom_elements.dart';
 import 'package:code/user-data/userdata.dart';
 
 class DietPage extends StatefulWidget {
