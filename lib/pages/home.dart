@@ -3,7 +3,6 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'filter.dart';
-import 'package:code/UI/custom_elements.dart';
 import 'package:code/themes/constants.dart';
 import 'package:code/themes/widgets.dart';
 import 'package:code/user-data/meals.dart';

@@ -8,7 +8,6 @@ import 'package:code/pages/profile.dart';
 import 'package:code/pages/history.dart';
 import 'package:code/pages/report.dart';
 import 'package:code/pages/filter.dart';
-import 'package:code/UI/custom_elements.dart';
 import 'package:code/themes/widgets.dart';
 import 'package:code/themes/constants.dart';
 import 'package:flutter/material.dart';

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'constants.dart';
-import '../UI/custom_elements.dart';
 
 class ThemedCard extends StatelessWidget {
   //final double wFactor;
@@ -365,7 +364,8 @@ class FoodCard extends StatelessWidget {
     );
   }
 }
-/*
+
+
 class CustomText extends StatelessWidget {
   final String content;
   final bool header;
@@ -394,13 +394,12 @@ class CustomText extends StatelessWidget {
   Widget build(BuildContext context) {
     String fontFamily = header ? AppFonts.headerFont : AppFonts.textFont;
     FontWeight fontWeight = bold ? AppFonts.boldWeight : AppFonts.regularWeight;
-
-    return SizedBox(
-      height: fontSize + 8, // Ensure enough space for underline offset
-      child: Stack(
+  
+      return Stack(
         alignment: Alignment.centerLeft,
         children: [
-          Text(
+          SizedBox(
+            child:Text(
             content,
             textAlign: textAlign,
             softWrap: softWrap,
@@ -411,7 +410,7 @@ class CustomText extends StatelessWidget {
               color: color,
               fontWeight: fontWeight,
             ),
-          ),
+          )),
           if (underline)
             Positioned(
               left: 0,
@@ -423,12 +422,10 @@ class CustomText extends StatelessWidget {
               ),
             ),
         ],
-      ),
-    );
+      );
   }
 }
-*/
-/*
+
 class CustomButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
@@ -506,5 +503,3 @@ class CustomButton extends StatelessWidget {
     );
   }
 }
-
-*/
