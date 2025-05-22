@@ -11,4 +11,4 @@ sudo rm -rf /var/www/html/test.pummer.li
 sudo mv build/web /var/www/html/test.pummer.li
 sudo chmod 755 /var/www/html/test.pummer.li
 sudo systemctl reload nginx
-python3 /home/bjpummer26/anodrexia/lib/backend/webscraping/scrape.py
+python3 /home/bjpummer26/anodrexia/lib/backend/webscraping/improved_scrape.py
