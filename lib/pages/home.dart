@@ -135,11 +135,40 @@ class _HomepageState extends State<HomePage> {
     }).toList();
   }
 
+  Map<dynamic, dynamic> getRecommendedMenu(){
+    Map<dynamic, dynamic> recommendedMenu = {"0":
+	{
+		"Name": "Tater Tots",
+		"Description": "Deep-fried seasoned shredded potato bites",
+		"Calories": "190",
+		"totalFat": "10 g",
+		"saturatedFat": "1.5 g",
+		"transFat": "0 g",
+		"cholesterol": "0 mg",
+		"sodium": "530 mg",
+		"totalCarbohydrates": "24 g",
+		"dietaryFiber": "2 g",
+		"totalSugars": "1 g",
+		"addedSugars": "0 g",
+		"protein": "2 g",
+		"vegan": "True",
+		"eatWell": "False",
+		"plantForward": "False",
+		"vegetarian": "False",
+		"lowCarbon": "False",
+		"glutenFree": "True"
+	}};
+    return recommendedMenu;
+  }
+
   @override
   Widget build(BuildContext context) {
     final globalData = context.watch<GlobalDataProvider>();
     final viewWidth = MediaQuery.of(context).size.width;
     context.watch<FoodFilterDrawerState>();
+    
+    Map<dynamic, dynamic>? recommendedMenu = {};
+    recommendedMenu = getRecommendedMenu();
 
     Map<dynamic, dynamic>? filteredMenu = {};
     final menuData = globalData.menuData;
@@ -242,7 +271,65 @@ class _HomepageState extends State<HomePage> {
             backgroundColor: AppColors.primaryBackground,
             body: Padding(
               padding: EdgeInsets.all(isLogBarExpanded ? MediaQuery.of(context).size.height*0.015 : MediaQuery.of(context).size.height*0.03),
-              child: GridView.builder(
+              child: SingleChildScrollView(
+                child: Column(
+                spacing: 15,
+                children: [
+                  Container(
+                    child: recommendedMenu.isEmpty ? null : 
+                    Container(
+                  decoration: BoxDecoration(
+                  color:AppColors.secondaryBackground, borderRadius: BorderRadius.circular(40)),
+                  padding: EdgeInsets.all(16),
+                  child: GridView.builder(
+                    
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: findCardsPerRow(viewWidth, MediaQuery.of(context).size.width*0.25),
+                  crossAxisSpacing: MediaQuery.of(context).size.height*0.02,
+                  mainAxisSpacing: MediaQuery.of(context).size.width*0.01,
+                  childAspectRatio: isLogBarExpanded ? 1.2 : 1.4,
+                ),
+                itemCount: recommendedMenu.length,
+                itemBuilder: (context, index) {
+                  final strIndex = index.toString();
+                  final item = recommendedMenu?[strIndex];
+                  if (item == null) return const SizedBox();
+
+                  final foodName = item['Name'];
+                  final calories = int.tryParse(item['Calories']) ?? 0;
+                  final protein = int.tryParse(
+                          item['protein']?.replaceAll(RegExp(r'[^\d]'), '') ??
+                              '0') ??
+                      0;
+                  final carbs = int.tryParse(item['totalCarbohydrates']
+                              ?.replaceAll(RegExp(r'[^\d]'), '') ??
+                          '0') ??
+                      0;
+                  final fat = int.tryParse(
+                          item['totalFat']?.replaceAll(RegExp(r'[^\d]'), '') ??
+                              '0') ??
+                      0;
+
+                  return FoodCard(
+                    name: foodName,
+                    description: item['Description'],
+                    calories: "Calories $calories",
+                    fontSize: isLogBarExpanded ? 14 : 18,
+                    onAddPressed: () {
+                      appendLog(foodName, calories, protein, carbs, fat);
+                      setState(() => isLogBarExpanded = true);
+                    },
+                  );
+                },
+                  )
+                    )
+                    )
+              ,
+              GridView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: findCardsPerRow(viewWidth, MediaQuery.of(context).size.width*0.25),
                   crossAxisSpacing: MediaQuery.of(context).size.height*0.02,
@@ -281,7 +368,10 @@ class _HomepageState extends State<HomePage> {
                     },
                   );
                 },
+              )
+              ]
               ),
+              )
             ),
           ),
         ),
