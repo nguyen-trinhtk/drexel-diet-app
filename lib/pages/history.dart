@@ -12,7 +12,7 @@ class HistoryPage extends StatelessWidget {
       backgroundColor: AppColors.primaryBackground,
       body: Padding(
         padding: EdgeInsets.all(MediaQuery.of(context).size.height*0.01),
-        child: Consumer<GlobalDataProvider>(
+        child: Consumer<FoodDataProvider>(
           builder: (context, globalData, child) {
             return ListView(
               children: globalData.historyCards,
