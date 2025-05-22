@@ -22,26 +22,23 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: AppColors.primaryBackground,
       body: Padding(
-        padding: EdgeInsets.only(top: 48, bottom: 48, right: 64, left: 64),
+        padding: EdgeInsets.only(top: MediaQuery.of(context).size.height*0.05, bottom: MediaQuery.of(context).size.height*0.06, right: MediaQuery.of(context).size.width*0.05, left: MediaQuery.of(context).size.width*0.05),
         child: Row(
-        spacing: 24,
+        spacing: MediaQuery.of(context).size.width*0.02,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Flexible(
             flex: 60,
             child: 
           Column(
-            spacing: 24,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            spacing: MediaQuery.of(context).size.height*0.04,
+            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SizedBox(
-              height: MediaQuery.of(context).size.height*0.35,
-              child:
-              Expanded(
+              Flexible(
               flex: 10,
               child:
               ThemedCard(
-                padding: EdgeInsets.only(left: 32, right:0, top:32, bottom:32),
+                padding: EdgeInsets.only(left: MediaQuery.of(context).size.width*0.015, right:0, top:MediaQuery.of(context).size.width*0.015, bottom:MediaQuery.of(context).size.width*0.015),
                 child: 
                   Row(
                     mainAxisSize: MainAxisSize.max,
@@ -49,7 +46,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     children:
                       [
                         Padding(
-                          padding: EdgeInsets.all(32),
+                          padding: EdgeInsets.all(MediaQuery.of(context).size.width*0.03),
                           child:
                           CircleAvatar(
                             backgroundImage: AssetImage(
@@ -58,7 +55,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           )
                         ),
                         Padding(
-                          padding: EdgeInsets.all(32),
+                          padding: EdgeInsets.all(MediaQuery.of(context).size.width*0.01),
                           child:
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -77,18 +74,16 @@ class _ProfilePageState extends State<ProfilePage> {
                           )
                         )
                       ]
-                  ),),)),
-                  SizedBox(
-                  height: MediaQuery.of(context).size.height*0.50,
-                  child:
-                  Expanded(
+                  ),),),
+
+                  Flexible(
                   flex: 15,
                   child:
                   ThemedCard(
-                  padding: EdgeInsets.all(32),
+                  padding: EdgeInsets.all(MediaQuery.of(context).size.width*0.03),
                   child:
                   Padding(
-                  padding:EdgeInsets.only(left:54, right:54,),
+                  padding:EdgeInsets.only(left:MediaQuery.of(context).size.width*0.04, right:MediaQuery.of(context).size.width*0.04,),
                   child: 
                   Column(
                     mainAxisSize: MainAxisSize.max,
@@ -200,32 +195,30 @@ class _ProfilePageState extends State<ProfilePage> {
                       ]
                     )
                   ])
-              ))))
+              )))
             ],)
           ),
           Flexible(
             flex: 40,
             child: Column(
-              spacing: 24,
+              spacing: MediaQuery.of(context).size.height*0.02,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children:[
-              
-              Expanded(
+              Flexible(
               flex:25,
               child:
               Container(
-              decoration: BoxDecoration(boxShadow:[BoxShadow(color: AppColors.accent, offset: Offset(10, 10)),], borderRadius: BorderRadius.circular(40)),
+              //decoration: BoxDecoration(color: Colors.white, boxShadow:[BoxShadow(color: AppColors.accent, offset: Offset(MediaQuery.of(context).size.width*0.007, MediaQuery.of(context).size.width*0.007)),], borderRadius: BorderRadius.circular(40)),
               child:
               ThemedCard(
-                padding: EdgeInsets.all(8),
+                padding: EdgeInsets.all(MediaQuery.of(context).size.width*0.008),
                 child: 
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children:
-                      [
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children:[
                           Column(
-                            spacing: 2,
+                            spacing: MediaQuery.of(context).size.height*0.002,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               CustomText(
@@ -240,17 +233,18 @@ class _ProfilePageState extends State<ProfilePage> {
                               child:TextField(cursorColor:AppColors.accent, style: TextStyle(fontSize: 48, color: AppColors.accent, fontFamily: AppFonts.headerFont), textAlign: TextAlign.center, decoration:InputDecoration(disabledBorder: UnderlineInputBorder(borderSide: BorderSide(color:AppColors.accent)), enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color:AppColors.accent)), focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color:AppColors.accent)),hintText: "90", hintStyle: TextStyle(color: const Color.fromARGB(148, 230, 109, 141), fontSize: 48, fontFamily: AppFonts.headerFont), floatingLabelBehavior: FloatingLabelBehavior.always))),
                             ]
                           )
-                        
                       ]
-                  ),),)),
-              Expanded(
+                    )
+                  ),)
+                  ),
+              Flexible(
               flex:25,
               child:
               Container(
-                decoration: BoxDecoration(boxShadow:[BoxShadow(color: AppColors.accent, offset: Offset(10, 10)),], borderRadius: BorderRadius.circular(40)),
+                //decoration: BoxDecoration(boxShadow:[BoxShadow(color: AppColors.accent, offset: Offset(MediaQuery.of(context).size.width*0.007, MediaQuery.of(context).size.width*0.007)),], borderRadius: BorderRadius.circular(40)),
                 child:
               ThemedCard(
-                padding: EdgeInsets.all(8),
+                padding: EdgeInsets.all(MediaQuery.of(context).size.width*0.008),
                 child: 
                   Row(
                     mainAxisSize: MainAxisSize.max,
@@ -258,7 +252,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     children:
                       [
                           Column(
-                            spacing: 2,
+                            spacing: MediaQuery.of(context).size.height*0.002,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               CustomText(
@@ -278,14 +272,14 @@ class _ProfilePageState extends State<ProfilePage> {
                         
                       ]
                   ),),)),
-              Expanded(
+              Flexible(
               flex:25,
               child:
               Container(
-                decoration: BoxDecoration(boxShadow:[BoxShadow(color: AppColors.accent, offset: Offset(10, 10)),], borderRadius: BorderRadius.circular(40)),
+                //decoration: BoxDecoration(boxShadow:[BoxShadow(color: AppColors.accent, offset: Offset(10, 10)),], borderRadius: BorderRadius.circular(40)),
                 child:
               ThemedCard(
-                padding: EdgeInsets.all(8),
+                padding: EdgeInsets.all(MediaQuery.of(context).size.height*0.002),
                 child: 
                   Row(
                     mainAxisSize: MainAxisSize.max,
@@ -313,11 +307,11 @@ class _ProfilePageState extends State<ProfilePage> {
                         
                       ]
                   ),),)),
-              Expanded(
+              Flexible(
               flex:25,
               child:
               Container(
-                decoration: BoxDecoration(boxShadow:[BoxShadow(color: AppColors.accent, offset: Offset(10, 10)),], borderRadius: BorderRadius.circular(40)),
+                //decoration: BoxDecoration(boxShadow:[BoxShadow(color: AppColors.accent, offset: Offset(10, 10)),], borderRadius: BorderRadius.circular(40)),
                 child:
               ThemedCard(
                 padding: EdgeInsets.all(8),
