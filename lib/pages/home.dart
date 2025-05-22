@@ -150,7 +150,7 @@ class _HomepageState extends State<HomePage> {
       var indexNum = 0;
       menuData.forEach((index, item) {
         for (FoodPreference preference in foodPreferenceFilters) {
-          if (item[preference.name] == 1) {
+          if (item[preference.name] == "True") {
             filteredMenu?[indexNum.toString()] = item;
             indexNum += 1;
             break;
