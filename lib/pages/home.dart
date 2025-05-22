@@ -275,7 +275,9 @@ class _HomepageState extends State<HomePage> {
                 child: Column(
                 spacing: 15,
                 children: [
+                  // Recommended Food Box
                   Container(
+                    // Check if there is recommended food
                     child: recommendedMenu.isEmpty ? null : 
                     Container(
                   decoration: BoxDecoration(
@@ -286,7 +288,7 @@ class _HomepageState extends State<HomePage> {
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: findCardsPerRow(viewWidth, MediaQuery.of(context).size.width*0.25),
+                  crossAxisCount: findCardsPerRow(viewWidth, 350),
                   crossAxisSpacing: MediaQuery.of(context).size.height*0.02,
                   mainAxisSpacing: MediaQuery.of(context).size.width*0.01,
                   childAspectRatio: isLogBarExpanded ? 1.2 : 1.4,
@@ -331,7 +333,7 @@ class _HomepageState extends State<HomePage> {
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: findCardsPerRow(viewWidth, MediaQuery.of(context).size.width*0.25),
+                  crossAxisCount: findCardsPerRow(viewWidth, 350),
                   crossAxisSpacing: MediaQuery.of(context).size.height*0.02,
                   mainAxisSpacing: MediaQuery.of(context).size.width*0.01,
                   childAspectRatio: isLogBarExpanded ? 1.2 : 1.4,
