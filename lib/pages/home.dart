@@ -30,7 +30,7 @@ class _HomepageState extends State<HomePage> {
   }
 
   Future<void> loadJsonAsset(String filename) async {
-    final globalData = Provider.of<GlobalDataProvider>(context, listen: false);
+    final globalData = Provider.of<FoodDataProvider>(context, listen: false);
     final String jsonString =
         await rootBundle.loadString('lib/backend/webscraping/$filename.json');
     final data = jsonDecode(jsonString);
@@ -76,7 +76,7 @@ class _HomepageState extends State<HomePage> {
   }
 
   void logMeal() {
-    final globalData = Provider.of<GlobalDataProvider>(context, listen: false);
+    final globalData = Provider.of<FoodDataProvider>(context, listen: false);
     final mealsProvider = Provider.of<MealsProvider>(context, listen: false);
 
     final now = DateTime.now();
@@ -163,7 +163,7 @@ class _HomepageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final globalData = context.watch<GlobalDataProvider>();
+    final globalData = context.watch<FoodDataProvider>();
     final viewWidth = MediaQuery.of(context).size.width;
     context.watch<FoodFilterDrawerState>();
     

@@ -18,7 +18,6 @@ import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
@@ -29,7 +28,8 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => FoodFilterDrawerState()),
         ChangeNotifierProvider(create: (context) => MealsProvider()),
-        ChangeNotifierProvider(create: (_) => GlobalDataProvider())
+        ChangeNotifierProvider(create: (_) => FoodDataProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider())
       ],
       child: const MyApp(),
     ),
@@ -39,8 +39,10 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  Future<void> dataCheck(String userId, Map<String, dynamic> newUserData) async {
-    DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(userId);
+  Future<void> dataCheck(
+      String userId, Map<String, dynamic> newUserData) async {
+    DocumentReference userRef =
+        FirebaseFirestore.instance.collection('users').doc(userId);
     try {
       DocumentSnapshot snapshot = await userRef.get();
       if (!snapshot.exists) {
@@ -64,17 +66,26 @@ class MyApp extends StatelessWidget {
             User? user = snapshot.data;
 
             if (user != null) {
+              Provider.of<UserProvider>(context, listen: false)
+                  .setUserId(user.uid);
+
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 dataCheck(user.uid, {
-                  'uid': user.uid,
-                  'name': user.displayName ?? '',
-                  'picture': user.photoURL ?? '',
-                  'age': null,
-                  'weight': null,
-                  'height': null,
-                  'sex': null,
-                  'activityLevel': null,
-                  'email': user.email,
+                  'activityLevel':null,
+                  'age':null,
+                  'currentWeight':null,
+                  'daysToGoal':null,
+                  'email':user.email,
+                  'gender':null,
+                  'goalCalories':null, 
+                  'goalCarbs':null,
+                  'goalFat':null, 
+                  'goalProtein':null,
+                  'goalWeight':null,
+                  'height':null,
+                  'name':user.displayName,
+                  'picture':user.photoURL,
+                  'uid':user.uid
                 });
               });
             }
@@ -96,7 +107,8 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -157,13 +169,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           Positioned(
             bottom: 30,
             left: 20,
-            child:
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: buttonUserLoggedInOut(context, widget.loginState)),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: buttonUserLoggedInOut(context, widget.loginState)),
           )
-
         ],
       ),
     );
@@ -226,7 +236,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             alignment: Alignment.centerLeft,
             padding: const EdgeInsets.only(left: 20),
             decoration: BoxDecoration(
-              color: isSelected ? AppColors.primaryBackground : AppColors.secondaryBackground,
+              color: isSelected
+                  ? AppColors.primaryBackground
+                  : AppColors.secondaryBackground,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(isSelected ? 50 : 0),
                 bottomLeft: Radius.circular(isSelected ? 50 : 0),
@@ -309,10 +321,11 @@ List<Widget> buttonUserLoggedInOut(BuildContext context, User? user) {
               iconColor: AppColors.accent,
               actions: [
                 CustomButton(
-                  onPressed: () => Navigator.of(context).pop(), 
-                  text: 'NO', bold: true, 
-                  color: AppColors.accent,
-                  hoverColor: AppColors.primaryText),
+                    onPressed: () => Navigator.of(context).pop(),
+                    text: 'NO',
+                    bold: true,
+                    color: AppColors.accent,
+                    hoverColor: AppColors.primaryText),
                 CustomButton(
                   onPressed: () async {
                     await FirebaseAuth.instance.signOut();
@@ -320,7 +333,7 @@ List<Widget> buttonUserLoggedInOut(BuildContext context, User? user) {
                   },
                   text: 'YES',
                   bold: true,
-                  color: AppColors.accent, 
+                  color: AppColors.accent,
                   hoverColor: AppColors.primaryText,
                 ),
               ],

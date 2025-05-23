@@ -34,7 +34,7 @@ class FoodFilterDrawerState extends State<FoodFilterDrawer> with ChangeNotifier 
   void initState() {
     super.initState();
     // Accessing minCalories and maxCalories from GlobalDataProvider
-    final globalData = Provider.of<GlobalDataProvider>(context, listen: false);
+    final globalData = Provider.of<FoodDataProvider>(context, listen: false);
     lowerBound = globalData.minCalories;
     upperBound = globalData.maxCalories;
   }
@@ -56,7 +56,7 @@ class FoodFilterDrawerState extends State<FoodFilterDrawer> with ChangeNotifier 
   @override
   Widget build(BuildContext context) {
     // Accessing globalData to update values on build
-    final globalData = Provider.of<GlobalDataProvider>(context);
+    final globalData = Provider.of<FoodDataProvider>(context);
 
     return Stack(
       children: [

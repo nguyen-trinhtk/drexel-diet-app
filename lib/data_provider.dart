@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:code/themes/widgets.dart';
 
-class GlobalDataProvider with ChangeNotifier {
+class FoodDataProvider with ChangeNotifier {
   Map<String, dynamic> _menuData = {};
   final List<Map<String, dynamic>> _mealHistory = [];
   List<Widget> _historyCards = [];
@@ -65,5 +65,14 @@ class GlobalDataProvider with ChangeNotifier {
         .map((item) => int.tryParse(item['Calories'] ?? '0') ?? 0)
         .reduce((a, b) => a > b ? a : b)
         .toDouble();
+  }
+}
+
+class UserProvider with ChangeNotifier {
+  String? _userId;
+  String? get userId => _userId;
+  void setUserId(String userId) {
+    _userId = userId;
+    notifyListeners();
   }
 }
