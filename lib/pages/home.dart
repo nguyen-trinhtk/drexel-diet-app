@@ -167,27 +167,35 @@ class _HomepageState extends State<HomePage> {
     final viewWidth = MediaQuery.of(context).size.width;
     context.watch<FoodFilterDrawerState>();
     
-    Map<dynamic, dynamic>? recommendedMenu = {};
+    Map<dynamic, dynamic> recommendedMenu = {};
     recommendedMenu = getRecommendedMenu();
 
-    Map<dynamic, dynamic>? filteredMenu = {};
+    Map<dynamic, dynamic> filteredMenu = {};
     final menuData = globalData.menuData;
 
-    if (foodPreferenceFilters.isEmpty) {
-      filteredMenu = menuData;
-    } else {
-      var indexNum = 0;
-      menuData.forEach((index, item) {
-        for (FoodPreference preference in foodPreferenceFilters) {
-          if (item[preference.name] == "True") {
-            filteredMenu?[indexNum.toString()] = item;
-            indexNum += 1;
-            break;
-          }
-        }
-      });
+    if (lowerBound == 0 && upperBound == 0 && globalData.maxCalories != 0) {
+      lowerBound = globalData.minCalories;
+      upperBound = globalData.maxCalories;
     }
 
+    var indexNum = 0;
+    menuData.forEach((index, item) {
+      bool passedPref = true;
+      for (FoodPreference preference in foodPreferenceFilters) {
+          if (item[preference.name] == "False") {
+            passedPref = false;
+            break;
+          }
+      }
+
+      int calories = int.tryParse(item["Calories"]) ?? 0;
+      if (lowerBound <= calories && calories <= upperBound && passedPref) { 
+        filteredMenu[indexNum.toString()] = item;
+        indexNum += 1;
+      }
+      });
+
+    
     return Row(
       children: [
         Expanded(
@@ -338,7 +346,7 @@ class _HomepageState extends State<HomePage> {
                   mainAxisSpacing: MediaQuery.of(context).size.width*0.01,
                   childAspectRatio: isLogBarExpanded ? 1.2 : 1.4,
                 ),
-                itemCount: filteredMenu.length,
+                itemCount: filteredMenu?.length,
                 itemBuilder: (context, index) {
                   final strIndex = index.toString();
                   final item = filteredMenu?[strIndex];
