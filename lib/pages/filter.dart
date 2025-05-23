@@ -6,6 +6,9 @@ import 'package:code/themes/widgets.dart';
 
 
 Set<FoodPreference> foodPreferenceFilters = <FoodPreference>{};
+double lowerBound = 0;
+double upperBound = 0;
+RangeValues _currentRangeValues = RangeValues(lowerBound, upperBound);
 
 enum FoodPreference {
   lowCarbon,
@@ -25,9 +28,7 @@ class FoodFilterDrawer extends StatefulWidget {
 }
 
 class FoodFilterDrawerState extends State<FoodFilterDrawer> with ChangeNotifier {
-  late RangeValues _currentRangeValues;
-  late double lowerBound;
-  late double upperBound;
+  
 
   @override
   void initState() {
@@ -36,7 +37,6 @@ class FoodFilterDrawerState extends State<FoodFilterDrawer> with ChangeNotifier 
     final globalData = Provider.of<GlobalDataProvider>(context, listen: false);
     lowerBound = globalData.minCalories;
     upperBound = globalData.maxCalories;
-    _currentRangeValues = RangeValues(lowerBound, upperBound);
   }
 
   @override
@@ -113,7 +113,7 @@ class FoodFilterDrawerState extends State<FoodFilterDrawer> with ChangeNotifier 
                         .clamp(globalData.minCalories, globalData.maxCalories);
                     upperBound = values.end
                         .clamp(globalData.minCalories, globalData.maxCalories);
-                    _currentRangeValues = RangeValues(lowerBound, upperBound);
+                      _currentRangeValues = RangeValues(lowerBound, upperBound);
                   });
                 },
               ),
