@@ -173,27 +173,37 @@ class _HomepageState extends State<HomePage> {
     Map<dynamic, dynamic> filteredMenu = {};
     final menuData = globalData.menuData;
 
-    if (lowerBound == 0 && upperBound == 0 && globalData.maxCalories != 0) {
-      lowerBound = globalData.minCalories;
-      upperBound = globalData.maxCalories;
-    }
 
+    // Apply filters
     var indexNum = 0;
     menuData.forEach((index, item) {
+      // If no filter, automatically passed
       bool passedPref = true;
+      bool passedCalorie = true;
+      
+      // Check pref filters (if available)
+      if(foodPreferenceFilters.isNotEmpty){
       for (FoodPreference preference in foodPreferenceFilters) {
           if (item[preference.name] == "False") {
             passedPref = false;
             break;
           }
+      }}
+
+      // Check calorie filters (if available)
+      if (!(lowerBound == 0 && upperBound == 0)) {
+        int calories = int.tryParse(item["Calories"]) ?? 0;
+        if (calories < lowerBound || calories > upperBound) { 
+          passedCalorie = false;
+        }
       }
 
-      int calories = int.tryParse(item["Calories"]) ?? 0;
-      if (lowerBound <= calories && calories <= upperBound && passedPref) { 
+      // Add to menu if passed filters
+      if (passedCalorie && passedPref){
         filteredMenu[indexNum.toString()] = item;
         indexNum += 1;
       }
-      });
+  });
 
     
     return Row(
