@@ -196,7 +196,7 @@ class _HomeScreenState extends State<HomeScreen>
         alignment: Alignment.bottomCenter,
         child: Column(
           children: [
-            Image.asset('../assets/colored-logo.png', width: 150, height: 150),
+            Image.network('https://content.anodrexia.xyz/colored-logo.png', width: 150, height: 150),
             CustomText(
               content: 'ANODREXIA',
               fontSize: 16,
