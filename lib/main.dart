@@ -11,7 +11,6 @@ import 'package:code/pages/filter.dart';
 import 'package:code/themes/widgets.dart';
 import 'package:code/themes/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:code/user-data/meals.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
@@ -27,7 +26,6 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => FoodFilterDrawerState()),
-        ChangeNotifierProvider(create: (context) => MealsProvider()),
         ChangeNotifierProvider(create: (_) => FoodDataProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider())
       ],
@@ -39,22 +37,34 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  Future<void> dataCheck(
-      String userId, Map<String, dynamic> newUserData) async {
-    DocumentReference userRef =
-        FirebaseFirestore.instance.collection('users').doc(userId);
-    try {
-      DocumentSnapshot snapshot = await userRef.get();
-      if (!snapshot.exists) {
-        await userRef.set(newUserData);
-        print('User data created successfully for $userId.');
-      } else {
-        print('User data already exists for $userId.');
-      }
-    } catch (error) {
-      print('Error checking or creating user data: $error');
+Future<void> dataCheck(String userId, Map<String, dynamic> newUserData) async {
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  DocumentReference userRef = firestore.collection('users').doc(userId);
+  DocumentReference mealHistoryRef = firestore.collection('mealHistory').doc(userId);
+
+  try {
+    // Check and create user document if it doesn't exist
+    DocumentSnapshot userSnapshot = await userRef.get();
+    if (!userSnapshot.exists) {
+      await userRef.set(newUserData);
+      print('User data created successfully for $userId.');
+    } else {
+      print('User data already exists for $userId.');
     }
+
+    // Check and create mealHistory document if it doesn't exist
+    DocumentSnapshot mealHistorySnapshot = await mealHistoryRef.get();
+    if (!mealHistorySnapshot.exists) {
+      await mealHistoryRef.set({'mealHistory': []});
+      print('Meal history initialized for $userId.');
+    } else {
+      print('Meal history already exists for $userId.');
+    }
+  } catch (error) {
+    print('Error during dataCheck: $error');
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +77,7 @@ class MyApp extends StatelessWidget {
 
             if (user != null) {
               Provider.of<UserProvider>(context, listen: false)
-                  .setUserId(user.uid);
+                  .setUser(user.uid);
 
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 dataCheck(user.uid, {
