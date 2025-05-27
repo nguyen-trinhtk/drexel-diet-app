@@ -21,23 +21,24 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final ValueNotifier<String> age = ValueNotifier<String>("18");
-  final ValueNotifier<String> height = ValueNotifier<String>("180");
+  final ValueNotifier<String> height = ValueNotifier<String>("72");
   final ValueNotifier<String> currentWeight = ValueNotifier<String>("100");
   final ValueNotifier<int> activityLevel = ValueNotifier<int>(1);
   final ValueNotifier<String> gender = ValueNotifier<String>("female");
   final ValueNotifier<String> goalWeight = ValueNotifier<String>("90");
   final ValueNotifier<int> daysUntilGoal = ValueNotifier<int>(0);
   final TextEditingController ageController = TextEditingController(text: "18");
-  final TextEditingController heightController =
-      TextEditingController(text: "180");
-  final TextEditingController weightController =
-      TextEditingController(text: "100");
-  final TextEditingController goalWeightController =
-      TextEditingController(text: "90");
+  final TextEditingController heightController = TextEditingController(text: "72");
+  final TextEditingController weightController = TextEditingController(text: "100");
+  final TextEditingController goalWeightController = TextEditingController(text: "90");
+
+  bool _dataLoaded = false;
 
   @override
   void initState() {
     super.initState();
+
+    _loadUserData();
 
     ageController.addListener(() {
       age.value = ageController.text;
@@ -72,6 +73,25 @@ class _ProfilePageState extends State<ProfilePage> {
     daysUntilGoal.addListener(() {
       updateFirestore();
     });
+  }
+
+  Future<void> _loadUserData() async {
+    String? uid = Provider.of<UserProvider>(context, listen: false).userId;
+    if (uid == null) return;
+    var doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    if (doc.exists && !_dataLoaded) {
+      final data = doc.data()!;
+      setState(() {
+        ageController.text = (data['age'] ?? 18).toString();
+        heightController.text = (data['height'] ?? 72).toString();
+        weightController.text = (data['currentWeight'] ?? 100).toString();
+        goalWeightController.text = (data['goalWeight'] ?? 90).toString();
+        activityLevel.value = data['activityLevel'] ?? 1;
+        gender.value = data['gender'] ?? "female";
+        daysUntilGoal.value = data['daysToGoal'] ?? 0;
+        _dataLoaded = true;
+      });
+    }
   }
 
   void _updateDaysUntilGoal(DateTime selectedDate) {
@@ -513,8 +533,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                                           .width *
                                                       .1,
                                                   child: TextField(
-                                                      cursorColor:
-                                                          AppColors.accent,
+                                                      controller: goalWeightController,
+                                                      keyboardType: TextInputType.number,
+                                                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                                      cursorColor: AppColors.accent,
                                                       style: TextStyle(
                                                           fontSize: 48,
                                                           color:
