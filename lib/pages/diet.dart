@@ -298,6 +298,7 @@ class _DietPageState extends State<DietPage> {
               ),
             ),
             Row(
+              spacing: MediaQuery.of(context).size.width*0.01,
               children: [
                 Expanded(
                   flex: 1,

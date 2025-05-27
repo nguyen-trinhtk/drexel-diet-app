@@ -4,6 +4,7 @@ import 'package:code/themes/widgets.dart';
 class GlobalDataProvider with ChangeNotifier {
   Map<String, dynamic> _menuData = {};
   final List<Map<String, dynamic>> _mealHistory = [];
+  final SearchController searchController = SearchController();
   List<Widget> _historyCards = [];
   double _minCalories = 0;
   double _maxCalories = 0;

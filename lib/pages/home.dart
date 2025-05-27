@@ -139,6 +139,7 @@ class _HomepageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final globalData = context.watch<GlobalDataProvider>();
     final viewWidth = MediaQuery.of(context).size.width;
+    SearchController? _searchAnchorController;
     context.watch<FoodFilterDrawerState>();
 
     Map<dynamic, dynamic>? filteredMenu = {};
@@ -166,32 +167,68 @@ class _HomepageState extends State<HomePage> {
             appBar: AppBar(
               backgroundColor: AppColors.primaryBackground,
               scrolledUnderElevation: 0,
-              title: Padding(
-                padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.height*0.02),
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width*0.8,
-                  height: MediaQuery.of(context).size.height*0.06,
-                  child:SearchBar(
-                  hintText: "Search",
-                  hintStyle: WidgetStateProperty.all(TextStyle(
-                    color: AppColors.secondaryText,
-                    fontFamily: AppFonts.headerFont,
-                  )),
-                  textStyle: WidgetStateProperty.all(TextStyle(
-                    color: AppColors.primaryText,
-                    fontFamily: AppFonts.headerFont,
-                  )),
-                  backgroundColor: WidgetStateProperty.all(AppColors.white),
-                  overlayColor:
-                      WidgetStateProperty.all(AppColors.transparentWhite),
-                  autoFocus: false,
-                  elevation: WidgetStateProperty.all(0),
-                  leading: Icon(Icons.search, color: AppColors.primaryText),
-                  shape: WidgetStateProperty.all(RoundedRectangleBorder(
-                      side:
-                          BorderSide(color: AppColors.primaryText, width: 1.0),
-                      borderRadius: BorderRadius.circular(100))),
-                )),
+              title: SizedBox( 
+                width: MediaQuery.sizeOf(context).width*0.8,
+                height: MediaQuery.sizeOf(context).height*0.06,
+                child:Padding( 
+                  padding: EdgeInsets.symmetric(horizontal: MediaQuery.sizeOf(context).width*0.01),
+                  child:
+                  SearchViewTheme(
+                    data: SearchViewThemeData(
+                      headerTextStyle: TextStyle(fontFamily: AppFonts.textFont, color: AppColors.primaryText),
+                      dividerColor: AppColors.primaryText,
+                      backgroundColor: Colors.white,
+                    ),
+                    child:SearchAnchor(
+                      builder: (BuildContext context, SearchController controller) {
+                        _searchAnchorController = controller;
+                        return SearchBar(
+                          backgroundColor: WidgetStateProperty.all(Colors.white),
+                          shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(40), side:BorderSide(width: 1, color: AppColors.primaryText))),
+                          elevation: WidgetStateProperty.all(0),
+                          controller: controller,
+                          padding: WidgetStatePropertyAll<EdgeInsets>(EdgeInsets.only(left: MediaQuery.of(context).size.height*0.02)),
+                          onTap: () {controller.openView();},
+                          onChanged: (_) {controller.openView();},
+                          leading: const Icon(Icons.search, color:AppColors.accent),
+                        );
+                      },
+
+                      suggestionsBuilder: (BuildContext context, SearchController controller){
+                        return List<ListTile>.generate(5, (int index) {
+                          final String item = 'item $index';
+                          return ListTile(
+                            title: Text(item),
+                            onTap: () {
+                              setState(() {
+                                controller.closeView(item);
+                              });
+                            }
+                          );
+                        });
+                      },
+
+                      viewTrailing: [
+                        Builder(
+                          builder: (context){
+                            return IconButton(
+                              icon: Icon(Icons.clear, color:AppColors.accent),
+                              onPressed: () {_searchAnchorController?.clear();},
+                            );
+                          }
+                        )
+                      ],
+                      viewLeading: Builder(
+                        builder: (context){
+                          return IconButton(
+                            icon: Icon(Icons.arrow_back, color:AppColors.accent),
+                            onPressed: () {_searchAnchorController?.closeView("");},
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
               ),
               actions: [
                 Padding(
@@ -239,6 +276,7 @@ class _HomepageState extends State<HomePage> {
                 SizedBox(width: MediaQuery.of(context).size.width*0.015),
               ],
             ),
+
             backgroundColor: AppColors.primaryBackground,
             body: Padding(
               padding: EdgeInsets.all(isLogBarExpanded ? MediaQuery.of(context).size.height*0.015 : MediaQuery.of(context).size.height*0.03),
