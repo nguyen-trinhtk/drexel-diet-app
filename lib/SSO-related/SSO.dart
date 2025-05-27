@@ -24,8 +24,8 @@ class _SSOPageState extends State<SSOPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              '../assets/colored-logo.png', 
+            Image.network(
+              'https://content.anodrexia.xyz/colored-logo.png', 
               width: 200, 
             ),
             CustomText(

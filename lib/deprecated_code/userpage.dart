@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
-import '../user-data/goal_calculator.dart';
+import '../backend/goal_calculator.dart';
 import 'sidebar.dart';
 
 double currentVolume = 3;

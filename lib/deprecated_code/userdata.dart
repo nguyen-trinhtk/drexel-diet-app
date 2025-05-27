@@ -1,4 +1,4 @@
-import 'package:code/user-data/goal_calculator.dart';
+import 'package:code/backend/goal_calculator.dart';
 
 Map<DateTime, double> weightProgress = {
   DateTime(2025, 4, 1): 150.0,

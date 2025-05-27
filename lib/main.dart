@@ -11,13 +11,11 @@ import 'package:code/pages/filter.dart';
 import 'package:code/themes/widgets.dart';
 import 'package:code/themes/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:code/user-data/meals.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,8 +26,8 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => FoodFilterDrawerState()),
-        ChangeNotifierProvider(create: (context) => MealsProvider()),
-        ChangeNotifierProvider(create: (_) => GlobalDataProvider())
+        ChangeNotifierProvider(create: (_) => FoodDataProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider())
       ],
       child: const MyApp(),
     ),
@@ -39,20 +37,34 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  Future<void> dataCheck(String userId, Map<String, dynamic> newUserData) async {
-    DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(userId);
-    try {
-      DocumentSnapshot snapshot = await userRef.get();
-      if (!snapshot.exists) {
-        await userRef.set(newUserData);
-        print('User data created successfully for $userId.');
-      } else {
-        print('User data already exists for $userId.');
-      }
-    } catch (error) {
-      print('Error checking or creating user data: $error');
+Future<void> dataCheck(String userId, Map<String, dynamic> newUserData) async {
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  DocumentReference userRef = firestore.collection('users').doc(userId);
+  DocumentReference mealHistoryRef = firestore.collection('mealHistory').doc(userId);
+
+  try {
+    // Check and create user document if it doesn't exist
+    DocumentSnapshot userSnapshot = await userRef.get();
+    if (!userSnapshot.exists) {
+      await userRef.set(newUserData);
+      print('User data created successfully for $userId.');
+    } else {
+      print('User data already exists for $userId.');
     }
+
+    // Check and create mealHistory document if it doesn't exist
+    DocumentSnapshot mealHistorySnapshot = await mealHistoryRef.get();
+    if (!mealHistorySnapshot.exists) {
+      await mealHistoryRef.set({'mealHistory': []});
+      print('Meal history initialized for $userId.');
+    } else {
+      print('Meal history already exists for $userId.');
+    }
+  } catch (error) {
+    print('Error during dataCheck: $error');
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -64,17 +76,26 @@ class MyApp extends StatelessWidget {
             User? user = snapshot.data;
 
             if (user != null) {
+              Provider.of<UserProvider>(context, listen: false)
+                  .setUser(user.uid);
+
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 dataCheck(user.uid, {
-                  'uid': user.uid,
-                  'name': user.displayName ?? '',
-                  'picture': user.photoURL ?? '',
-                  'age': null,
-                  'weight': null,
-                  'height': null,
-                  'sex': null,
-                  'activityLevel': null,
-                  'email': user.email,
+                  'activityLevel':null,
+                  'age':null,
+                  'currentWeight':null,
+                  'daysToGoal':null,
+                  'email':user.email,
+                  'gender':null,
+                  'goalCalories':null, 
+                  'goalCarbs':null,
+                  'goalFat':null, 
+                  'goalProtein':null,
+                  'goalWeight':null,
+                  'height':null,
+                  'name':user.displayName,
+                  'picture':user.photoURL,
+                  'uid':user.uid
                 });
               });
             }
@@ -96,7 +117,8 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -157,13 +179,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           Positioned(
             bottom: 30,
             left: 20,
-            child:
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: buttonUserLoggedInOut(context, widget.loginState)),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: buttonUserLoggedInOut(context, widget.loginState)),
           )
-
         ],
       ),
     );
@@ -186,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         alignment: Alignment.bottomCenter,
         child: Column(
           children: [
-            Image.asset('../assets/colored-logo.png', width: 150, height: 150),
+            Image.network('https://content.anodrexia.xyz/colored-logo.png', width: 150, height: 150),
             CustomText(
               content: 'ANODREXIA',
               fontSize: 16,
@@ -226,7 +246,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             alignment: Alignment.centerLeft,
             padding: const EdgeInsets.only(left: 20),
             decoration: BoxDecoration(
-              color: isSelected ? AppColors.primaryBackground : AppColors.secondaryBackground,
+              color: isSelected
+                  ? AppColors.primaryBackground
+                  : AppColors.secondaryBackground,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(isSelected ? 50 : 0),
                 bottomLeft: Radius.circular(isSelected ? 50 : 0),
@@ -309,10 +331,11 @@ List<Widget> buttonUserLoggedInOut(BuildContext context, User? user) {
               iconColor: AppColors.accent,
               actions: [
                 CustomButton(
-                  onPressed: () => Navigator.of(context).pop(), 
-                  text: 'NO', bold: true, 
-                  color: AppColors.accent,
-                  hoverColor: AppColors.primaryText),
+                    onPressed: () => Navigator.of(context).pop(),
+                    text: 'NO',
+                    bold: true,
+                    color: AppColors.accent,
+                    hoverColor: AppColors.primaryText),
                 CustomButton(
                   onPressed: () async {
                     await FirebaseAuth.instance.signOut();
@@ -320,7 +343,7 @@ List<Widget> buttonUserLoggedInOut(BuildContext context, User? user) {
                   },
                   text: 'YES',
                   bold: true,
-                  color: AppColors.accent, 
+                  color: AppColors.accent,
                   hoverColor: AppColors.primaryText,
                 ),
               ],
