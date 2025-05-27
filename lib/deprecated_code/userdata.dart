@@ -1,10 +1,6 @@
 import 'package:code/backend/goal_calculator.dart';
 
-Map<DateTime, double> weightProgress = {
-  DateTime(2025, 4, 1): 150.0,
-  DateTime(2025, 4, 15): 145.5,
-  DateTime(2026, 5, 5): 130.0,
-};
+
 
 int daysToGoal = 60;
 int age = 20;

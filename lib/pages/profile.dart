@@ -9,7 +9,7 @@ import 'package:code/data_provider.dart';
 
 // import 'package:code/user-data/meals.dart';
 
-enum Genders { male, female}
+enum Genders { male, female }
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -28,9 +28,12 @@ class _ProfilePageState extends State<ProfilePage> {
   final ValueNotifier<String> goalWeight = ValueNotifier<String>("90");
   final ValueNotifier<int> daysUntilGoal = ValueNotifier<int>(0);
   final TextEditingController ageController = TextEditingController(text: "18");
-  final TextEditingController heightController = TextEditingController(text: "72");
-  final TextEditingController weightController = TextEditingController(text: "100");
-  final TextEditingController goalWeightController = TextEditingController(text: "90");
+  final TextEditingController heightController =
+      TextEditingController(text: "72");
+  final TextEditingController weightController =
+      TextEditingController(text: "100");
+  final TextEditingController goalWeightController =
+      TextEditingController(text: "90");
 
   bool _dataLoaded = false;
 
@@ -53,32 +56,33 @@ class _ProfilePageState extends State<ProfilePage> {
       goalWeight.value = goalWeightController.text;
     });
     age.addListener(() {
-      updateFirestore();
+      updateFirestore(false);
     });
     height.addListener(() {
-      updateFirestore();
+      updateFirestore(false);
     });
     currentWeight.addListener(() {
-      updateFirestore();
+      updateFirestore(true);
     });
     activityLevel.addListener(() {
-      updateFirestore();
+      updateFirestore(false);
     });
     gender.addListener(() {
-      updateFirestore();
+      updateFirestore(false);
     });
     goalWeight.addListener(() {
-      updateFirestore();
+      updateFirestore(false);
     });
     daysUntilGoal.addListener(() {
-      updateFirestore();
+      updateFirestore(false);
     });
   }
 
   Future<void> _loadUserData() async {
     String? uid = Provider.of<UserProvider>(context, listen: false).userId;
     if (uid == null) return;
-    var doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    var doc =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
     if (doc.exists && !_dataLoaded) {
       final data = doc.data()!;
       setState(() {
@@ -129,7 +133,7 @@ class _ProfilePageState extends State<ProfilePage> {
     super.dispose();
   }
 
-  void updateFirestore() {
+  void updateFirestore(bool updateWeight) {
     int goalCalories = calculateCaloricGoal(
       int.parse(age.value),
       double.parse(height.value),
@@ -168,6 +172,16 @@ class _ProfilePageState extends State<ProfilePage> {
     db.collection("users").doc(uid).update(data).onError((e, _) {
       print("Error writing document: $e");
     });
+    if (updateWeight) {
+          DateTime today = DateTime.now();
+    String todayString =
+        "${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}-${today.year}";
+    db.collection("weightProgress").doc(uid).update({
+        "weightProgress.$todayString": int.parse(currentWeight.value),
+      }).catchError((e) {
+        print("Error updating document: $e");
+      });
+    }
   }
 
   @override
@@ -533,10 +547,16 @@ class _ProfilePageState extends State<ProfilePage> {
                                                           .width *
                                                       .1,
                                                   child: TextField(
-                                                      controller: goalWeightController,
-                                                      keyboardType: TextInputType.number,
-                                                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                                      cursorColor: AppColors.accent,
+                                                      controller:
+                                                          goalWeightController,
+                                                      keyboardType:
+                                                          TextInputType.number,
+                                                      inputFormatters: [
+                                                        FilteringTextInputFormatter
+                                                            .digitsOnly
+                                                      ],
+                                                      cursorColor:
+                                                          AppColors.accent,
                                                       style: TextStyle(
                                                           fontSize: 48,
                                                           color:
@@ -549,8 +569,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                           disabledBorder:
                                                               UnderlineInputBorder(
                                                                   borderSide:
-                                                                      BorderSide(
-                                                                          color: AppColors.accent)),
+                                                                      BorderSide(color: AppColors.accent)),
                                                           enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: AppColors.accent)),
                                                           focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: AppColors.accent)),
                                                           hintText: "90",
@@ -592,7 +611,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                     .collection('users')
                                                     .doc(Provider.of<
                                                                 UserProvider>(
-                                                            context)
+                                                            this.context)
                                                         .userId)
                                                     .snapshots(),
                                                 builder: (context, snapshot) {
