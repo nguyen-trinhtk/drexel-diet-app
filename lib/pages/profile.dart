@@ -1,6 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:code/themes/constants.dart';
 import 'package:code/themes/widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:code/backend/goal_calculator.dart';
+import 'package:code/data_provider.dart';
+
 // import 'package:code/user-data/meals.dart';
 
 enum Genders { male, female }
