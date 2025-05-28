@@ -69,6 +69,7 @@ Future<void> dataCheck(String userId, Map<String, dynamic> newUserData) async {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(textSelectionTheme: TextSelectionThemeData(selectionColor: const Color.fromARGB(137, 255, 205, 208))),
       home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
