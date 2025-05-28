@@ -37,34 +37,44 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-Future<void> dataCheck(String userId, Map<String, dynamic> newUserData) async {
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  Future<void> dataCheck(
+      String userId, Map<String, dynamic> newUserData) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  DocumentReference userRef = firestore.collection('users').doc(userId);
-  DocumentReference mealHistoryRef = firestore.collection('mealHistory').doc(userId);
+    DocumentReference userRef = firestore.collection('users').doc(userId);
+    DocumentReference mealHistoryRef =
+        firestore.collection('mealHistory').doc(userId);
+    DocumentReference weightProgressRef =
+        firestore.collection('weightProgress').doc(userId);
 
-  try {
-    // Check and create user document if it doesn't exist
-    DocumentSnapshot userSnapshot = await userRef.get();
-    if (!userSnapshot.exists) {
-      await userRef.set(newUserData);
-      print('User data created successfully for $userId.');
-    } else {
-      print('User data already exists for $userId.');
+    try {
+      DocumentSnapshot userSnapshot = await userRef.get();
+      if (!userSnapshot.exists) {
+        await userRef.set(newUserData);
+        print('User data created successfully for $userId.');
+      } else {
+        print('User data already exists for $userId.');
+      }
+
+      DocumentSnapshot mealHistorySnapshot = await mealHistoryRef.get();
+      if (!mealHistorySnapshot.exists) {
+        await mealHistoryRef.set({'mealHistory': []});
+        print('Meal history initialized for $userId.');
+      } else {
+        print('Meal history already exists for $userId.');
+      }
+
+      DocumentSnapshot weightProgressSnapshot = await weightProgressRef.get();
+      if (!weightProgressSnapshot.exists) {
+        await weightProgressRef.set({'weightProgress': {}});
+        print('Weight progress initialized for $userId.');
+      } else {
+        print('Weight progress already exists for $userId.');
+      }
+    } catch (error) {
+      print('Error during dataCheck: $error');
     }
-
-    // Check and create mealHistory document if it doesn't exist
-    DocumentSnapshot mealHistorySnapshot = await mealHistoryRef.get();
-    if (!mealHistorySnapshot.exists) {
-      await mealHistoryRef.set({'mealHistory': []});
-      print('Meal history initialized for $userId.');
-    } else {
-      print('Meal history already exists for $userId.');
-    }
-  } catch (error) {
-    print('Error during dataCheck: $error');
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -82,21 +92,21 @@ Future<void> dataCheck(String userId, Map<String, dynamic> newUserData) async {
 
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 dataCheck(user.uid, {
-                  'activityLevel':null,
-                  'age':null,
-                  'currentWeight':null,
-                  'daysToGoal':null,
-                  'email':user.email,
-                  'gender':null,
-                  'goalCalories':null, 
-                  'goalCarbs':null,
-                  'goalFat':null, 
-                  'goalProtein':null,
-                  'goalWeight':null,
-                  'height':null,
-                  'name':user.displayName,
-                  'picture':user.photoURL,
-                  'uid':user.uid
+                  'activityLevel': null,
+                  'age': null,
+                  'currentWeight': null,
+                  'daysToGoal': null,
+                  'email': user.email,
+                  'gender': null,
+                  'goalCalories': null,
+                  'goalCarbs': null,
+                  'goalFat': null,
+                  'goalProtein': null,
+                  'goalWeight': null,
+                  'height': null,
+                  'name': user.displayName,
+                  'picture': user.photoURL,
+                  'uid': user.uid
                 });
               });
             }
@@ -207,7 +217,8 @@ class _HomeScreenState extends State<HomeScreen>
         alignment: Alignment.bottomCenter,
         child: Column(
           children: [
-            Image.network('https://content.anodrexia.xyz/colored-logo.png', width: 150, height: 150),
+            Image.network('https://content.anodrexia.xyz/colored-logo.png',
+                width: 150, height: 150),
             CustomText(
               content: 'ANODREXIA',
               fontSize: 16,
