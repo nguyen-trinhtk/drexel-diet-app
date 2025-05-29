@@ -4,6 +4,17 @@
 // Male metric BMR = (10 × weight in kg) + (6.25 × height in cm) – (5 × age in years) + 5
 // Female metric BMR = (10 × weight in kg) + (6.25 × height in cm) – (5 × age in years) – 161
 
+double calculateBMR(
+    int age, double height, double currentWeight, String gender) {
+  if (gender == 'female') {
+    return ((10 * currentWeight) + (6.25 * height) - (5 * age) - 161);
+  } else if (gender == 'male') {
+    return ((10 * currentWeight) + (6.25 * height) - (5 * age) + 5);
+  } else {
+    return ((10 * currentWeight) + (6.25 * height) - (5 * age) - 78);
+  }
+}
+
 int calculateCaloricGoal(
     int age,
     double height, //cm or inches
@@ -22,12 +33,7 @@ int calculateCaloricGoal(
     goalWeight *= 0.453592;
   }
   //gender-based BMR
-  double bmr = 0;
-  if (gender == 'female') {
-    bmr = (10 * currentWeight) + (6.25 * height) - (5 * age) - 161;
-  } else if (gender == 'male') {
-    bmr = (10 * currentWeight) + (6.25 * height) - (5 * age) + 5;
-  }
+  double bmr = calculateBMR(age, height, currentWeight, gender);
   //calorie goal
   if (activityLevel == 1) {
     bmr *= 1.2;

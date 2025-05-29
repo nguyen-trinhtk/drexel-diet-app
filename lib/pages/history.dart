@@ -31,20 +31,19 @@ class HistoryPage extends StatelessWidget {
             }
 
             if (!snapshot.hasData || !snapshot.data!.exists) {
-              return const Center(child: Text("No meal history found."));
+              return const Center(child: CustomText(content:"No meal history found :(", header:true, fontSize: 30));
             }
 
             final data = snapshot.data!.data() as Map<String, dynamic>;
 
-            // Try both possible field names
             final rawList = data['entries'] ?? data['mealHistory'];
 
             if (rawList == null || rawList is! List) {
-              return const Center(child: Text("No meal history available."));
+              return const Center(child: CustomText(content:"No meal history found :(", header:true, fontSize: 30));
             }
 
             if (rawList.isEmpty) {
-              return const Center(child: Text("No meals have been logged yet."));
+              return const Center(child: CustomText(content:"No meal has been logged yet :'(", header:true, fontSize: 30));
             }
 
             final List<Map<String, dynamic>> entries = List<Map<String, dynamic>>.from(rawList);
