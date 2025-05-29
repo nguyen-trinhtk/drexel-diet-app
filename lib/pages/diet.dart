@@ -342,35 +342,35 @@ class _DietPageState extends State<DietPage> {
                         ],
                       ),
                     ),
-                    Row(
-                      spacing: MediaQuery.of(context).size.width * 0.01,
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: CustomButton(
-                            text: 'Update current weight',
-                            padding: EdgeInsets.all(
-                                MediaQuery.of(context).size.height * 0.02),
-                            header: true,
-                            onPressed: () => print('Update current weight pressed'),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: CustomButton(
-                            text: 'Reset goal',
-                            padding: EdgeInsets.all(
-                                MediaQuery.of(context).size.height * 0.02),
-                            header: true,
-                            color: AppColors.white,
-                            textColor: AppColors.primaryText,
-                            borderColor: AppColors.primaryText,
-                            hoverColor: AppColors.tertiaryText,
-                            onPressed: () => print('Reset goal pressed'),
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   spacing: MediaQuery.of(context).size.width * 0.01,
+                    //   children: [
+                    //     Expanded(
+                    //       flex: 1,
+                    //       child: CustomButton(
+                    //         text: 'Update current weight',
+                    //         padding: EdgeInsets.all(
+                    //             MediaQuery.of(context).size.height * 0.02),
+                    //         header: true,
+                    //         onPressed: () => print('Update current weight pressed'),
+                    //       ),
+                    //     ),
+                    //     Expanded(
+                    //       flex: 1,
+                    //       child: CustomButton(
+                    //         text: 'Reset goal',
+                    //         padding: EdgeInsets.all(
+                    //             MediaQuery.of(context).size.height * 0.02),
+                    //         header: true,
+                    //         color: AppColors.white,
+                    //         textColor: AppColors.primaryText,
+                    //         borderColor: AppColors.primaryText,
+                    //         hoverColor: AppColors.tertiaryText,
+                    //         onPressed: () => print('Reset goal pressed'),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                   ],
                 ),
               ),
