@@ -30,6 +30,9 @@ class _HomepageState extends State<HomePage> {
   int _totalFat = 0;
   int _totalProtein = 0;
 
+  // List of hall selection checks  
+  List<bool> isHallSelected = [true, false];
+
   @override
   void initState() {
     super.initState();
@@ -42,7 +45,7 @@ class _HomepageState extends State<HomePage> {
     final String jsonString =
         await rootBundle.loadString('lib/backend/webscraping/$filename.json');
     final data = jsonDecode(jsonString);
-    if (filename == 'urban') {
+    if (filename == 'urban' || filename == 'hans') {
       globalData.setMenuData(data);
     }
   }
@@ -114,6 +117,7 @@ class _HomepageState extends State<HomePage> {
       "totalFat": _totalFat,
       "dishes": loggedCopy,
     };
+
     db.collection("mealHistory").doc(uid).update({
       "mealHistory": FieldValue.arrayUnion([entry])
     }).onError((e, _) {
@@ -225,6 +229,7 @@ class _HomepageState extends State<HomePage> {
         }
       }
     });
+
 
     return Row(
       children: [
@@ -366,6 +371,25 @@ class _HomepageState extends State<HomePage> {
                     : MediaQuery.of(context).size.height * 0.03),
                 child: SingleChildScrollView(
                   child: Column(spacing: 15, children: [
+                    ToggleButtons(
+                      isSelected: isHallSelected,
+                      onPressed: (int index) {
+                        setState(() {
+                        for (int buttonIndex = 0; buttonIndex < isHallSelected.length; buttonIndex++) {
+                          if (buttonIndex == index) {
+                            isHallSelected[buttonIndex] = true;
+                          } else {
+                            isHallSelected[buttonIndex] = false;
+                          }
+                        }
+                      });
+                      },
+                      children: <Widget>[
+                        CustomText(content: "Urban Eatery",),
+                        CustomText(content: "Handschumacher",),
+                      ]
+                    ),
+
                     // Recommended Food Box
                     Container(
                         // Check if there is recommended food
