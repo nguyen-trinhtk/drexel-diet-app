@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'filter.dart';
@@ -7,6 +8,8 @@ import 'package:code/themes/constants.dart';
 import 'package:code/themes/widgets.dart';
 import 'package:code/data_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,6 +21,7 @@ class HomePage extends StatefulWidget {
 class _HomepageState extends State<HomePage> {
   bool isLogBarExpanded = false;
   final Map<String, Map<String, dynamic>> _loggedDishes = {};
+  Map<dynamic, dynamic> recommendedMenu = {};
   int _totalCalories = 0;
   int _totalCarbs = 0;
   int _totalFat = 0;
@@ -26,7 +30,8 @@ class _HomepageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    loadJsonAsset('urban');
+    loadJsonAsset('urban').then((_) {getRecommendedMenu();}
+    );
   }
 
   Future<void> loadJsonAsset(String filename) async {
@@ -134,45 +139,48 @@ class _HomepageState extends State<HomePage> {
     }).toList();
   }
 
-  Map<dynamic, dynamic> getRecommendedMenu() {
-    Map<dynamic, dynamic> recommendedMenu = {
-      "0": {
-        "Name": "Tater Tots",
-        "Description": "Deep-fried seasoned shredded potato bites",
-        "Calories": "190",
-        "totalFat": "10 g",
-        "saturatedFat": "1.5 g",
-        "transFat": "0 g",
-        "cholesterol": "0 mg",
-        "sodium": "530 mg",
-        "totalCarbohydrates": "24 g",
-        "dietaryFiber": "2 g",
-        "totalSugars": "1 g",
-        "addedSugars": "0 g",
-        "protein": "2 g",
-        "vegan": "True",
-        "eatWell": "False",
-        "plantForward": "False",
-        "vegetarian": "False",
-        "lowCarbon": "False",
-        "glutenFree": "True"
-      }
-    };
-    return recommendedMenu;
+  Future<void> getRecommendedMenu() async { 
+    await dotenv.load(fileName: ".env");
+    final apiKey = dotenv.env["GEMINI_API_KEY"];
+
+    final globalData = Provider.of<FoodDataProvider>(context, listen: false);
+    final menuData = globalData.menuData;
+
+    List<String> recommendedIndex = [];
+
+    Gemini.init(apiKey: apiKey ?? "");
+    await Gemini.instance.prompt(parts: [
+    Part.text('Based on user past data, suggest 1-3 dishes from the current menu data. ONLY output your response with only the ID number of the dish (e.g. 1, 2, 3). Here is user past data: Honey BBQ Chicken. Here is menu data: $menuData'),
+  ]).then((value) {
+    var ans = value?.output;
+    print("Answer from Gemini: $ans");
+    recommendedIndex = ans!.trim().split(", ");
+    print(recommendedIndex);
+  }).catchError((e) {
+    print('error ${e}');
+  });
+
+    int recommendedMenuIndex = 0;
+    for (var index in recommendedIndex){
+      recommendedMenu[recommendedMenuIndex.toString()] = menuData[index]; 
+      recommendedMenuIndex += 1;
+    }
+    
+    print(recommendedMenu);
+    setState(() {
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final globalData = context.watch<FoodDataProvider>();
+    final menuData = globalData.menuData;
+    
     final viewWidth = MediaQuery.of(context).size.width;
     SearchController? _searchAnchorController;
     context.watch<FoodFilterDrawerState>();
 
-    Map<dynamic, dynamic> recommendedMenu = {};
-    recommendedMenu = getRecommendedMenu();
-
-    Map<dynamic, dynamic> filteredMenu = {};
-    final menuData = globalData.menuData;
+    Map<dynamic, dynamic> filteredMenu = {};   
 
     // Apply filters
     var indexNum = 0;
