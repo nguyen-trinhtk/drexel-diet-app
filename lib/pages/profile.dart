@@ -9,7 +9,7 @@ import 'package:code/data_provider.dart';
 
 // import 'package:code/user-data/meals.dart';
 
-enum Genders { male, female }
+enum Genders { male, female, nonbinary }
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -24,7 +24,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final ValueNotifier<String> height = ValueNotifier<String>("72");
   final ValueNotifier<String> currentWeight = ValueNotifier<String>("100");
   final ValueNotifier<int> activityLevel = ValueNotifier<int>(1);
-  final ValueNotifier<String> gender = ValueNotifier<String>("female");
+  final ValueNotifier<String> gender = ValueNotifier<String>("nonbinary");
   final ValueNotifier<String> goalWeight = ValueNotifier<String>("90");
   final ValueNotifier<int> daysUntilGoal = ValueNotifier<int>(0);
   final TextEditingController ageController = TextEditingController(text: "18");
@@ -34,6 +34,8 @@ class _ProfilePageState extends State<ProfilePage> {
       TextEditingController(text: "100");
   final TextEditingController goalWeightController =
       TextEditingController(text: "90");
+
+  final ValueNotifier<int> safeDays = ValueNotifier<int>(0);
 
   bool _dataLoaded = false;
 
@@ -76,6 +78,31 @@ class _ProfilePageState extends State<ProfilePage> {
     daysUntilGoal.addListener(() {
       updateFirestore(false);
     });
+
+    // Add listeners to update safeDays
+    currentWeight.addListener(_updateSafeDays);
+    goalWeight.addListener(_updateSafeDays);
+
+    // Initial calculation
+    _updateSafeDays();
+  }
+
+  int computeSafeDays({
+    required double currentWeightLbs,
+    required double goalWeightLbs,
+    required double maintenanceCalories,
+    double calorieFloor = 1200,
+  }) {
+    double weightToLose = currentWeightLbs - goalWeightLbs;
+    if (weightToLose <= 0) return 0;
+    double maxDailyDeficit = maintenanceCalories - calorieFloor;
+    if (maxDailyDeficit <= 0) {
+      throw Exception("Maintenance calories too low for safe weight loss.");
+    }
+    double totalCaloriesToLose = weightToLose * 3500;
+    int minSafeDays = (totalCaloriesToLose / maxDailyDeficit).ceil();
+    int safeDays = (minSafeDays * 1.1).ceil();
+    return safeDays;
   }
 
   Future<void> _loadUserData() async {
@@ -91,7 +118,7 @@ class _ProfilePageState extends State<ProfilePage> {
         weightController.text = (data['currentWeight'] ?? 100).toString();
         goalWeightController.text = (data['goalWeight'] ?? 90).toString();
         activityLevel.value = data['activityLevel'] ?? 1;
-        gender.value = data['gender'] ?? "female";
+        gender.value = data['gender'] ?? "nonbinary";
         daysUntilGoal.value = data['daysToGoal'] ?? 0;
         _dataLoaded = true;
       });
@@ -104,12 +131,43 @@ class _ProfilePageState extends State<ProfilePage> {
     daysUntilGoal.value = difference > 0 ? difference : 0;
   }
 
+  void _updateSafeDays() {
+    safeDays.value = computeSafeDays(
+      currentWeightLbs: double.tryParse(currentWeight.value) ?? 0.0,
+      goalWeightLbs: double.tryParse(goalWeight.value) ?? 0.0,
+      maintenanceCalories: calculateBMR(
+        int.parse(age.value),
+        double.parse(height.value),
+        double.parse(currentWeight.value),
+        gender.value,
+      ),
+    );
+  }
+
   Future<void> _selectGoalDate(BuildContext context) async {
+    final int currentSafeDays = safeDays.value;
+    if (currentSafeDays < 14) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Unrealistic Goal"),
+          content: Text(
+              "Your goal is unrealistic or too aggressive. Please allow more time to reach your goal safely."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text("OK"),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
     final DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(Duration(days: 730)),
+      initialDate: DateTime.now().add(Duration(days: currentSafeDays)),
+      firstDate: DateTime.now().add(Duration(days: currentSafeDays)),
+      lastDate: DateTime.now().add(Duration(days: 7300)),
     );
 
     if (pickedDate != null) {
@@ -130,6 +188,7 @@ class _ProfilePageState extends State<ProfilePage> {
     gender.dispose();
     goalWeight.dispose();
     daysUntilGoal.dispose();
+    safeDays.dispose();
     super.dispose();
   }
 
@@ -173,10 +232,10 @@ class _ProfilePageState extends State<ProfilePage> {
       print("Error writing document: $e");
     });
     if (updateWeight) {
-          DateTime today = DateTime.now();
-    String todayString =
-        "${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}-${today.year}";
-    db.collection("weightProgress").doc(uid).update({
+      DateTime today = DateTime.now();
+      String todayString =
+          "${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}-${today.year}";
+      db.collection("weightProgress").doc(uid).update({
         "weightProgress.$todayString": int.parse(currentWeight.value),
       }).catchError((e) {
         print("Error updating document: $e");
@@ -475,28 +534,106 @@ class _ProfilePageState extends State<ProfilePage> {
                                                     valueListenable: gender,
                                                     builder: (context,
                                                         selectedGender, child) {
-                                                      return SegmentedButton<
-                                                          String>(
-                                                        showSelectedIcon: false,
-                                                        segments: const <ButtonSegment<
-                                                            String>>[
-                                                          ButtonSegment<String>(
-                                                              value: "female",
-                                                              label: Text('F')),
-                                                          ButtonSegment<String>(
-                                                              value: "male",
-                                                              label: Text('M'))
-                                                        ],
-                                                        selected: <String>{
-                                                          selectedGender
-                                                        },
-                                                        onSelectionChanged:
-                                                            (Set<String>
-                                                                newSelection) {
-                                                          gender.value =
-                                                              newSelection
-                                                                  .first;
-                                                        },
+                                                      return Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal:
+                                                                    10.0,
+                                                                vertical: 10.0),
+                                                        child: SegmentedButton<
+                                                            String>(
+                                                          showSelectedIcon:
+                                                              false,
+                                                          style: ButtonStyle(
+                                                            side:
+                                                                WidgetStateProperty
+                                                                    .all(
+                                                              BorderSide(
+                                                                  color: AppColors
+                                                                      .accent),
+                                                            ),
+                                                            backgroundColor:
+                                                                WidgetStateProperty
+                                                                    .resolveWith<
+                                                                        Color?>(
+                                                              (states) {
+                                                                if (states.contains(
+                                                                    WidgetState
+                                                                        .selected)) {
+                                                                  return AppColors
+                                                                      .accent;
+                                                                }
+                                                                return AppColors
+                                                                    .white;
+                                                              },
+                                                            ),
+                                                            foregroundColor:
+                                                                WidgetStateProperty
+                                                                    .resolveWith<
+                                                                        Color?>(
+                                                              (states) {
+                                                                if (states.contains(
+                                                                    WidgetState
+                                                                        .selected)) {
+                                                                  return Colors
+                                                                      .white; // Selected text is white
+                                                                }
+                                                                return AppColors
+                                                                    .accent; // Unselected text is accent color
+                                                              },
+                                                            ),
+                                                            padding: WidgetStateProperty.all(
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        20,
+                                                                    vertical:
+                                                                        12)),
+                                                          ),
+                                                          segments: const <ButtonSegment<
+                                                              String>>[
+                                                            ButtonSegment<
+                                                                    String>(
+                                                                value: "female",
+                                                                label:
+                                                                    CustomText(
+                                                                  content: 'F',
+                                                                  bold: true,
+                                                                  fontSize: 20,
+                                                                )),
+                                                            ButtonSegment<
+                                                                    String>(
+                                                                value: "male",
+                                                                label:
+                                                                    CustomText(
+                                                                  content: 'M',
+                                                                  bold: true,
+                                                                  fontSize: 20,
+                                                                )),
+                                                            ButtonSegment<
+                                                                    String>(
+                                                                value:
+                                                                    "nonbinary",
+                                                                label:
+                                                                    CustomText(
+                                                                  content:
+                                                                      'N/A',
+                                                                  bold: true,
+                                                                  fontSize: 20,
+                                                                )),
+                                                          ],
+                                                          selected: <String>{
+                                                            selectedGender
+                                                          },
+                                                          onSelectionChanged:
+                                                              (Set<String>
+                                                                  newSelection) {
+                                                            gender.value =
+                                                                newSelection
+                                                                    .first;
+                                                          },
+                                                        ),
                                                       );
                                                     },
                                                   ),

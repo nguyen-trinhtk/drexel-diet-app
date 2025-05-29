@@ -417,7 +417,7 @@ class _HomepageState extends State<HomePage> {
                                       onAddPressed: () {
                                         final String? uid =
                                             Provider.of<UserProvider>(context,
-                                                    listen: false)
+                                                    listen: true)
                                                 .userId;
                                         if (uid == null || uid.isEmpty) {
                                           showDialog(
