@@ -7,6 +7,7 @@ import 'filter.dart';
 import 'package:code/themes/constants.dart';
 import 'package:code/themes/widgets.dart';
 import 'package:code/data_provider.dart';
+import 'package:logger/logger.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 
@@ -19,8 +20,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomepageState extends State<HomePage> {
+  var logger = Logger();
   bool isLogBarExpanded = false;
   final Map<String, Map<String, dynamic>> _loggedDishes = {};
+  String searchQuery = "";
   Map<dynamic, dynamic> recommendedMenu = {};
   int _totalCalories = 0;
   int _totalCarbs = 0;
@@ -180,37 +183,46 @@ class _HomepageState extends State<HomePage> {
     SearchController? _searchAnchorController;
     context.watch<FoodFilterDrawerState>();
 
-    Map<dynamic, dynamic> filteredMenu = {};   
-
+    Map<dynamic, dynamic> filteredMenu = {};
     // Apply filters
     var indexNum = 0;
     menuData.forEach((index, item) {
-      // If no filter, automatically passed
-      bool passedPref = true;
-      bool passedCalorie = true;
+      if (searchQuery == "") {
+        // If no filter, automatically passed
+        bool passedPref = true;
+        bool passedCalorie = true;
 
-      // Check pref filters (if available)
-      if (foodPreferenceFilters.isNotEmpty) {
-        for (FoodPreference preference in foodPreferenceFilters) {
-          if (item[preference.name] == "False") {
-            passedPref = false;
-            break;
+        // Check pref filters (if available)
+        if (foodPreferenceFilters.isNotEmpty) {
+          for (FoodPreference preference in foodPreferenceFilters) {
+            if (item[preference.name] == "False") {
+              passedPref = false;
+              break;
+            }
           }
         }
-      }
 
-      // Check calorie filters (if available)
-      if (!(lowerBound == 0 && upperBound == 0)) {
-        int calories = int.tryParse(item["Calories"]) ?? 0;
-        if (calories < lowerBound || calories > upperBound) {
-          passedCalorie = false;
+        // Check calorie filters (if available)
+        if (!(lowerBound == 0 && upperBound == 0)) {
+          int calories = int.tryParse(item["Calories"]) ?? 0;
+          if (calories < lowerBound || calories > upperBound) {
+            passedCalorie = false;
+          }
+        }
+
+        // Add to menu if passed filters
+        if (passedCalorie && passedPref) {
+          filteredMenu[indexNum.toString()] = item;
+          indexNum += 1;
         }
       }
-
-      // Add to menu if passed filters
-      if (passedCalorie && passedPref) {
-        filteredMenu[indexNum.toString()] = item;
-        indexNum += 1;
+      else {
+        if (item != null){
+          if (((item["Name"].contains(searchQuery)) | (item["Name"].toLowerCase().contains(searchQuery))) | ((item["Description"].contains(searchQuery)) | (item["Description"].toLowerCase().contains(searchQuery)))){
+            filteredMenu[indexNum.toString()] = item;
+            indexNum += 1;
+          }
+        }
       }
     });
 
@@ -229,6 +241,7 @@ class _HomepageState extends State<HomePage> {
                   child:
                   SearchViewTheme(
                     data: SearchViewThemeData(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40), side:BorderSide(color:AppColors.primaryText)),
                       headerTextStyle: TextStyle(fontFamily: AppFonts.textFont, color: AppColors.primaryText),
                       dividerColor: AppColors.primaryText,
                       backgroundColor: Colors.white,
@@ -249,10 +262,23 @@ class _HomepageState extends State<HomePage> {
                       },
 
                       suggestionsBuilder: (BuildContext context, SearchController controller){
-                        return List<ListTile>.generate(5, (int index) {
-                          final String item = 'item $index';
+                        String query = controller.value.text;
+                        List<String> suggestions = [];
+                        for (int index = 0; index < menuData.length; index++){
+                          final item = menuData[index.toString()];
+                          if (item != null){
+                            if (((item["Name"].contains(query)) | (item["Name"].toLowerCase().contains(query))) | ((item["Description"].contains(query)) | (item["Description"].toLowerCase().contains(query)))){
+                              suggestions.add(menuData[index.toString()]["Name"]);
+                            }
+                          }
+                        }
+                        setState(() {
+                          searchQuery = query;
+                        });
+                        return List<ListTile>.generate(suggestions.length, (int index) {
+                          final String item = suggestions[index];
                           return ListTile(
-                            title: Text(item),
+                            title: CustomText(content:item),
                             onTap: () {
                               setState(() {
                                 controller.closeView(item);
@@ -399,7 +425,7 @@ class _HomepageState extends State<HomePage> {
                                       onAddPressed: () {
                                         final String? uid =
                                             Provider.of<UserProvider>(context,
-                                                    listen: false)
+                                                    listen: true)
                                                 .userId;
                                         if (uid == null || uid.isEmpty) {
                                           showDialog(
