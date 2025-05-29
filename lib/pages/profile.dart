@@ -79,11 +79,9 @@ class _ProfilePageState extends State<ProfilePage> {
       updateFirestore(false);
     });
 
-    // Add listeners to update safeDays
     currentWeight.addListener(_updateSafeDays);
     goalWeight.addListener(_updateSafeDays);
 
-    // Initial calculation
     _updateSafeDays();
   }
 
@@ -577,10 +575,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                                                     WidgetState
                                                                         .selected)) {
                                                                   return Colors
-                                                                      .white; // Selected text is white
+                                                                      .white;
                                                                 }
                                                                 return AppColors
-                                                                    .accent; // Unselected text is accent color
+                                                                    .accent;
                                                               },
                                                             ),
                                                             padding: WidgetStateProperty.all(
