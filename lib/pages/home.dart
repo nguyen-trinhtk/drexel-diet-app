@@ -23,6 +23,7 @@ class _HomepageState extends State<HomePage> {
   var logger = Logger();
   bool isLogBarExpanded = false;
   final Map<String, Map<String, dynamic>> _loggedDishes = {};
+  final ValueNotifier<String> hall = ValueNotifier<String>("hans");
   String searchQuery = "";
   Map<dynamic, dynamic> recommendedMenu = {};
   int _totalCalories = 0;
@@ -30,13 +31,11 @@ class _HomepageState extends State<HomePage> {
   int _totalFat = 0;
   int _totalProtein = 0;
 
-  // List of hall selection checks
-  List<bool> isHallSelected = [true, false];
-
   @override
   void initState() {
     super.initState();
-    loadJsonAsset('urban').then((_) {
+    logger.d(hall.toString());
+    loadJsonAsset(hall.value).then((_) {
       getRecommendedMenu();
     });
   }
@@ -399,6 +398,32 @@ class _HomepageState extends State<HomePage> {
                     : MediaQuery.of(context).size.height * 0.03),
                 child: SingleChildScrollView(
                   child: Column(spacing: 15, children: [
+                    ValueListenableBuilder<String>( 
+                      valueListenable: hall,
+                      builder: (context, selectedHall, child) {
+                        return SegmentedButton<String>(
+                          segments: const <ButtonSegment<String>>[
+                            ButtonSegment<String>(
+                              value: "hans",
+                              label: CustomText(content:"Handschumacher"),
+                            ),
+                            ButtonSegment<String>(
+                              value: "urban",
+                              label: CustomText(content:"Urban Eatery"),
+                            )
+                          ],
+                          selected: <String>{selectedHall},
+                          onSelectionChanged: 
+                            (Set<String> newSelection){
+                              hall.value = newSelection.first;
+                              loadJsonAsset(hall.value).then((_) {
+                                getRecommendedMenu();
+                              });
+                            },
+                        );
+                      }
+                    ),
+                    /*
                     ToggleButtons(
                         isSelected: isHallSelected,
                         onPressed: (int index) {
@@ -422,7 +447,7 @@ class _HomepageState extends State<HomePage> {
                             content: "Handschumacher",
                           ),
                         ]),
-
+                    */
                     // Recommended Food Box
                     Container(
                         // Check if there is recommended food
