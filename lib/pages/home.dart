@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+import 'package:code/SSO-related/SSO.dart';
 import 'dart:convert';
 import 'filter.dart';
 import 'package:code/themes/constants.dart';
@@ -10,7 +11,6 @@ import 'package:code/data_provider.dart';
 import 'package:logger/logger.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
-
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -30,14 +30,15 @@ class _HomepageState extends State<HomePage> {
   int _totalFat = 0;
   int _totalProtein = 0;
 
-  // List of hall selection checks  
+  // List of hall selection checks
   List<bool> isHallSelected = [true, false];
 
   @override
   void initState() {
     super.initState();
-    loadJsonAsset('urban').then((_) {getRecommendedMenu();}
-    );
+    loadJsonAsset('urban').then((_) {
+      getRecommendedMenu();
+    });
   }
 
   Future<void> loadJsonAsset(String filename) async {
@@ -146,7 +147,7 @@ class _HomepageState extends State<HomePage> {
     }).toList();
   }
 
-  Future<void> getRecommendedMenu() async { 
+  Future<void> getRecommendedMenu() async {
     await dotenv.load(fileName: ".env");
     final apiKey = dotenv.env["GEMINI_API_KEY"];
 
@@ -157,32 +158,32 @@ class _HomepageState extends State<HomePage> {
 
     Gemini.init(apiKey: apiKey ?? "");
     await Gemini.instance.prompt(parts: [
-    Part.text('Based on user past data, suggest 1-3 dishes from the current menu data. ONLY output your response with only the ID number of the dish (e.g. 1, 2, 3). Here is user past data: Honey BBQ Chicken. Here is menu data: $menuData'),
-  ]).then((value) {
-    var ans = value?.output;
-    print("Answer from Gemini: $ans");
-    recommendedIndex = ans!.trim().split(", ");
-    print(recommendedIndex);
-  }).catchError((e) {
-    print('error ${e}');
-  });
+      Part.text(
+          'Based on user past data, suggest 1-3 dishes from the current menu data. ONLY output your response with only the ID number of the dish (e.g. 1, 2, 3). Here is user past data: Honey BBQ Chicken. Here is menu data: $menuData'),
+    ]).then((value) {
+      var ans = value?.output;
+      print("Answer from Gemini: $ans");
+      recommendedIndex = ans!.trim().split(", ");
+      print(recommendedIndex);
+    }).catchError((e) {
+      print('error ${e}');
+    });
 
     int recommendedMenuIndex = 0;
-    for (var index in recommendedIndex){
-      recommendedMenu[recommendedMenuIndex.toString()] = menuData[index]; 
+    for (var index in recommendedIndex) {
+      recommendedMenu[recommendedMenuIndex.toString()] = menuData[index];
       recommendedMenuIndex += 1;
     }
-    
+
     print(recommendedMenu);
-    setState(() {
-    });
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     final globalData = context.watch<FoodDataProvider>();
     final menuData = globalData.menuData;
-    
+
     final viewWidth = MediaQuery.of(context).size.width;
     SearchController? _searchAnchorController;
     context.watch<FoodFilterDrawerState>();
@@ -219,17 +220,18 @@ class _HomepageState extends State<HomePage> {
           filteredMenu[indexNum.toString()] = item;
           indexNum += 1;
         }
-      }
-      else {
-        if (item != null){
-          if (((item["Name"].contains(searchQuery)) | (item["Name"].toLowerCase().contains(searchQuery))) | ((item["Description"].contains(searchQuery)) | (item["Description"].toLowerCase().contains(searchQuery)))){
+      } else {
+        if (item != null) {
+          if (((item["Name"].contains(searchQuery)) |
+                  (item["Name"].toLowerCase().contains(searchQuery))) |
+              ((item["Description"].contains(searchQuery)) |
+                  (item["Description"].toLowerCase().contains(searchQuery)))) {
             filteredMenu[indexNum.toString()] = item;
             indexNum += 1;
           }
         }
       }
     });
-
 
     return Row(
       children: [
@@ -238,76 +240,103 @@ class _HomepageState extends State<HomePage> {
             appBar: AppBar(
               backgroundColor: AppColors.primaryBackground,
               scrolledUnderElevation: 0,
-              title: SizedBox( 
-                width: MediaQuery.sizeOf(context).width*0.8,
-                height: MediaQuery.sizeOf(context).height*0.06,
-                child:Padding( 
-                  padding: EdgeInsets.symmetric(horizontal: MediaQuery.sizeOf(context).width*0.01),
-                  child:
-                  SearchViewTheme(
+              title: SizedBox(
+                width: MediaQuery.sizeOf(context).width * 0.8,
+                height: MediaQuery.sizeOf(context).height * 0.06,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: MediaQuery.sizeOf(context).width * 0.01),
+                  child: SearchViewTheme(
                     data: SearchViewThemeData(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40), side:BorderSide(color:AppColors.primaryText)),
-                      headerTextStyle: TextStyle(fontFamily: AppFonts.textFont, color: AppColors.primaryText),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(40),
+                          side: BorderSide(color: AppColors.primaryText)),
+                      headerTextStyle: TextStyle(
+                          fontFamily: AppFonts.textFont,
+                          color: AppColors.primaryText),
                       dividerColor: AppColors.primaryText,
                       backgroundColor: Colors.white,
                     ),
-                    child:SearchAnchor(
-                      builder: (BuildContext context, SearchController controller) {
+                    child: SearchAnchor(
+                      builder:
+                          (BuildContext context, SearchController controller) {
                         _searchAnchorController = controller;
                         return SearchBar(
-                          backgroundColor: WidgetStateProperty.all(Colors.white),
-                          shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(40), side:BorderSide(width: 1, color: AppColors.primaryText))),
+                          backgroundColor:
+                              WidgetStateProperty.all(Colors.white),
+                          shape: WidgetStateProperty.all(RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40),
+                              side: BorderSide(
+                                  width: 1, color: AppColors.primaryText))),
                           elevation: WidgetStateProperty.all(0),
                           controller: controller,
-                          padding: WidgetStatePropertyAll<EdgeInsets>(EdgeInsets.only(left: MediaQuery.of(context).size.height*0.02)),
-                          onTap: () {controller.openView();},
-                          onChanged: (_) {controller.openView();},
-                          leading: const Icon(Icons.search, color:AppColors.accent),
+                          padding: WidgetStatePropertyAll<EdgeInsets>(
+                              EdgeInsets.only(
+                                  left: MediaQuery.of(context).size.height *
+                                      0.02)),
+                          onTap: () {
+                            controller.openView();
+                          },
+                          onChanged: (_) {
+                            controller.openView();
+                          },
+                          leading:
+                              const Icon(Icons.search, color: AppColors.accent),
                         );
                       },
-
-                      suggestionsBuilder: (BuildContext context, SearchController controller){
+                      suggestionsBuilder:
+                          (BuildContext context, SearchController controller) {
                         String query = controller.value.text;
                         List<String> suggestions = [];
-                        for (int index = 0; index < menuData.length; index++){
+                        for (int index = 0; index < menuData.length; index++) {
                           final item = menuData[index.toString()];
-                          if (item != null){
-                            if (((item["Name"].contains(query)) | (item["Name"].toLowerCase().contains(query))) | ((item["Description"].contains(query)) | (item["Description"].toLowerCase().contains(query)))){
-                              suggestions.add(menuData[index.toString()]["Name"]);
+                          if (item != null) {
+                            if (((item["Name"].contains(query)) |
+                                    (item["Name"]
+                                        .toLowerCase()
+                                        .contains(query))) |
+                                ((item["Description"].contains(query)) |
+                                    (item["Description"]
+                                        .toLowerCase()
+                                        .contains(query)))) {
+                              suggestions
+                                  .add(menuData[index.toString()]["Name"]);
                             }
                           }
                         }
                         setState(() {
                           searchQuery = query;
                         });
-                        return List<ListTile>.generate(suggestions.length, (int index) {
+                        return List<ListTile>.generate(suggestions.length,
+                            (int index) {
                           final String item = suggestions[index];
                           return ListTile(
-                            title: CustomText(content:item),
-                            onTap: () {
-                              setState(() {
-                                controller.closeView(item);
+                              title: CustomText(content: item),
+                              onTap: () {
+                                setState(() {
+                                  controller.closeView(item);
+                                });
                               });
-                            }
-                          );
                         });
                       },
-
                       viewTrailing: [
-                        Builder(
-                          builder: (context){
-                            return IconButton(
-                              icon: Icon(Icons.clear, color:AppColors.accent),
-                              onPressed: () {_searchAnchorController?.clear();},
-                            );
-                          }
-                        )
+                        Builder(builder: (context) {
+                          return IconButton(
+                            icon: Icon(Icons.clear, color: AppColors.accent),
+                            onPressed: () {
+                              _searchAnchorController?.clear();
+                            },
+                          );
+                        })
                       ],
                       viewLeading: Builder(
-                        builder: (context){
+                        builder: (context) {
                           return IconButton(
-                            icon: Icon(Icons.arrow_back, color:AppColors.accent),
-                            onPressed: () {_searchAnchorController?.closeView("");},
+                            icon:
+                                Icon(Icons.arrow_back, color: AppColors.accent),
+                            onPressed: () {
+                              _searchAnchorController?.closeView("");
+                            },
                           );
                         },
                       ),
@@ -345,25 +374,24 @@ class _HomepageState extends State<HomePage> {
                     },
                   ),
                 ),
-                // Collapsible Log Dish Bar
-                IconButton(
-                  icon: Icon(
-                    isLogBarExpanded ? Icons.close : Icons.menu,
-                    color: AppColors.primaryText,
+                if (Provider.of<UserProvider>(context, listen: false).userId != null)
+                  IconButton(
+                    icon: Icon(
+                      isLogBarExpanded ? Icons.close : Icons.menu,
+                      color: AppColors.primaryText,
+                    ),
+                    tooltip: isLogBarExpanded
+                        ? "Close Logged Dishes"
+                        : "Show Logged Dishes",
+                    onPressed: () {
+                      setState(() {
+                        isLogBarExpanded = !isLogBarExpanded;
+                      });
+                    },
                   ),
-                  tooltip: isLogBarExpanded
-                      ? "Close Logged Dishes"
-                      : "Show Logged Dishes",
-                  onPressed: () {
-                    setState(() {
-                      isLogBarExpanded = !isLogBarExpanded;
-                    });
-                  },
-                ),
                 SizedBox(width: MediaQuery.of(context).size.width * 0.015),
               ],
             ),
-
             backgroundColor: AppColors.primaryBackground,
             body: Padding(
                 padding: EdgeInsets.all(isLogBarExpanded
@@ -372,23 +400,28 @@ class _HomepageState extends State<HomePage> {
                 child: SingleChildScrollView(
                   child: Column(spacing: 15, children: [
                     ToggleButtons(
-                      isSelected: isHallSelected,
-                      onPressed: (int index) {
-                        setState(() {
-                        for (int buttonIndex = 0; buttonIndex < isHallSelected.length; buttonIndex++) {
-                          if (buttonIndex == index) {
-                            isHallSelected[buttonIndex] = true;
-                          } else {
-                            isHallSelected[buttonIndex] = false;
-                          }
-                        }
-                      });
-                      },
-                      children: <Widget>[
-                        CustomText(content: "Urban Eatery",),
-                        CustomText(content: "Handschumacher",),
-                      ]
-                    ),
+                        isSelected: isHallSelected,
+                        onPressed: (int index) {
+                          setState(() {
+                            for (int buttonIndex = 0;
+                                buttonIndex < isHallSelected.length;
+                                buttonIndex++) {
+                              if (buttonIndex == index) {
+                                isHallSelected[buttonIndex] = true;
+                              } else {
+                                isHallSelected[buttonIndex] = false;
+                              }
+                            }
+                          });
+                        },
+                        children: <Widget>[
+                          CustomText(
+                            content: "Urban Eatery",
+                          ),
+                          CustomText(
+                            content: "Handschumacher",
+                          ),
+                        ]),
 
                     // Recommended Food Box
                     Container(
@@ -447,25 +480,34 @@ class _HomepageState extends State<HomePage> {
                                       calories: "Calories $calories",
                                       fontSize: isLogBarExpanded ? 14 : 18,
                                       onAddPressed: () {
-                                        final String? uid =
+                                        String? uid =
                                             Provider.of<UserProvider>(context,
-                                                    listen: true)
+                                                    listen: false)
                                                 .userId;
                                         if (uid == null || uid.isEmpty) {
                                           showDialog(
                                             context: context,
                                             builder: (BuildContext context) {
                                               return AlertDialog(
-                                                title: Text("Login Required"),
-                                                content: Text(
-                                                    "You must be logged in to add food to your log."),
+                                                title: CustomText(
+                                                    content: "Please log in to add food",
+                                                    header: true,
+                                                    fontSize: 18,),
+                                              backgroundColor: AppColors.white,
+                                              iconColor: AppColors.accent,
                                                 actions: [
-                                                  TextButton(
-                                                    child: Text("OK"),
+                                                  CustomButton(
+                                                    text: "Log in",
                                                     onPressed: () {
                                                       Navigator.of(context)
-                                                          .pop();
+                                                          .push(
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                const SSOPage()),
+                                                      );
                                                     },
+                                                    color: AppColors.accent,
+                                                    hoverColor: AppColors.primaryText
                                                   ),
                                                 ],
                                               );
@@ -518,39 +560,54 @@ class _HomepageState extends State<HomePage> {
                           description: item['Description'],
                           calories: "Calories $calories",
                           fontSize: isLogBarExpanded ? 14 : 18,
-                                      onAddPressed: () {
-                                        final String? uid =
-                                            Provider.of<UserProvider>(context,
-                                                    listen: false)
-                                                .userId;
-                                        print(uid);
-                                        if (uid == null || uid.isEmpty) {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: Text("Login Required"),
-                                                content: Text(
-                                                    "You must be logged in to add food to your log."),
+                          onAddPressed: () {
+                            String? uid = Provider.of<UserProvider>(
+                                    context,
+                                    listen: false)
+                                .userId;
+                            if (uid == null || uid.isEmpty) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                                title: CustomText(
+                                                    content: "Please log in to add food",
+                                                    header: true,
+                                                    fontSize: 18,),
+                                              backgroundColor: AppColors.white,
+                                              iconColor: AppColors.accent,
                                                 actions: [
-                                                  TextButton(
-                                                    child: Text("OK"),
+                                                  CustomButton(
+                                                    onPressed: () => Navigator.of(context).pop(),
+                                                    text: 'Return',
+                                                    bold: true,
+                                                    borderColor: AppColors.accent,
+                                                    color: AppColors.white,
+                                                    textColor: AppColors.accent,
+                                                    hoverColor: AppColors.tertiaryText),
+                                                  CustomButton(
+                                                    text: "Log in",
                                                     onPressed: () {
                                                       Navigator.of(context)
-                                                          .pop();
+                                                          .push(
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                const SSOPage()),
+                                                      );
                                                     },
+                                                    color: AppColors.accent,
+                                                    hoverColor: AppColors.primaryText
                                                   ),
                                                 ],
                                               );
-                                            },
-                                          );
-                                        } else {
-                                          appendLog(foodName, calories, protein,
-                                              carbs, fat);
-                                          setState(
-                                              () => isLogBarExpanded = true);
-                                        }
-                                      },
+                                },
+                              );
+                            } else {
+                              appendLog(
+                                  foodName, calories, protein, carbs, fat);
+                              setState(() => isLogBarExpanded = true);
+                            }
+                          },
                         );
                       },
                     )
