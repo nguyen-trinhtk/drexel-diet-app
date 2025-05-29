@@ -29,7 +29,7 @@ class _DietPageState extends State<DietPage> {
           return const Center(child: CircularProgressIndicator());
         }
         if (!snapshot.hasData || !snapshot.data!.exists) {
-          return const Center(child: Text("No user data found."));
+          return const Center(child: CustomText(content:"No user data found :(", header:true, fontSize: 30));
         }
         final data = snapshot.data!.data() as Map<String, dynamic>;
 
@@ -47,7 +47,7 @@ class _DietPageState extends State<DietPage> {
               return const Center(child: CircularProgressIndicator());
             }
             if (!weightSnapshot.hasData || !weightSnapshot.data!.exists) {
-              return const Center(child: Text("No weight progress data found."));
+              return const Center(child: CustomText(content:"No weight data found :(", header:true, fontSize: 30));
             }
             final weightData = weightSnapshot.data!.data() as Map<String, dynamic>;
             final Map<String, dynamic> weightProgressMap = weightData['weightProgress'] != null
@@ -58,7 +58,7 @@ class _DietPageState extends State<DietPage> {
                 MapEntry(key, (value is num) ? value.toDouble() : double.tryParse(value.toString()) ?? 0.0));
 
             if (weightProgress.isEmpty) {
-              return const Center(child: Text("No weight progress entries."));
+              return const Center(child: CustomText(content:"No weight data found :(", header:true, fontSize: 30));
             }
 
             return Scaffold(
