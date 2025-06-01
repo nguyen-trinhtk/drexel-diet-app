@@ -23,13 +23,18 @@ class _DietPageState extends State<DietPage> {
     }
 
     return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance.collection('users').doc(uid).snapshots(),
+      stream:
+          FirebaseFirestore.instance.collection('users').doc(uid).snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
         if (!snapshot.hasData || !snapshot.data!.exists) {
-          return const Center(child: CustomText(content:"No user data found :(", header:true, fontSize: 30));
+          return const Center(
+              child: CustomText(
+                  content: "No user data found :(",
+                  header: true,
+                  fontSize: 30));
         }
         final data = snapshot.data!.data() as Map<String, dynamic>;
 
@@ -38,28 +43,67 @@ class _DietPageState extends State<DietPage> {
         final int currentWeight = data['currentWeight'] ?? 0;
         final int daysToGoal = data['daysToGoal'] ?? 0;
         final achieveBy = DateTime.now().add(Duration(days: daysToGoal));
-        String achieveByString = "${achieveBy.month.toString().padLeft(2, '0')}-${achieveBy.day.toString().padLeft(2, '0')}-${achieveBy.year}";
+        String achieveByString =
+            "${achieveBy.month.toString().padLeft(2, '0')}-${achieveBy.day.toString().padLeft(2, '0')}-${achieveBy.year}";
 
         return StreamBuilder<DocumentSnapshot>(
-          stream: FirebaseFirestore.instance.collection('weightProgress').doc(uid).snapshots(),
+          stream: FirebaseFirestore.instance
+              .collection('weightProgress')
+              .doc(uid)
+              .snapshots(),
           builder: (context, weightSnapshot) {
             if (weightSnapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
             if (!weightSnapshot.hasData || !weightSnapshot.data!.exists) {
-              return const Center(child: CustomText(content:"No weight data found :(", header:true, fontSize: 30));
+              return const Center(
+                  child: CustomText(
+                      content: "No weight data found :(",
+                      header: true,
+                      fontSize: 30));
             }
-            final weightData = weightSnapshot.data!.data() as Map<String, dynamic>;
-            final Map<String, dynamic> weightProgressMap = weightData['weightProgress'] != null
-                ? Map<String, dynamic>.from(weightData['weightProgress'])
-                : {};
+            final weightData =
+                weightSnapshot.data!.data() as Map<String, dynamic>;
+            final Map<String, dynamic> weightProgressMap =
+                weightData['weightProgress'] != null
+                    ? Map<String, dynamic>.from(weightData['weightProgress'])
+                    : {};
 
-            final Map<String, double> weightProgress = weightProgressMap.map((key, value) =>
-                MapEntry(key, (value is num) ? value.toDouble() : double.tryParse(value.toString()) ?? 0.0));
+            final Map<String, double> weightProgress = weightProgressMap.map(
+                (key, value) => MapEntry(
+                    key,
+                    (value is num)
+                        ? value.toDouble()
+                        : double.tryParse(value.toString()) ?? 0.0));
 
             if (weightProgress.isEmpty) {
-              return const Center(child: CustomText(content:"No weight data found :(", header:true, fontSize: 30));
+              return const Center(
+                  child: CustomText(
+                      content: "No weight data found :(",
+                      header: true,
+                      fontSize: 30));
             }
+
+            final sortedKeys = weightProgress.keys.toList()
+              ..sort((a, b) => parseMMDDYYYY(a).compareTo(parseMMDDYYYY(b)));
+
+            DateTime startDate = parseMMDDYYYY(sortedKeys.first);
+
+            final spots = sortedKeys.map((key) {
+              double x =
+                  parseMMDDYYYY(key).difference(startDate).inDays.toDouble();
+              double y = weightProgress[key]!;
+              return FlSpot(x, y);
+            }).toList();
+
+            double minY =
+                weightProgress.values.reduce((a, b) => a < b ? a : b) - 1;
+            double maxY =
+                weightProgress.values.reduce((a, b) => a > b ? a : b) + 1;
+            double maxX = parseMMDDYYYY(sortedKeys.last)
+                .difference(startDate)
+                .inDays
+                .toDouble();
 
             return Scaffold(
               backgroundColor: AppColors.primaryBackground,
@@ -96,11 +140,14 @@ class _DietPageState extends State<DietPage> {
                                     decoration: BoxDecoration(
                                       color: AppColors.accent,
                                       borderRadius: BorderRadius.circular(25),
-                                      border: Border.all(color: AppColors.primaryText),
+                                      border: Border.all(
+                                          color: AppColors.primaryText),
                                     ),
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         CustomText(
                                           content: '$goalCalories',
@@ -124,18 +171,22 @@ class _DietPageState extends State<DietPage> {
                                     decoration: BoxDecoration(
                                       color: AppColors.accent,
                                       borderRadius: BorderRadius.circular(25),
-                                      border: Border.all(color: AppColors.primaryText),
+                                      border: Border.all(
+                                          color: AppColors.primaryText),
                                     ),
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         Expanded(
                                           child: Container(
                                             width: double.infinity,
                                             decoration: BoxDecoration(
                                               color: AppColors.accent,
-                                              borderRadius: const BorderRadius.only(
+                                              borderRadius:
+                                                  const BorderRadius.only(
                                                 topLeft: Radius.circular(25),
                                                 topRight: Radius.circular(25),
                                               ),
@@ -154,9 +205,11 @@ class _DietPageState extends State<DietPage> {
                                             width: double.infinity,
                                             decoration: BoxDecoration(
                                               color: AppColors.white,
-                                              borderRadius: const BorderRadius.only(
+                                              borderRadius:
+                                                  const BorderRadius.only(
                                                 bottomLeft: Radius.circular(25),
-                                                bottomRight: Radius.circular(25),
+                                                bottomRight:
+                                                    Radius.circular(25),
                                               ),
                                             ),
                                             child: Center(
@@ -180,18 +233,22 @@ class _DietPageState extends State<DietPage> {
                                     decoration: BoxDecoration(
                                       color: AppColors.accent,
                                       borderRadius: BorderRadius.circular(25),
-                                      border: Border.all(color: AppColors.primaryText),
+                                      border: Border.all(
+                                          color: AppColors.primaryText),
                                     ),
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         Expanded(
                                           child: Container(
                                             width: double.infinity,
                                             decoration: BoxDecoration(
                                               color: AppColors.accent,
-                                              borderRadius: const BorderRadius.only(
+                                              borderRadius:
+                                                  const BorderRadius.only(
                                                 topLeft: Radius.circular(25),
                                                 topRight: Radius.circular(25),
                                               ),
@@ -210,9 +267,11 @@ class _DietPageState extends State<DietPage> {
                                             width: double.infinity,
                                             decoration: BoxDecoration(
                                               color: AppColors.white,
-                                              borderRadius: const BorderRadius.only(
+                                              borderRadius:
+                                                  const BorderRadius.only(
                                                 bottomLeft: Radius.circular(25),
-                                                bottomRight: Radius.circular(25),
+                                                bottomRight:
+                                                    Radius.circular(25),
                                               ),
                                             ),
                                             child: Center(
@@ -238,16 +297,21 @@ class _DietPageState extends State<DietPage> {
                               decoration: BoxDecoration(
                                 color: AppColors.white,
                                 borderRadius: BorderRadius.circular(25),
-                                border: Border.all(color: AppColors.primaryText),
+                                border:
+                                    Border.all(color: AppColors.primaryText),
                               ),
                               child: Column(
-                                spacing: MediaQuery.of(context).size.height * .02,
+                                spacing:
+                                    MediaQuery.of(context).size.height * .02,
                                 children: [
                                   Padding(
                                     padding: EdgeInsets.only(
-                                        top: MediaQuery.of(context).size.height * 0.01),
+                                        top:
+                                            MediaQuery.of(context).size.height *
+                                                0.01),
                                     child: CustomText(
-                                      content: 'Current weight: $currentWeight lbs',
+                                      content:
+                                          'Current weight: $currentWeight lbs',
                                       header: true,
                                       color: AppColors.accent,
                                     ),
@@ -255,18 +319,21 @@ class _DietPageState extends State<DietPage> {
                                   Expanded(
                                     child: Padding(
                                       padding: EdgeInsets.all(
-                                          MediaQuery.of(context).size.height * .025),
+                                          MediaQuery.of(context).size.height *
+                                              .025),
                                       child: LineChart(
                                         LineChartData(
                                           gridData: FlGridData(
                                             show: true,
                                             drawVerticalLine: true,
                                             drawHorizontalLine: true,
-                                            getDrawingHorizontalLine: (value) => FlLine(
+                                            getDrawingHorizontalLine: (value) =>
+                                                FlLine(
                                               color: AppColors.secondaryText,
                                               strokeWidth: 1,
                                             ),
-                                            getDrawingVerticalLine: (value) => FlLine(
+                                            getDrawingVerticalLine: (value) =>
+                                                FlLine(
                                               color: AppColors.secondaryText,
                                               strokeWidth: 1,
                                             ),
@@ -277,9 +344,15 @@ class _DietPageState extends State<DietPage> {
                                                 showTitles: true,
                                                 reservedSize: 30,
                                                 getTitlesWidget: (value, _) {
-                                                  DateTime startDate = parseMMDDYYYY(weightProgress.keys.first);
-                                                  DateTime date = startDate.add(Duration(days: value.toInt()));
-                                                  return Text('${date.month}/${date.day}');
+                                                  DateTime startDate =
+                                                      parseMMDDYYYY(
+                                                          weightProgress
+                                                              .keys.first);
+                                                  DateTime date = startDate.add(
+                                                      Duration(
+                                                          days: value.toInt()));
+                                                  return Text(
+                                                      '${date.month}/${date.day}');
                                                 },
                                               ),
                                             ),
@@ -292,39 +365,25 @@ class _DietPageState extends State<DietPage> {
                                               ),
                                             ),
                                             rightTitles: AxisTitles(
-                                                sideTitles:
-                                                    SideTitles(showTitles: false)),
+                                                sideTitles: SideTitles(
+                                                    showTitles: false)),
                                             topTitles: AxisTitles(
-                                                sideTitles:
-                                                    SideTitles(showTitles: false)),
+                                                sideTitles: SideTitles(
+                                                    showTitles: false)),
                                           ),
                                           borderData: FlBorderData(
                                             show: true,
                                             border: Border.all(
-                                                color: AppColors.primaryText, width: 1),
+                                                color: AppColors.primaryText,
+                                                width: 1),
                                           ),
                                           minX: 0,
-                                          maxX: parseMMDDYYYY(weightProgress.keys.last)
-                                              .difference(parseMMDDYYYY(weightProgress.keys.first))
-                                              .inDays
-                                              .toDouble(),
-                                          minY: weightProgress.values
-                                                  .reduce((a, b) => a < b ? a : b) -
-                                              1,
-                                          maxY: weightProgress.values
-                                                  .reduce((a, b) => a > b ? a : b) +
-                                              1,
+                                          maxX: maxX,
+                                          minY: minY,
+                                          maxY: maxY,
                                           lineBarsData: [
                                             LineChartBarData(
-                                              spots: weightProgress.entries.map((entry) {
-                                                DateTime startDate = parseMMDDYYYY(weightProgress.keys.first);
-                                                double x = parseMMDDYYYY(entry.key)
-                                                    .difference(startDate)
-                                                    .inDays
-                                                    .toDouble();
-                                                double y = entry.value;
-                                                return FlSpot(x, y);
-                                              }).toList(),
+                                              spots: spots,
                                               isCurved: false,
                                               color: AppColors.accent,
                                               barWidth: 3,
