@@ -29,7 +29,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final ValueNotifier<String> name = ValueNotifier<String>("Name");
 
   final TextEditingController nameController =
-      TextEditingController(text: "Name");
+      TextEditingController();
   final TextEditingController ageController = TextEditingController(text: "18");
   final TextEditingController heightController =
       TextEditingController(text: "72");
@@ -41,41 +41,34 @@ class _ProfilePageState extends State<ProfilePage> {
 
   bool _isLoading = true;
 
-  @override
-  void initState() {
-    super.initState();
-    _loadUserData();
+@override
+void initState() {
+  super.initState();
+  _initProfilePage();
+}
 
-    ageController.addListener(() {
-      if (!_isLoading) age.value = ageController.text;
-    });
-    nameController.addListener(() {
-      if (!_isLoading) name.value = nameController.text;
-    });
-    heightController.addListener(() {
-      if (!_isLoading) height.value = heightController.text;
-    });
-    weightController.addListener(() {
-      if (!_isLoading) currentWeight.value = weightController.text;
-    });
-    goalWeightController.addListener(() {
-      if (!_isLoading) goalWeight.value = goalWeightController.text;
-    });
-
-    age.addListener(() => updateFirestore(false));
-    name.addListener(() => updateFirestore(false));
-    height.addListener(() => updateFirestore(false));
-    currentWeight.addListener(() => updateFirestore(true));
-    activityLevel.addListener(() => updateFirestore(false));
-    gender.addListener(() => updateFirestore(false));
-    goalWeight.addListener(() => updateFirestore(false));
-    daysUntilGoal.addListener(() => updateFirestore(false));
-
-    currentWeight.addListener(_updateSafeDays);
-    goalWeight.addListener(_updateSafeDays);
-
-    _updateSafeDays();
-  }
+Future<void> _initProfilePage() async {
+  await _loadUserData();
+  ageController.addListener(() => age.value = ageController.text);
+  nameController.addListener(() => name.value = nameController.text);
+  heightController.addListener(() => height.value = heightController.text);
+  weightController.addListener(() => currentWeight.value = weightController.text);
+  goalWeightController.addListener(() => goalWeight.value = goalWeightController.text);
+  age.addListener(() => updateFirestore(false));
+  name.addListener(() => updateFirestore(false));
+  height.addListener(() => updateFirestore(false));
+  currentWeight.addListener(() => updateFirestore(true));
+  activityLevel.addListener(() => updateFirestore(false));
+  gender.addListener(() => updateFirestore(false));
+  goalWeight.addListener(() => updateFirestore(false));
+  daysUntilGoal.addListener(() => updateFirestore(false));
+  currentWeight.addListener(_updateSafeDays);
+  goalWeight.addListener(_updateSafeDays);
+  _updateSafeDays();
+  setState(() {
+    _isLoading = false;
+  });
+}
 
   int computeSafeDays({
     required double currentWeightLbs,
@@ -98,35 +91,64 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _loadUserData() async {
     String? uid = Provider.of<UserProvider>(context, listen: false).userId;
     if (uid == null) return;
+
     _isLoading = true;
-    var doc =
-        await FirebaseFirestore.instance.collection('users').doc(uid).get();
-    if (doc.exists) {
-      final data = doc.data()!;
-      setState(() {
-        ageController.text = (data['age'] ?? 18).toString();
-        nameController.text = data['name'] ?? "Name";
-        heightController.text = (data['height'] ?? 72).toString();
-        weightController.text = (data['currentWeight'] ?? 100).toString();
-        goalWeightController.text = (data['goalWeight'] ?? 90).toString();
-        activityLevel.value = data['activityLevel'] ?? 1;
-        if (data['gender'] != null) {
-          gender.value = data['gender'];
-        }
-        daysUntilGoal.value = data['daysToGoal'] ?? 0;
-        if (data['startDate'] != null) {
-          try {
-            final DateFormat formatter = DateFormat('MM-dd-yyyy');
-            final DateTime start = formatter.parse(data['startDate']);
-            daysAchieved.value = DateTime.now().difference(start).inDays + 1;
-          } catch (e) {
+
+    try {
+      var doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      if (doc.exists) {
+        final data = doc.data()!;
+
+        setState(() {
+          if (data.containsKey('age') && data['age'] != null) {
+            ageController.text = data['age'].toString();
+          }
+
+          if (data.containsKey('name') && data['name'] != null) {
+            nameController.text = data['name'];
+          }
+
+          if (data.containsKey('height') && data['height'] != null) {
+            heightController.text = data['height'].toString();
+          }
+
+          if (data.containsKey('currentWeight') && data['currentWeight'] != null) {
+            weightController.text = data['currentWeight'].toString();
+          }
+
+          if (data.containsKey('goalWeight') && data['goalWeight'] != null) {
+            goalWeightController.text = data['goalWeight'].toString();
+          }
+
+          if (data.containsKey('activityLevel') && data['activityLevel'] != null) {
+            activityLevel.value = data['activityLevel'];
+          }
+
+          if (data.containsKey('gender') && data['gender'] != null) {
+            gender.value = data['gender'];
+          }
+
+          if (data.containsKey('daysToGoal') && data['daysToGoal'] != null) {
+            daysUntilGoal.value = data['daysToGoal'];
+          }
+
+          if (data.containsKey('startDate') && data['startDate'] != null) {
+            try {
+              final DateFormat formatter = DateFormat('MM-dd-yyyy');
+              final DateTime start = formatter.parse(data['startDate']);
+              daysAchieved.value = DateTime.now().difference(start).inDays + 1;
+            } catch (e) {
+              daysAchieved.value = 0;
+            }
+          } else {
             daysAchieved.value = 0;
           }
-        } else {
-          daysAchieved.value = 0;
-        }
-      });
+        });
+      }
+    } catch (e) {
+      print("Error loading user data: $e");
     }
+
     _isLoading = false;
   }
 
@@ -880,7 +902,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   CustomText(
-                                    content: "Days Achieveddddd",
+                                    content: "Days Achieved",
                                     softWrap: true,
                                     fontSize: 24,
                                     header: true,
