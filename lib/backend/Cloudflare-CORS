@@ -1,0 +1,22 @@
+export default {
+  async fetch(request, env, ctx) {
+    //accepts any url and appends content url
+    const url = new URL(request.url);
+    const upstream = `https://content.anodrexia.xyz${url.pathname}`;
+
+    //accept data from headers
+    const response = await fetch(upstream);
+    const newHeaders = new Headers(response.headers);
+
+    // Add CORS headers
+    newHeaders.set('Access-Control-Allow-Origin', '*');
+    newHeaders.set('Access-Control-Allow-Methods', 'GET');
+    newHeaders.set('Access-Control-Allow-Headers', '*');
+
+    //returns request with proper access headers
+    return new Response(response.body, {
+      status: response.status,
+      headers: newHeaders,
+    });
+  }
+}
