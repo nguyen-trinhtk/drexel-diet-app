@@ -7,7 +7,7 @@ from selenium.webdriver.support.expected_conditions import visibility_of_element
 
 def scrapePage(url, database):
     optionsFirefox = Options()
-    optionsFirefox.add_argument("--headless") # don't display firefox window
+    #optionsFirefox.add_argument("--headless") # don't display firefox window
 
     browser = webdriver.Firefox(options=optionsFirefox)  # start a web browser
     browser.get(url)  # navigate to URL

@@ -428,49 +428,6 @@ class _HomepageState extends State<HomePage> {
                         child:Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15), child:CustomText(content: "Handschumacher", fontSize: 18, bold: true))
                       ))
                     ],),
-                    /*Align(
-                      alignment: Alignment.topLeft,
-                      child: ValueListenableBuilder<String>(
-                          valueListenable: hall,
-                          builder: (context, selectedHall, child) {
-                            return SegmentedButton<String>(
-                              showSelectedIcon: false,
-                              style: ButtonStyle(
-                                padding:
-                                    WidgetStatePropertyAll(EdgeInsets.all(16)),
-                                backgroundColor:
-                                    WidgetStateProperty.resolveWith<Color?>(
-                                  (Set<WidgetState> states) {
-                                    if (states.contains(WidgetState.selected)) {
-                                      return AppColors.secondaryBackground; // selected color
-                                    }
-                                    return AppColors
-                                        .transparentWhite; // unselected background
-                                  },
-                                ),
-                              ),
-                              segments: const <ButtonSegment<String>>[
-                                ButtonSegment<String>(
-                                  value: "urban",
-                                  label: CustomText(
-                                      content: "Urban Eatery", fontSize: 20),
-                                ),
-                                ButtonSegment<String>(
-                                  value: "hans",
-                                  label: CustomText(
-                                      content: "Handschumacher", fontSize: 20),
-                                )
-                              ],
-                              selected: <String>{selectedHall},
-                              onSelectionChanged: (Set<String> newSelection) {
-                                hall.value = newSelection.first;
-                                loadJsonAsset(hall.value).then((_) {
-                                  getRecommendedMenu();
-                                });
-                              },
-                            );
-                          }),
-                    ),*/
 
                     // Recommended Food Box
                     Container(
