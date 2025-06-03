@@ -296,7 +296,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   padding: EdgeInsets.symmetric(vertical: 32),
                                   child: CircleAvatar(
                                     backgroundImage:
-                                        AssetImage("../assets/images/han.jpg"),
+                                        NetworkImage("https://content.anodrexia.xyz/han.jpg"),
                                     radius: 100,
                                   ),
                                 ),
