@@ -147,9 +147,9 @@ class _HomepageState extends State<HomePage> {
     }).toList();
   }
 
-  var userDishes = "Honey BBQ Chicken";
-
-  Future<void> getRecommendedMenu(List<String> userDishes) async {
+  Future<void> getRecommendedMenu() async {
+    
+    var userDishes = "Honey BBQ Chicken";
     await dotenv.load(fileName: ".env");
     final apiKey = dotenv.env["GEMINI_API_KEY"];
 
