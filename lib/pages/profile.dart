@@ -26,6 +26,10 @@ class _ProfilePageState extends State<ProfilePage> {
   final ValueNotifier<String> goalWeight = ValueNotifier<String>("90");
   final ValueNotifier<int> daysUntilGoal = ValueNotifier<int>(0);
   final ValueNotifier<int> daysAchieved = ValueNotifier<int>(0);
+  final ValueNotifier<String> name = ValueNotifier<String>("Name");
+
+  final TextEditingController nameController =
+      TextEditingController(text: "Name");
   final TextEditingController ageController = TextEditingController(text: "18");
   final TextEditingController heightController =
       TextEditingController(text: "72");
@@ -45,6 +49,9 @@ class _ProfilePageState extends State<ProfilePage> {
     ageController.addListener(() {
       if (!_isLoading) age.value = ageController.text;
     });
+    nameController.addListener(() {
+      if (!_isLoading) name.value = nameController.text;
+    });
     heightController.addListener(() {
       if (!_isLoading) height.value = heightController.text;
     });
@@ -56,6 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
     });
 
     age.addListener(() => updateFirestore(false));
+    name.addListener(() => updateFirestore(false));
     height.addListener(() => updateFirestore(false));
     currentWeight.addListener(() => updateFirestore(true));
     activityLevel.addListener(() => updateFirestore(false));
@@ -97,6 +105,7 @@ class _ProfilePageState extends State<ProfilePage> {
       final data = doc.data()!;
       setState(() {
         ageController.text = (data['age'] ?? 18).toString();
+        nameController.text = data['name'] ?? "Name";
         heightController.text = (data['height'] ?? 72).toString();
         weightController.text = (data['currentWeight'] ?? 100).toString();
         goalWeightController.text = (data['goalWeight'] ?? 90).toString();
@@ -145,24 +154,24 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _selectGoalDate(BuildContext context) async {
     final int currentSafeDays = safeDays.value;
-    if (currentSafeDays < 14) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text("Unrealistic Goal"),
-          content: Text(
-            "Your goal is unrealistic or too aggressive. Please allow more time to reach your goal safely.",
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text("OK"),
-            ),
-          ],
-        ),
-      );
-      return;
-    }
+    // if (currentSafeDays < 14) {
+    //   showDialog(
+    //     context: context,
+    //     builder: (context) => AlertDialog(
+    //       title: Text("Unrealistic Goal"),
+    //       content: Text(
+    //         "Your goal is unrealistic or too aggressive. Please allow more time to reach your goal safely.",
+    //       ),
+    //       actions: [
+    //         TextButton(
+    //           onPressed: () => Navigator.of(context).pop(),
+    //           child: Text("OK"),
+    //         ),
+    //       ],
+    //     ),
+    //   );
+    //   return;
+    // }
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now().add(
@@ -210,10 +219,12 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void dispose() {
     ageController.dispose();
+    nameController.dispose();
     heightController.dispose();
     weightController.dispose();
     goalWeightController.dispose();
     age.dispose();
+    name.dispose();
     height.dispose();
     currentWeight.dispose();
     activityLevel.dispose();
@@ -250,6 +261,7 @@ class _ProfilePageState extends State<ProfilePage> {
     var data = <String, dynamic>{
       'activityLevel': activityLevel.value,
       'age': int.parse(age.value),
+      'name': name.value,
       'currentWeight': int.parse(currentWeight.value),
       'daysToGoal': daysUntilGoal.value,
       'gender': gender.value,
@@ -311,7 +323,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.all(32),
+                                  padding: EdgeInsets.symmetric(vertical: 32),
                                   child: CircleAvatar(
                                     backgroundImage:
                                         AssetImage("../assets/images/han.jpg"),
@@ -319,19 +331,45 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.all(32),
+                                  padding: EdgeInsets.all(10),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
-                                      CustomText(
-                                        content: "Name",
-                                        softWrap: true,
-                                        fontSize: 60,
-                                        header: true,
+                                      Container(
+                                        width: 400,
+                                        child: TextField(
+                                          controller: nameController,
+                                          style: TextStyle(
+                                            fontSize: 40,
+                                            color: AppColors.primaryText,
+                                            fontFamily: AppFonts.headerFont,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          decoration: InputDecoration(
+                                            border: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: AppColors.primaryText),
+                                            ),
+                                            hintText: "Name",
+                                            hintStyle: TextStyle(
+                                              color: AppColors.secondaryText,
+                                              fontSize: 40,
+                                              fontFamily: AppFonts.headerFont,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          textAlign: TextAlign.center,
+                                          onChanged: (value) {
+                                            name.value = value;
+                                          },
+                                        ),
                                       ),
+                                      SizedBox(height: 10),
                                       CustomText(
-                                        content: "1-month goal plan",
-                                        fontSize: 24,
+                                        content: "Profile Overview & Diet Goal",
+                                        fontSize: 20,
                                       ),
                                     ],
                                   ),
