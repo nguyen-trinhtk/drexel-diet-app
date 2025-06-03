@@ -147,7 +147,9 @@ class _HomepageState extends State<HomePage> {
     }).toList();
   }
 
-  Future<void> getRecommendedMenu() async {
+  var userDishes = "Honey BBQ Chicken";
+
+  Future<void> getRecommendedMenu(List<String> userDishes) async {
     await dotenv.load(fileName: ".env");
     final apiKey = dotenv.env["GEMINI_API_KEY"];
 
@@ -155,17 +157,18 @@ class _HomepageState extends State<HomePage> {
     final menuData = globalData.menuData;
 
     List<String> recommendedIndex = [];
-    var userDishes = "Honey BBQ Chicken";
 
     Gemini.init(apiKey: apiKey ?? "");
     await Gemini.instance.prompt(parts: [
       Part.text(
-          'Based on user past data, suggest 1-3 dishes from the current menu data, don\'t suggest overlapping dishes twice (e.g. Only suggest Grilled Chicken Breast once). ONLY output your response with only the ID number of the dish (e.g. 1, 2, 3). Here is user past data: $userDishes. Here is menu data: $menuData'),
+          '''Based on user past data, suggest 1-3 dishes from the current menu data,
+            don\'t suggest overlapping dishes twice (e.g. Only suggest Grilled Chicken Breast once).
+            ONLY output your response with only the ID number of the dish (e.g. 1, 2, 3).
+            Here is user past data: $userDishes. Here is menu data: $menuData'''
+            ),
     ]).then((value) {
       var ans = value?.output;
-      print("Answer from Gemini: $ans");
       recommendedIndex = ans!.trim().split(", ");
-      print(recommendedIndex);
     }).catchError((e) {
       print('error ${e}');
     });
