@@ -22,6 +22,7 @@ class HomePage extends StatefulWidget {
 class _HomepageState extends State<HomePage> {
   var logger = Logger();
   bool isLogBarExpanded = false;
+  bool urban = true;
   final Map<String, Map<String, dynamic>> _loggedDishes = {};
   final ValueNotifier<String> hall = ValueNotifier<String>("urban");
   String searchQuery = "";
@@ -399,7 +400,33 @@ class _HomepageState extends State<HomePage> {
                     : MediaQuery.of(context).size.height * 0.03),
                 child: SingleChildScrollView(
                   child: Column(spacing: 15, children: [
-                    Align(
+                    Row(
+                      children: [
+                      Container(
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(40), color: hall.value == "urban" ? const Color.fromARGB(160, 255, 205, 208) : Colors.transparent),
+                        child:GestureDetector(
+                        onTap: ()  {setState(() {
+                        hall.value = "urban";
+                        loadJsonAsset(hall.value).then((_) {
+                          getRecommendedMenu();
+                        });
+                      });},
+                      child: Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15), child:CustomText(content: "Urban", fontSize: 18, bold: true,))
+                      ),
+                      ),
+                      Padding(padding: EdgeInsets.all(10), child:CustomText(content:"|")),
+                      Container(
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(40), color: hall.value == "hans" ? const Color.fromARGB(160, 255, 205, 208) : Colors.transparent),
+                        child:GestureDetector(onTap: ()  {setState(() {
+                        hall.value = "hans";
+                        loadJsonAsset(hall.value).then((_) {
+                          getRecommendedMenu();
+                        });
+                      });},
+                      child: Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15), child:CustomText(content: "Handschumacher", fontSize: 18, bold: true))
+                      ))
+                    ],),
+                    /*Align(
                       alignment: Alignment.topLeft,
                       child: ValueListenableBuilder<String>(
                           valueListenable: hall,
@@ -441,7 +468,7 @@ class _HomepageState extends State<HomePage> {
                               },
                             );
                           }),
-                    ),
+                    ),*/
 
                     // Recommended Food Box
                     Container(
