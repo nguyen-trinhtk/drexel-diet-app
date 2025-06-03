@@ -283,6 +283,12 @@ class _HomepageState extends State<HomePage> {
                           },
                           leading:
                               const Icon(Icons.search, color: AppColors.accent),
+                          trailing: [IconButton(
+                            icon: Icon(Icons.clear, color: AppColors.accent),
+                            onPressed: () {
+                              _searchAnchorController?.clear();
+                            },
+                          ),]
                         );
                       },
                       suggestionsBuilder:
