@@ -853,7 +853,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           updateFirestore(true);
                         },
                       ),
-                    )
+                    ))
                   ],
                 ),
               ),
