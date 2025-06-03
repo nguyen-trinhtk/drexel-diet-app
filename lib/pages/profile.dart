@@ -927,12 +927,15 @@ Future<void> _initProfilePage() async {
                     ),
                     Expanded(
                       flex: 10,
-                      child: CustomButton(
+                      child: Container(
+                        width: double.infinity,
+                        child:
+                        CustomButton(
                         text: "Save Data", 
                         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
                         fontSize: 24,
                         onPressed: () => updateFirestore(true)),)
-                  ],
+                )],
                 ),
               ),
             ],
