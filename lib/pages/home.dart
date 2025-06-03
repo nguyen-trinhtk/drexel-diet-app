@@ -283,12 +283,20 @@ class _HomepageState extends State<HomePage> {
                           },
                           leading:
                               const Icon(Icons.search, color: AppColors.accent),
-                          trailing: [IconButton(
-                            icon: Icon(Icons.clear, color: AppColors.accent),
-                            onPressed: () {
-                              _searchAnchorController?.clear();
-                            },
-                          ),]
+                          trailing: [
+                            IconButton(
+                              icon: Icon(Icons.clear, color: AppColors.accent),
+                              onPressed: () {
+                                _searchAnchorController?.clear();
+                              },
+                            ),
+                          ],
+                          textStyle: WidgetStateProperty.all(
+                            TextStyle(
+                              color: AppColors.primaryText,
+                              fontFamily: AppFonts.textFont,
+                            ),
+                          ),
                         );
                       },
                       suggestionsBuilder:
@@ -409,31 +417,63 @@ class _HomepageState extends State<HomePage> {
                   child: Column(spacing: 15, children: [
                     Row(
                       children: [
-                      GestureDetector(
-                        onTap: ()  {setState(() {
-                        hall.value = "urban";
-                        loadJsonAsset(hall.value).then((_) {
-                          getRecommendedMenu();
-                        });
-                      });},
-                      child:
-                      Container(
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(40), color: hall.value == "urban" ? const Color.fromARGB(160, 255, 205, 208) : Colors.transparent, border: Border.all(color: AppColors.primaryText, width: 1)),
-                        child:Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15), child:CustomText(content: "Urban", fontSize: 18, bold: true,))
-                      
-                      ),),
-                      Padding(padding: EdgeInsets.all(10), child:CustomText(content:"|")),
-                      GestureDetector(onTap: ()  {setState(() {
-                        hall.value = "hans";
-                        loadJsonAsset(hall.value).then((_) {
-                          getRecommendedMenu();
-                        });
-                      });},
-                      child: Container(
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(40), color: hall.value == "hans" ? const Color.fromARGB(160, 255, 205, 208) : Colors.transparent, border: Border.all(color: AppColors.primaryText, width: 1)),
-                        child:Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15), child:CustomText(content: "Handschumacher", fontSize: 18, bold: true))
-                      ))
-                    ],),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              hall.value = "urban";
+                              loadJsonAsset(hall.value).then((_) {
+                                getRecommendedMenu();
+                              });
+                            });
+                          },
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(40),
+                                  color: hall.value == "urban"
+                                      ? const Color.fromARGB(160, 255, 205, 208)
+                                      : Colors.transparent,
+                                  border: Border.all(
+                                      color: AppColors.primaryText, width: 1)),
+                              child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 15),
+                                  child: CustomText(
+                                    content: "Urban",
+                                    fontSize: 18,
+                                    bold: true,
+                                  ))),
+                        ),
+                        Padding(
+                            padding: EdgeInsets.all(10),
+                            child: CustomText(content: "|")),
+                        GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                hall.value = "hans";
+                                loadJsonAsset(hall.value).then((_) {
+                                  getRecommendedMenu();
+                                });
+                              });
+                            },
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(40),
+                                    color: hall.value == "hans"
+                                        ? const Color.fromARGB(
+                                            160, 255, 205, 208)
+                                        : Colors.transparent,
+                                    border: Border.all(
+                                        color: AppColors.primaryText,
+                                        width: 1)),
+                                child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10, horizontal: 15),
+                                    child: CustomText(
+                                        content: "Handschumacher",
+                                        fontSize: 18,
+                                        bold: true))))
+                      ],
+                    ),
 
                     // Recommended Food Box
                     Container(
