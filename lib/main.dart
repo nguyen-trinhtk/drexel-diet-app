@@ -16,6 +16,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -105,7 +106,8 @@ class MyApp extends StatelessWidget {
                   'height': null,
                   'name': user.displayName,
                   'picture': user.photoURL,
-                  'uid': user.uid
+                  'uid': user.uid, 
+                  'startDate':DateFormat('MM-dd-yyyy').format(DateTime.now()),
                 });
               });
             }

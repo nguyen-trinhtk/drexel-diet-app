@@ -373,7 +373,8 @@ class _HomepageState extends State<HomePage> {
                     },
                   ),
                 ),
-                if (Provider.of<UserProvider>(context, listen: false).userId != null)
+                if (Provider.of<UserProvider>(context, listen: false).userId !=
+                    null)
                   IconButton(
                     icon: Icon(
                       isLogBarExpanded ? Icons.close : Icons.menu,
@@ -399,32 +400,48 @@ class _HomepageState extends State<HomePage> {
                 child: SingleChildScrollView(
                   child: Column(spacing: 15, children: [
                     Align(
-                    alignment: Alignment.topLeft,
-                    child:ValueListenableBuilder<String>( 
-                      valueListenable: hall,
-                      builder: (context, selectedHall, child) {
-                        return SegmentedButton<String>(
-                          segments: const <ButtonSegment<String>>[
-                            ButtonSegment<String>(
-                              value: "hans",
-                              label: CustomText(content:"Handschumacher"),
-                            ),
-                            ButtonSegment<String>(
-                              value: "urban",
-                              label: CustomText(content:"Urban Eatery"),
-                            )
-                          ],
-                          selected: <String>{selectedHall},
-                          onSelectionChanged: 
-                            (Set<String> newSelection){
-                              hall.value = newSelection.first;
-                              loadJsonAsset(hall.value).then((_) {
-                                getRecommendedMenu();
-                              });
-                            },
-                        );
-                      }
-                    ),),
+                      alignment: Alignment.topLeft,
+                      child: ValueListenableBuilder<String>(
+                          valueListenable: hall,
+                          builder: (context, selectedHall, child) {
+                            return SegmentedButton<String>(
+                              showSelectedIcon: false,
+                              style: ButtonStyle(
+                                padding:
+                                    WidgetStatePropertyAll(EdgeInsets.all(16)),
+                                backgroundColor:
+                                    WidgetStateProperty.resolveWith<Color?>(
+                                  (Set<WidgetState> states) {
+                                    if (states.contains(WidgetState.selected)) {
+                                      return AppColors.secondaryBackground; // selected color
+                                    }
+                                    return AppColors
+                                        .transparentWhite; // unselected background
+                                  },
+                                ),
+                              ),
+                              segments: const <ButtonSegment<String>>[
+                                ButtonSegment<String>(
+                                  value: "urban",
+                                  label: CustomText(
+                                      content: "Urban Eatery", fontSize: 20),
+                                ),
+                                ButtonSegment<String>(
+                                  value: "hans",
+                                  label: CustomText(
+                                      content: "Handschumacher", fontSize: 20),
+                                )
+                              ],
+                              selected: <String>{selectedHall},
+                              onSelectionChanged: (Set<String> newSelection) {
+                                hall.value = newSelection.first;
+                                loadJsonAsset(hall.value).then((_) {
+                                  getRecommendedMenu();
+                                });
+                              },
+                            );
+                          }),
+                    ),
 
                     // Recommended Food Box
                     Container(
@@ -483,35 +500,38 @@ class _HomepageState extends State<HomePage> {
                                       calories: "Calories $calories",
                                       fontSize: isLogBarExpanded ? 14 : 18,
                                       onAddPressed: () {
-                                        String? uid =
-                                            Provider.of<UserProvider>(context,
-                                                    listen: false)
-                                                .userId;
+                                        String? uid = Provider.of<UserProvider>(
+                                                context,
+                                                listen: false)
+                                            .userId;
                                         if (uid == null || uid.isEmpty) {
                                           showDialog(
                                             context: context,
                                             builder: (BuildContext context) {
                                               return AlertDialog(
                                                 title: CustomText(
-                                                    content: "Please log in to add food",
-                                                    header: true,
-                                                    fontSize: 18,),
-                                              backgroundColor: AppColors.white,
-                                              iconColor: AppColors.accent,
+                                                  content:
+                                                      "Please log in to add food",
+                                                  header: true,
+                                                  fontSize: 18,
+                                                ),
+                                                backgroundColor:
+                                                    AppColors.white,
+                                                iconColor: AppColors.accent,
                                                 actions: [
                                                   CustomButton(
-                                                    text: "Log in",
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .push(
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                const SSOPage()),
-                                                      );
-                                                    },
-                                                    color: AppColors.accent,
-                                                    hoverColor: AppColors.primaryText
-                                                  ),
+                                                      text: "Log in",
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .push(
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  const SSOPage()),
+                                                        );
+                                                      },
+                                                      color: AppColors.accent,
+                                                      hoverColor: AppColors
+                                                          .primaryText),
                                                 ],
                                               );
                                             },
@@ -564,8 +584,7 @@ class _HomepageState extends State<HomePage> {
                           calories: "Calories $calories",
                           fontSize: isLogBarExpanded ? 14 : 18,
                           onAddPressed: () {
-                            String? uid = Provider.of<UserProvider>(
-                                    context,
+                            String? uid = Provider.of<UserProvider>(context,
                                     listen: false)
                                 .userId;
                             if (uid == null || uid.isEmpty) {
@@ -573,36 +592,36 @@ class _HomepageState extends State<HomePage> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
-                                                title: CustomText(
-                                                    content: "Please log in to add food",
-                                                    header: true,
-                                                    fontSize: 18,),
-                                              backgroundColor: AppColors.white,
-                                              iconColor: AppColors.accent,
-                                                actions: [
-                                                  CustomButton(
-                                                    onPressed: () => Navigator.of(context).pop(),
-                                                    text: 'Return',
-                                                    bold: true,
-                                                    borderColor: AppColors.accent,
-                                                    color: AppColors.white,
-                                                    textColor: AppColors.accent,
-                                                    hoverColor: AppColors.tertiaryText),
-                                                  CustomButton(
-                                                    text: "Log in",
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .push(
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                const SSOPage()),
-                                                      );
-                                                    },
-                                                    color: AppColors.accent,
-                                                    hoverColor: AppColors.primaryText
-                                                  ),
-                                                ],
-                                              );
+                                    title: CustomText(
+                                      content: "Please log in to add food",
+                                      header: true,
+                                      fontSize: 18,
+                                    ),
+                                    backgroundColor: AppColors.white,
+                                    iconColor: AppColors.accent,
+                                    actions: [
+                                      CustomButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(),
+                                          text: 'Return',
+                                          bold: true,
+                                          borderColor: AppColors.accent,
+                                          color: AppColors.white,
+                                          textColor: AppColors.accent,
+                                          hoverColor: AppColors.tertiaryText),
+                                      CustomButton(
+                                          text: "Log in",
+                                          onPressed: () {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const SSOPage()),
+                                            );
+                                          },
+                                          color: AppColors.accent,
+                                          hoverColor: AppColors.primaryText),
+                                    ],
+                                  );
                                 },
                               );
                             } else {
