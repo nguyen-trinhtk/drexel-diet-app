@@ -18,18 +18,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final ValueNotifier<String> age = ValueNotifier<String>("18");
-  final ValueNotifier<String> height = ValueNotifier<String>("72");
-  final ValueNotifier<String> currentWeight = ValueNotifier<String>("100");
-  final ValueNotifier<int> activityLevel = ValueNotifier<int>(1);
-  final ValueNotifier<String> gender = ValueNotifier<String>("nonbinary");
-  final ValueNotifier<String> goalWeight = ValueNotifier<String>("90");
-  final ValueNotifier<int> daysUntilGoal = ValueNotifier<int>(0);
-  final ValueNotifier<int> daysAchieved = ValueNotifier<int>(0);
-  final ValueNotifier<String> name = ValueNotifier<String>("Name");
-
-  final TextEditingController nameController =
-      TextEditingController();
+  final TextEditingController nameController = TextEditingController();
   final TextEditingController ageController = TextEditingController(text: "18");
   final TextEditingController heightController =
       TextEditingController(text: "72");
@@ -37,38 +26,28 @@ class _ProfilePageState extends State<ProfilePage> {
       TextEditingController(text: "100");
   final TextEditingController goalWeightController =
       TextEditingController(text: "90");
-  final ValueNotifier<int> safeDays = ValueNotifier<int>(0);
+
+  int activityLevel = 1;
+  String gender = "nonbinary";
+  int daysUntilGoal = 0;
+  int daysAchieved = 0;
+  int safeDays = 0;
 
   bool _isLoading = true;
 
-@override
-void initState() {
-  super.initState();
-  _initProfilePage();
-}
+  @override
+  void initState() {
+    super.initState();
+    _initProfilePage();
+  }
 
-Future<void> _initProfilePage() async {
-  await _loadUserData();
-  ageController.addListener(() => age.value = ageController.text);
-  nameController.addListener(() => name.value = nameController.text);
-  heightController.addListener(() => height.value = heightController.text);
-  weightController.addListener(() => currentWeight.value = weightController.text);
-  goalWeightController.addListener(() => goalWeight.value = goalWeightController.text);
-  // age.addListener(() => updateFirestore(false));
-  // name.addListener(() => updateFirestore(false));
-  // height.addListener(() => updateFirestore(false));
-  // currentWeight.addListener(() => updateFirestore(true));
-  // activityLevel.addListener(() => updateFirestore(false));
-  // gender.addListener(() => updateFirestore(false));
-  // goalWeight.addListener(() => updateFirestore(false));
-  // daysUntilGoal.addListener(() => updateFirestore(false));
-  currentWeight.addListener(_updateSafeDays);
-  goalWeight.addListener(_updateSafeDays);
-  _updateSafeDays();
-  setState(() {
-    _isLoading = false;
-  });
-}
+  Future<void> _initProfilePage() async {
+    await _loadUserData();
+    _updateSafeDays();
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   int computeSafeDays({
     required double currentWeightLbs,
@@ -103,45 +82,39 @@ Future<void> _initProfilePage() async {
           if (data.containsKey('age') && data['age'] != null) {
             ageController.text = data['age'].toString();
           }
-
           if (data.containsKey('name') && data['name'] != null) {
             nameController.text = data['name'];
           }
-
           if (data.containsKey('height') && data['height'] != null) {
             heightController.text = data['height'].toString();
           }
-
-          if (data.containsKey('currentWeight') && data['currentWeight'] != null) {
+          if (data.containsKey('currentWeight') &&
+              data['currentWeight'] != null) {
             weightController.text = data['currentWeight'].toString();
           }
-
           if (data.containsKey('goalWeight') && data['goalWeight'] != null) {
             goalWeightController.text = data['goalWeight'].toString();
           }
-
-          if (data.containsKey('activityLevel') && data['activityLevel'] != null) {
-            activityLevel.value = data['activityLevel'];
+          if (data.containsKey('activityLevel') &&
+              data['activityLevel'] != null) {
+            activityLevel = data['activityLevel'];
           }
-
           if (data.containsKey('gender') && data['gender'] != null) {
-            gender.value = data['gender'];
+            gender = data['gender'];
           }
-
           if (data.containsKey('daysToGoal') && data['daysToGoal'] != null) {
-            daysUntilGoal.value = data['daysToGoal'];
+            daysUntilGoal = data['daysToGoal'];
           }
-
           if (data.containsKey('startDate') && data['startDate'] != null) {
             try {
               final DateFormat formatter = DateFormat('MM-dd-yyyy');
               final DateTime start = formatter.parse(data['startDate']);
-              daysAchieved.value = DateTime.now().difference(start).inDays + 1;
+              daysAchieved = DateTime.now().difference(start).inDays + 1;
             } catch (e) {
-              daysAchieved.value = 0;
+              daysAchieved = 0;
             }
           } else {
-            daysAchieved.value = 0;
+            daysAchieved = 0;
           }
         });
       }
@@ -155,52 +128,38 @@ Future<void> _initProfilePage() async {
   void _updateDaysUntilGoal(DateTime selectedDate) {
     final today = DateTime.now();
     final difference = selectedDate.difference(today).inDays;
-    daysUntilGoal.value = difference > 0 ? difference : 0;
+    setState(() {
+      daysUntilGoal = difference > 0 ? difference : 0;
+    });
   }
 
   void _updateSafeDays() {
-    safeDays.value = computeSafeDays(
-      currentWeightLbs: double.tryParse(currentWeight.value) ?? 0.0,
-      goalWeightLbs: double.tryParse(goalWeight.value) ?? 0.0,
-      maintenanceCalories: calculateBMR(
-        int.parse(age.value),
-        double.parse(height.value),
-        double.parse(currentWeight.value),
-        gender.value,
-      ),
-    );
-    if (daysUntilGoal.value < safeDays.value) {
-      daysUntilGoal.value = safeDays.value;
-    }
+    setState(() {
+      safeDays = computeSafeDays(
+        currentWeightLbs: double.tryParse(weightController.text) ?? 0.0,
+        goalWeightLbs: double.tryParse(goalWeightController.text) ?? 0.0,
+        maintenanceCalories: calculateBMR(
+          int.tryParse(ageController.text) ?? 18,
+          double.tryParse(heightController.text) ?? 72,
+          double.tryParse(weightController.text) ?? 100,
+          gender,
+        ),
+      );
+      if (daysUntilGoal < safeDays) {
+        daysUntilGoal = safeDays;
+      }
+    });
   }
 
   Future<void> _selectGoalDate(BuildContext context) async {
-    final int currentSafeDays = safeDays.value;
-    // if (currentSafeDays < 14) {
-    //   showDialog(
-    //     context: context,
-    //     builder: (context) => AlertDialog(
-    //       title: Text("Unrealistic Goal"),
-    //       content: Text(
-    //         "Your goal is unrealistic or too aggressive. Please allow more time to reach your goal safely.",
-    //       ),
-    //       actions: [
-    //         TextButton(
-    //           onPressed: () => Navigator.of(context).pop(),
-    //           child: Text("OK"),
-    //         ),
-    //       ],
-    //     ),
-    //   );
-    //   return;
-    // }
+    final int currentSafeDays = safeDays;
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now().add(
         Duration(
-          days: currentSafeDays > daysUntilGoal.value + 1
+          days: currentSafeDays > daysUntilGoal + 1
               ? currentSafeDays
-              : daysUntilGoal.value + 1,
+              : daysUntilGoal + 1,
         ),
       ),
       firstDate: DateTime.now().add(Duration(days: currentSafeDays)),
@@ -245,28 +204,19 @@ Future<void> _initProfilePage() async {
     heightController.dispose();
     weightController.dispose();
     goalWeightController.dispose();
-    age.dispose();
-    name.dispose();
-    height.dispose();
-    currentWeight.dispose();
-    activityLevel.dispose();
-    gender.dispose();
-    goalWeight.dispose();
-    daysUntilGoal.dispose();
-    safeDays.dispose();
     super.dispose();
   }
 
   void updateFirestore(bool updateWeight) {
     if (_isLoading) return;
     int goalCalories = calculateCaloricGoal(
-      int.parse(age.value),
-      double.parse(height.value),
-      double.parse(currentWeight.value),
-      double.parse(goalWeight.value),
-      activityLevel.value,
-      gender.value,
-      daysUntilGoal.value,
+      int.tryParse(ageController.text) ?? 18,
+      double.tryParse(heightController.text) ?? 72,
+      double.tryParse(weightController.text) ?? 100,
+      double.tryParse(goalWeightController.text) ?? 90,
+      activityLevel,
+      gender,
+      daysUntilGoal,
       'Imperial',
     );
     int goalProtein = proteinGoal(goalCalories);
@@ -281,18 +231,18 @@ Future<void> _initProfilePage() async {
 
     var db = FirebaseFirestore.instance;
     var data = <String, dynamic>{
-      'activityLevel': activityLevel.value,
-      'age': int.parse(age.value),
-      'name': name.value,
-      'currentWeight': int.parse(currentWeight.value),
-      'daysToGoal': daysUntilGoal.value,
-      'gender': gender.value,
+      'activityLevel': activityLevel,
+      'age': int.tryParse(ageController.text) ?? 18,
+      'name': nameController.text,
+      'currentWeight': int.tryParse(weightController.text) ?? 100,
+      'daysToGoal': daysUntilGoal,
+      'gender': gender,
       'goalCalories': goalCalories,
       'goalCarbs': goalCarbs,
       'goalFat': goalFat,
       'goalProtein': goalProtein,
-      'goalWeight': int.parse(goalWeight.value),
-      'height': int.parse(height.value),
+      'goalWeight': int.tryParse(goalWeightController.text) ?? 90,
+      'height': int.tryParse(heightController.text) ?? 72,
     };
 
     db.collection("users").doc(uid).update(data).onError((e, _) {
@@ -303,7 +253,8 @@ Future<void> _initProfilePage() async {
       String todayString =
           "${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}-${today.year}";
       db.collection("weightProgress").doc(uid).update({
-        "weightProgress.$todayString": int.parse(currentWeight.value),
+        "weightProgress.$todayString":
+            int.tryParse(weightController.text) ?? 100,
       }).catchError((e) {
         print("Error updating document: $e");
       });
@@ -332,9 +283,6 @@ Future<void> _initProfilePage() async {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        //Expanded(flex:4, child:Card(child:Text("test"))),
-                        //Expanded(flex:6, child:Card(child:Text("Test")))
-
                         Expanded(
                           flex: 4,
                           child: ThemedCard(
@@ -383,9 +331,6 @@ Future<void> _initProfilePage() async {
                                             ),
                                           ),
                                           textAlign: TextAlign.center,
-                                          onChanged: (value) {
-                                            name.value = value;
-                                          },
                                         ),
                                       ),
                                       SizedBox(height: 10),
@@ -403,7 +348,6 @@ Future<void> _initProfilePage() async {
                         Flexible(
                           flex: 6,
                           fit: FlexFit.tight,
-                          //height: MediaQuery.of(context).size.height*0.6,
                           child: ThemedCard(
                             padding: EdgeInsets.all(32),
                             child: Padding(
@@ -554,43 +498,33 @@ Future<void> _initProfilePage() async {
                                       CustomText(
                                           content: "Activity Level",
                                           fontSize: 24),
-                                      ValueListenableBuilder<int>(
-                                        valueListenable: activityLevel,
-                                        builder: (context, activityLevelValue,
-                                            child) {
-                                          return SliderTheme(
-                                            data: SliderTheme.of(context)
-                                                .copyWith(
-                                              activeTickMarkColor:
-                                                  Color(0x00FFFFFF),
-                                              inactiveTickMarkColor:
-                                                  Color(0x00FFFFFF),
-                                              thumbColor: Color(0xFFE66D8D),
-                                              valueIndicatorColor:
-                                                  Color(0xFFE66D8D),
-                                              activeTrackColor:
-                                                  Color(0xFF232597),
-                                              inactiveTrackColor:
-                                                  Color(0xFF232597),
-                                              trackHeight: 2,
-                                              trackShape:
-                                                  RectangularSliderTrackShape(),
-                                            ),
-                                            child: Slider(
-                                              value:
-                                                  activityLevelValue.toDouble(),
-                                              min: 1,
-                                              max: 5,
-                                              divisions: 4,
-                                              label:
-                                                  activityLevelValue.toString(),
-                                              onChanged: (double value) {
-                                                activityLevel.value =
-                                                    value.toInt();
-                                              },
-                                            ),
-                                          );
-                                        },
+                                      SliderTheme(
+                                        data: SliderTheme.of(context).copyWith(
+                                          activeTickMarkColor:
+                                              Color(0x00FFFFFF),
+                                          inactiveTickMarkColor:
+                                              Color(0x00FFFFFF),
+                                          thumbColor: Color(0xFFE66D8D),
+                                          valueIndicatorColor:
+                                              Color(0xFFE66D8D),
+                                          activeTrackColor: Color(0xFF232597),
+                                          inactiveTrackColor: Color(0xFF232597),
+                                          trackHeight: 2,
+                                          trackShape:
+                                              RectangularSliderTrackShape(),
+                                        ),
+                                        child: Slider(
+                                          value: activityLevel.toDouble(),
+                                          min: 1,
+                                          max: 5,
+                                          divisions: 4,
+                                          label: activityLevel.toString(),
+                                          onChanged: (double value) {
+                                            setState(() {
+                                              activityLevel = value.toInt();
+                                            });
+                                          },
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -600,59 +534,49 @@ Future<void> _initProfilePage() async {
                                     children: [
                                       CustomText(
                                           content: "Gender", fontSize: 24),
-                                      ValueListenableBuilder<String>(
-                                        valueListenable: gender,
-                                        builder:
-                                            (context, selectedGender, child) {
-                                          return Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10.0,
-                                                vertical: 10.0),
-                                            child: SegmentedButton<String>(
-                                              showSelectedIcon: false,
-                                              style: SegmentedButton.styleFrom(
-                                                  selectedBackgroundColor:
-                                                      Color(0xFFE66D8D),
-                                                  selectedForegroundColor:
-                                                      Color(0xFFFFFFFF),
-                                                  foregroundColor:
-                                                      Color(0xFF232597),
-                                                  backgroundColor:
-                                                      Color(0xFFFFFFFF),
-                                                  textStyle: TextStyle(
-                                                      fontFamily:
-                                                          AppFonts.headerFont,
-                                                      fontSize: 16),
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 20,
-                                                      horizontal: 12),
-                                                  side: const BorderSide(
-                                                      color:
-                                                          Color(0xFF232597))),
-                                              segments: const <ButtonSegment<
-                                                  String>>[
-                                                ButtonSegment<String>(
-                                                  value: "female",
-                                                  label: Text('F'),
-                                                ),
-                                                ButtonSegment<String>(
-                                                    value: "male",
-                                                    label: Text('M')),
-                                                ButtonSegment<String>(
-                                                    value: "nonbinary",
-                                                    label: Text('N/A')),
-                                              ],
-                                              selected: <String>{
-                                                selectedGender
-                                              },
-                                              onSelectionChanged:
-                                                  (Set<String> newSelection) {
-                                                gender.value =
-                                                    newSelection.first;
-                                              },
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10.0, vertical: 10.0),
+                                        child: SegmentedButton<String>(
+                                          showSelectedIcon: false,
+                                          style: SegmentedButton.styleFrom(
+                                              selectedBackgroundColor:
+                                                  Color(0xFFE66D8D),
+                                              selectedForegroundColor:
+                                                  Color(0xFFFFFFFF),
+                                              foregroundColor:
+                                                  Color(0xFF232597),
+                                              backgroundColor:
+                                                  Color(0xFFFFFFFF),
+                                              textStyle: TextStyle(
+                                                  fontFamily:
+                                                      AppFonts.headerFont,
+                                                  fontSize: 16),
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 20, horizontal: 12),
+                                              side: const BorderSide(
+                                                  color: Color(0xFF232597))),
+                                          segments: const <ButtonSegment<
+                                              String>>[
+                                            ButtonSegment<String>(
+                                              value: "female",
+                                              label: Text('F'),
                                             ),
-                                          );
-                                        },
+                                            ButtonSegment<String>(
+                                                value: "male",
+                                                label: Text('M')),
+                                            ButtonSegment<String>(
+                                                value: "nonbinary",
+                                                label: Text('N/A')),
+                                          ],
+                                          selected: <String>{gender},
+                                          onSelectionChanged:
+                                              (Set<String> newSelection) {
+                                            setState(() {
+                                              gender = newSelection.first;
+                                            });
+                                          },
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -849,28 +773,23 @@ Future<void> _initProfilePage() async {
                                     fontSize: 24,
                                     header: true,
                                   ),
-                                  ValueListenableBuilder<int>(
-                                    valueListenable: daysUntilGoal,
-                                    builder: (context, days, child) {
-                                      return GestureDetector(
-                                        onTap: () => _selectGoalDate(context),
-                                        child: Row(
-                                          children: [
-                                            CustomText(
-                                              content: days.toString(),
-                                              header: true,
-                                              color: AppColors.accent,
-                                              fontSize: 48,
-                                            ),
-                                            Icon(
-                                              Icons.calendar_today,
-                                              color: AppColors.accent,
-                                              size: 24,
-                                            ),
-                                          ],
+                                  GestureDetector(
+                                    onTap: () => _selectGoalDate(context),
+                                    child: Row(
+                                      children: [
+                                        CustomText(
+                                          content: daysUntilGoal.toString(),
+                                          header: true,
+                                          color: AppColors.accent,
+                                          fontSize: 48,
                                         ),
-                                      );
-                                    },
+                                        Icon(
+                                          Icons.calendar_today,
+                                          color: AppColors.accent,
+                                          size: 24,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
@@ -907,16 +826,11 @@ Future<void> _initProfilePage() async {
                                     fontSize: 24,
                                     header: true,
                                   ),
-                                  ValueListenableBuilder<int>(
-                                    valueListenable: daysAchieved,
-                                    builder: (context, value, child) {
-                                      return CustomText(
-                                        content: '$value',
-                                        header: true,
-                                        color: AppColors.accent,
-                                        fontSize: 48,
-                                      );
-                                    },
+                                  CustomText(
+                                    content: '$daysAchieved',
+                                    header: true,
+                                    color: AppColors.accent,
+                                    fontSize: 48,
                                   ),
                                 ],
                               ),
@@ -928,10 +842,16 @@ Future<void> _initProfilePage() async {
                     Expanded(
                       flex: 10,
                       child: CustomButton(
-                        text: "Save Data", 
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                        text: "Save Data",
+                        padding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 30),
                         fontSize: 24,
-                        onPressed: () => updateFirestore(true)),)
+                        onPressed: () {
+                          _updateSafeDays();
+                          updateFirestore(true);
+                        },
+                      ),
+                    )
                   ],
                 ),
               ),
