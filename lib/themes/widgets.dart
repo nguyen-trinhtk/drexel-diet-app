@@ -17,8 +17,8 @@ class ThemedCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Flexible(
-      child: Card (
+    return //Flexible(
+      /*child:*/ Card (
         color: Colors.white,
         shape: RoundedRectangleBorder(
           side: BorderSide(
@@ -32,8 +32,8 @@ class ThemedCard extends StatelessWidget {
           padding: padding,
           child: child,
         )
-      )
-    );
+      );
+    //);
   }
 }
 

@@ -23,7 +23,7 @@ class _HomepageState extends State<HomePage> {
   var logger = Logger();
   bool isLogBarExpanded = false;
   final Map<String, Map<String, dynamic>> _loggedDishes = {};
-  final ValueNotifier<String> hall = ValueNotifier<String>("hans");
+  final ValueNotifier<String> hall = ValueNotifier<String>("urban");
   String searchQuery = "";
   Map<dynamic, dynamic> recommendedMenu = {};
   int _totalCalories = 0;
@@ -398,7 +398,9 @@ class _HomepageState extends State<HomePage> {
                     : MediaQuery.of(context).size.height * 0.03),
                 child: SingleChildScrollView(
                   child: Column(spacing: 15, children: [
-                    ValueListenableBuilder<String>( 
+                    Align(
+                    alignment: Alignment.topLeft,
+                    child:ValueListenableBuilder<String>( 
                       valueListenable: hall,
                       builder: (context, selectedHall, child) {
                         return SegmentedButton<String>(
@@ -422,32 +424,8 @@ class _HomepageState extends State<HomePage> {
                             },
                         );
                       }
-                    ),
-                    /*
-                    ToggleButtons(
-                        isSelected: isHallSelected,
-                        onPressed: (int index) {
-                          setState(() {
-                            for (int buttonIndex = 0;
-                                buttonIndex < isHallSelected.length;
-                                buttonIndex++) {
-                              if (buttonIndex == index) {
-                                isHallSelected[buttonIndex] = true;
-                              } else {
-                                isHallSelected[buttonIndex] = false;
-                              }
-                            }
-                          });
-                        },
-                        children: <Widget>[
-                          CustomText(
-                            content: "Urban Eatery",
-                          ),
-                          CustomText(
-                            content: "Handschumacher",
-                          ),
-                        ]),
-                    */
+                    ),),
+
                     // Recommended Food Box
                     Container(
                         // Check if there is recommended food

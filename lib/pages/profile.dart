@@ -262,20 +262,28 @@ class _ProfilePageState extends State<ProfilePage> {
       backgroundColor: AppColors.primaryBackground,
       body: Padding(
         padding: EdgeInsets.only(top: 48, bottom: 48, right: 64, left: 64),
-        child: Row(
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height - 96,
+          child:Row(
           spacing: 24,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Flexible(
               flex: 60,
-              child: Column(
-                spacing: 24,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.35,
-                    child: Expanded(
-                      flex: 10,
+              fit: FlexFit.tight,
+              child: LayoutBuilder(
+              builder: (builder, constraints) {
+                return Column(
+                  spacing: 24,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.max,
+                  children:[
+                    //Expanded(flex:4, child:Card(child:Text("test"))),
+                    //Expanded(flex:6, child:Card(child:Text("Test")))
+                    
+                    Expanded(
+                      flex: 4,
                       child: ThemedCard(
                         padding: EdgeInsets.only(
                             left: 32, right: 0, top: 32, bottom: 32),
@@ -313,11 +321,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.50,
-                    child: Expanded(
-                      flex: 15,
+                    Flexible(
+                      flex: 6,
+                      fit: FlexFit.tight,
+                      //height: MediaQuery.of(context).size.height*0.6,
                       child: ThemedCard(
                         padding: EdgeInsets.all(32),
                         child: Padding(
@@ -545,11 +552,11 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                    )
+                  ]
+                );
+              }
+            ),),
             Flexible(
               flex: 40,
               child: Column(
@@ -805,7 +812,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ],
         ),
-      ),
+      ),),
     );
   }
 }
