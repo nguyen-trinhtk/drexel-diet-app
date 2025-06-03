@@ -1,10 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:code/SSO-related/SSO.dart';
 import 'dart:convert';
-import 'package:code/pages/filter.dart';
+import 'filter.dart';
 import 'package:code/themes/constants.dart';
 import 'package:code/themes/widgets.dart';
 import 'package:code/data_provider.dart';
@@ -22,21 +23,22 @@ class HomePage extends StatefulWidget {
 class _HomepageState extends State<HomePage> {
   var logger = Logger();
   bool isLogBarExpanded = false;
+  bool urban = true;
   final Map<String, Map<String, dynamic>> _loggedDishes = {};
+  final ValueNotifier<String> hall = ValueNotifier<String>("urban");
   String searchQuery = "";
   Map<dynamic, dynamic> recommendedMenu = {};
   int _totalCalories = 0;
   int _totalCarbs = 0;
   int _totalFat = 0;
   int _totalProtein = 0;
-
-  // List of hall selection checks
-  List<bool> isHallSelected = [true, false];
+  List<String> _lastUserDishes = [];
 
   @override
   void initState() {
     super.initState();
-    loadJsonAsset('urban');
+    logger.d(hall.toString());
+    loadJsonAsset(hall.value);
   }
 
   Future<void> loadJsonAsset(String filename) async {
@@ -157,7 +159,7 @@ class _HomepageState extends State<HomePage> {
     Gemini.init(apiKey: apiKey ?? "");
     await Gemini.instance.prompt(parts: [
       Part.text(
-          'Based on user past data, suggest 1-3 dishes from the current menu data. ONLY output your response with only the ID number of the dish (e.g. 1, 2, 3). Here is user past data: $userDishes. Here is menu data: $menuData'),
+          'Based on user past data, suggest 1-3 dishes from the current menu data, don\'t suggest overlapping dishes twice (e.g. Only suggest Grilled Chicken Breast once). ONLY output your response with only the ID number of the dish (e.g. 1, 2, 3). Here is user past data: $userDishes. Here is menu data: $menuData'),
     ]).then((value) {
       var ans = value?.output;
       print("Answer from Gemini: $ans");
@@ -172,6 +174,9 @@ class _HomepageState extends State<HomePage> {
       recommendedMenu[recommendedMenuIndex.toString()] = menuData[index];
       recommendedMenuIndex += 1;
     }
+
+    print(recommendedMenu);
+    setState(() {});
   }
 
   @override
@@ -227,22 +232,36 @@ class _HomepageState extends State<HomePage> {
         }
       }
     });
+final String? uid = Provider.of<UserProvider>(context).userId;
 
-    final String? uid = Provider.of<UserProvider>(context).userId;
-
+if (uid != null && uid.isNotEmpty) {
+  // If user is logged in, fetch meal history
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance.collection('mealHistory').doc(uid).snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
-        final data = snapshot.data!.data() as Map<String, dynamic>;
         List<String> userDishes = [];
-        for (var meal in data.values){
-           userDishes.add(meal["dishes"].values);
+        if (snapshot.hasData){      
+          final data = snapshot.data!.data() as Map<String, dynamic>;
+          final mealHistory = data["mealHistory"];
+          for (var meal in mealHistory) {
+            if (meal is Map && meal["dishes"] is Map) {
+              userDishes.addAll((meal["dishes"] as Map).values.map((e) => e.toString()));
+            }
+          }
         }
-        getRecommendedMenu(userDishes).then((_) {
-        return Row(
+
+        if (!listEquals(userDishes, _lastUserDishes)) {
+              _lastUserDishes = List.from(userDishes);
+              
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                getRecommendedMenu(userDishes);
+              });
+        }
+      // Main Home Page
+      return Row(
       children: [
         Expanded(
           child: Scaffold(
@@ -383,7 +402,8 @@ class _HomepageState extends State<HomePage> {
                     },
                   ),
                 ),
-                if (Provider.of<UserProvider>(context, listen: false).userId != null)
+                if (Provider.of<UserProvider>(context, listen: false).userId !=
+                    null)
                   IconButton(
                     icon: Icon(
                       isLogBarExpanded ? Icons.close : Icons.menu,
@@ -408,29 +428,76 @@ class _HomepageState extends State<HomePage> {
                     : MediaQuery.of(context).size.height * 0.03),
                 child: SingleChildScrollView(
                   child: Column(spacing: 15, children: [
-                    ToggleButtons(
-                        isSelected: isHallSelected,
-                        onPressed: (int index) {
-                          setState(() {
-                            for (int buttonIndex = 0;
-                                buttonIndex < isHallSelected.length;
-                                buttonIndex++) {
-                              if (buttonIndex == index) {
-                                isHallSelected[buttonIndex] = true;
-                              } else {
-                                isHallSelected[buttonIndex] = false;
-                              }
-                            }
-                          });
-                        },
-                        children: <Widget>[
-                          CustomText(
-                            content: "Urban Eatery",
-                          ),
-                          CustomText(
-                            content: "Handschumacher",
-                          ),
-                        ]),
+                    Row(
+                      children: [
+                      GestureDetector(
+                        onTap: ()  {setState(() {
+                        hall.value = "urban";
+                        loadJsonAsset(hall.value).then((_) {
+                          getRecommendedMenu(userDishes);
+                        });
+                      });},
+                      child:
+                      Container(
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(40), color: hall.value == "urban" ? const Color.fromARGB(160, 255, 205, 208) : Colors.transparent, border: Border.all(color: AppColors.primaryText, width: 1)),
+                        child:Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15), child:CustomText(content: "Urban", fontSize: 18, bold: true,))
+                      
+                      ),),
+                      Padding(padding: EdgeInsets.all(10), child:CustomText(content:"|")),
+                      GestureDetector(onTap: ()  {setState(() {
+                        hall.value = "hans";
+                        loadJsonAsset(hall.value).then((_) {
+                          getRecommendedMenu(userDishes);
+                        });
+                      });},
+                      child: Container(
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(40), color: hall.value == "hans" ? const Color.fromARGB(160, 255, 205, 208) : Colors.transparent, border: Border.all(color: AppColors.primaryText, width: 1)),
+                        child:Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15), child:CustomText(content: "Handschumacher", fontSize: 18, bold: true))
+                      ))
+                    ],),
+                    /*Align(
+                      alignment: Alignment.topLeft,
+                      child: ValueListenableBuilder<String>(
+                          valueListenable: hall,
+                          builder: (context, selectedHall, child) {
+                            return SegmentedButton<String>(
+                              showSelectedIcon: false,
+                              style: ButtonStyle(
+                                padding:
+                                    WidgetStatePropertyAll(EdgeInsets.all(16)),
+                                backgroundColor:
+                                    WidgetStateProperty.resolveWith<Color?>(
+                                  (Set<WidgetState> states) {
+                                    if (states.contains(WidgetState.selected)) {
+                                      return AppColors.secondaryBackground; // selected color
+                                    }
+                                    return AppColors
+                                        .transparentWhite; // unselected background
+                                  },
+                                ),
+                              ),
+                              segments: const <ButtonSegment<String>>[
+                                ButtonSegment<String>(
+                                  value: "urban",
+                                  label: CustomText(
+                                      content: "Urban Eatery", fontSize: 20),
+                                ),
+                                ButtonSegment<String>(
+                                  value: "hans",
+                                  label: CustomText(
+                                      content: "Handschumacher", fontSize: 20),
+                                )
+                              ],
+                              selected: <String>{selectedHall},
+                              onSelectionChanged: (Set<String> newSelection) {
+                                hall.value = newSelection.first;
+                                loadJsonAsset(hall.value).then((_) {
+                                  getRecommendedMenu();
+                                });
+                              },
+                            );
+                          }),
+                    ),*/
 
                     // Recommended Food Box
                     Container(
@@ -489,35 +556,38 @@ class _HomepageState extends State<HomePage> {
                                       calories: "Calories $calories",
                                       fontSize: isLogBarExpanded ? 14 : 18,
                                       onAddPressed: () {
-                                        String? uid =
-                                            Provider.of<UserProvider>(context,
-                                                    listen: false)
-                                                .userId;
+                                        String? uid = Provider.of<UserProvider>(
+                                                context,
+                                                listen: false)
+                                            .userId;
                                         if (uid == null || uid.isEmpty) {
                                           showDialog(
                                             context: context,
                                             builder: (BuildContext context) {
                                               return AlertDialog(
                                                 title: CustomText(
-                                                    content: "Please log in to add food",
-                                                    header: true,
-                                                    fontSize: 18,),
-                                              backgroundColor: AppColors.white,
-                                              iconColor: AppColors.accent,
+                                                  content:
+                                                      "Please log in to add food",
+                                                  header: true,
+                                                  fontSize: 18,
+                                                ),
+                                                backgroundColor:
+                                                    AppColors.white,
+                                                iconColor: AppColors.accent,
                                                 actions: [
                                                   CustomButton(
-                                                    text: "Log in",
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .push(
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                const SSOPage()),
-                                                      );
-                                                    },
-                                                    color: AppColors.accent,
-                                                    hoverColor: AppColors.primaryText
-                                                  ),
+                                                      text: "Log in",
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .push(
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  const SSOPage()),
+                                                        );
+                                                      },
+                                                      color: AppColors.accent,
+                                                      hoverColor: AppColors
+                                                          .primaryText),
                                                 ],
                                               );
                                             },
@@ -570,8 +640,7 @@ class _HomepageState extends State<HomePage> {
                           calories: "Calories $calories",
                           fontSize: isLogBarExpanded ? 14 : 18,
                           onAddPressed: () {
-                            String? uid = Provider.of<UserProvider>(
-                                    context,
+                            String? uid = Provider.of<UserProvider>(context,
                                     listen: false)
                                 .userId;
                             if (uid == null || uid.isEmpty) {
@@ -579,36 +648,36 @@ class _HomepageState extends State<HomePage> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
-                                                title: CustomText(
-                                                    content: "Please log in to add food",
-                                                    header: true,
-                                                    fontSize: 18,),
-                                              backgroundColor: AppColors.white,
-                                              iconColor: AppColors.accent,
-                                                actions: [
-                                                  CustomButton(
-                                                    onPressed: () => Navigator.of(context).pop(),
-                                                    text: 'Return',
-                                                    bold: true,
-                                                    borderColor: AppColors.accent,
-                                                    color: AppColors.white,
-                                                    textColor: AppColors.accent,
-                                                    hoverColor: AppColors.tertiaryText),
-                                                  CustomButton(
-                                                    text: "Log in",
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .push(
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                const SSOPage()),
-                                                      );
-                                                    },
-                                                    color: AppColors.accent,
-                                                    hoverColor: AppColors.primaryText
-                                                  ),
-                                                ],
-                                              );
+                                    title: CustomText(
+                                      content: "Please log in to add food",
+                                      header: true,
+                                      fontSize: 18,
+                                    ),
+                                    backgroundColor: AppColors.white,
+                                    iconColor: AppColors.accent,
+                                    actions: [
+                                      CustomButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(),
+                                          text: 'Return',
+                                          bold: true,
+                                          borderColor: AppColors.accent,
+                                          color: AppColors.white,
+                                          textColor: AppColors.accent,
+                                          hoverColor: AppColors.tertiaryText),
+                                      CustomButton(
+                                          text: "Log in",
+                                          onPressed: () {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const SSOPage()),
+                                            );
+                                          },
+                                          color: AppColors.accent,
+                                          hoverColor: AppColors.primaryText),
+                                    ],
+                                  );
                                 },
                               );
                             } else {
@@ -697,9 +766,514 @@ class _HomepageState extends State<HomePage> {
         ),
       ],
     );
-      });
-      return Container();
-    }
+
+      }
+      
+      ); 
+  }
+  
+  // Main Home Page
+      return Row(
+      children: [
+        Expanded(
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: AppColors.primaryBackground,
+              scrolledUnderElevation: 0,
+              title: SizedBox(
+                width: MediaQuery.sizeOf(context).width * 0.8,
+                height: MediaQuery.sizeOf(context).height * 0.06,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: MediaQuery.sizeOf(context).width * 0.01),
+                  child: SearchViewTheme(
+                    data: SearchViewThemeData(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(40),
+                          side: BorderSide(color: AppColors.primaryText)),
+                      headerTextStyle: TextStyle(
+                          fontFamily: AppFonts.textFont,
+                          color: AppColors.primaryText),
+                      dividerColor: AppColors.primaryText,
+                      backgroundColor: Colors.white,
+                    ),
+                    child: SearchAnchor(
+                      builder:
+                          (BuildContext context, SearchController controller) {
+                        _searchAnchorController = controller;
+                        return SearchBar(
+                          backgroundColor:
+                              WidgetStateProperty.all(Colors.white),
+                          shape: WidgetStateProperty.all(RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40),
+                              side: BorderSide(
+                                  width: 1, color: AppColors.primaryText))),
+                          elevation: WidgetStateProperty.all(0),
+                          controller: controller,
+                          padding: WidgetStatePropertyAll<EdgeInsets>(
+                              EdgeInsets.only(
+                                  left: MediaQuery.of(context).size.height *
+                                      0.02)),
+                          onTap: () {
+                            controller.openView();
+                          },
+                          onChanged: (_) {
+                            controller.openView();
+                          },
+                          leading:
+                              const Icon(Icons.search, color: AppColors.accent),
+                        );
+                      },
+                      suggestionsBuilder:
+                          (BuildContext context, SearchController controller) {
+                        String query = controller.value.text;
+                        List<String> suggestions = [];
+                        for (int index = 0; index < menuData.length; index++) {
+                          final item = menuData[index.toString()];
+                          if (item != null) {
+                            if (((item["Name"].contains(query)) |
+                                    (item["Name"]
+                                        .toLowerCase()
+                                        .contains(query))) |
+                                ((item["Description"].contains(query)) |
+                                    (item["Description"]
+                                        .toLowerCase()
+                                        .contains(query)))) {
+                              suggestions
+                                  .add(menuData[index.toString()]["Name"]);
+                            }
+                          }
+                        }
+                        setState(() {
+                          searchQuery = query;
+                        });
+                        return List<ListTile>.generate(suggestions.length,
+                            (int index) {
+                          final String item = suggestions[index];
+                          return ListTile(
+                              title: CustomText(content: item),
+                              onTap: () {
+                                setState(() {
+                                  controller.closeView(item);
+                                });
+                              });
+                        });
+                      },
+                      viewTrailing: [
+                        Builder(builder: (context) {
+                          return IconButton(
+                            icon: Icon(Icons.clear, color: AppColors.accent),
+                            onPressed: () {
+                              _searchAnchorController?.clear();
+                            },
+                          );
+                        })
+                      ],
+                      viewLeading: Builder(
+                        builder: (context) {
+                          return IconButton(
+                            icon:
+                                Icon(Icons.arrow_back, color: AppColors.accent),
+                            onPressed: () {
+                              _searchAnchorController?.closeView("");
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              actions: [
+                Padding(
+                  padding: EdgeInsets.only(
+                      right: MediaQuery.of(context).size.width * 0.015),
+                  child: CustomButton(
+                    text: "Filters",
+                    bold: true,
+                    height: MediaQuery.of(context).size.height * 0.045,
+                    fontSize: 20,
+                    padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.01),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => Dialog(
+                          backgroundColor: AppColors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                            side: BorderSide(
+                                color: AppColors.primaryText, width: 1.5),
+                          ),
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.45,
+                            child: FoodFilterDrawer(),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                if (Provider.of<UserProvider>(context, listen: false).userId !=
+                    null)
+                  IconButton(
+                    icon: Icon(
+                      isLogBarExpanded ? Icons.close : Icons.menu,
+                      color: AppColors.primaryText,
+                    ),
+                    tooltip: isLogBarExpanded
+                        ? "Close Logged Dishes"
+                        : "Show Logged Dishes",
+                    onPressed: () {
+                      setState(() {
+                        isLogBarExpanded = !isLogBarExpanded;
+                      });
+                    },
+                  ),
+                SizedBox(width: MediaQuery.of(context).size.width * 0.015),
+              ],
+            ),
+            backgroundColor: AppColors.primaryBackground,
+            body: Padding(
+                padding: EdgeInsets.all(isLogBarExpanded
+                    ? MediaQuery.of(context).size.height * 0.015
+                    : MediaQuery.of(context).size.height * 0.03),
+                child: SingleChildScrollView(
+                  child: Column(spacing: 15, children: [
+                    Row(
+                      children: [
+                      GestureDetector(
+                        onTap: ()  {setState(() {
+                        hall.value = "urban";
+                        loadJsonAsset(hall.value);
+                      });},
+                      child:
+                      Container(
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(40), color: hall.value == "urban" ? const Color.fromARGB(160, 255, 205, 208) : Colors.transparent, border: Border.all(color: AppColors.primaryText, width: 1)),
+                        child:Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15), child:CustomText(content: "Urban", fontSize: 18, bold: true,))
+                      
+                      ),),
+                      Padding(padding: EdgeInsets.all(10), child:CustomText(content:"|")),
+                      GestureDetector(onTap: ()  {setState(() {
+                        hall.value = "hans";
+                        loadJsonAsset(hall.value);
+                      });},
+                      child: Container(
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(40), color: hall.value == "hans" ? const Color.fromARGB(160, 255, 205, 208) : Colors.transparent, border: Border.all(color: AppColors.primaryText, width: 1)),
+                        child:Padding(padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15), child:CustomText(content: "Handschumacher", fontSize: 18, bold: true))
+                      ))
+                    ],),
+                    /*Align(
+                      alignment: Alignment.topLeft,
+                      child: ValueListenableBuilder<String>(
+                          valueListenable: hall,
+                          builder: (context, selectedHall, child) {
+                            return SegmentedButton<String>(
+                              showSelectedIcon: false,
+                              style: ButtonStyle(
+                                padding:
+                                    WidgetStatePropertyAll(EdgeInsets.all(16)),
+                                backgroundColor:
+                                    WidgetStateProperty.resolveWith<Color?>(
+                                  (Set<WidgetState> states) {
+                                    if (states.contains(WidgetState.selected)) {
+                                      return AppColors.secondaryBackground; // selected color
+                                    }
+                                    return AppColors
+                                        .transparentWhite; // unselected background
+                                  },
+                                ),
+                              ),
+                              segments: const <ButtonSegment<String>>[
+                                ButtonSegment<String>(
+                                  value: "urban",
+                                  label: CustomText(
+                                      content: "Urban Eatery", fontSize: 20),
+                                ),
+                                ButtonSegment<String>(
+                                  value: "hans",
+                                  label: CustomText(
+                                      content: "Handschumacher", fontSize: 20),
+                                )
+                              ],
+                              selected: <String>{selectedHall},
+                              onSelectionChanged: (Set<String> newSelection) {
+                                hall.value = newSelection.first;
+                                loadJsonAsset(hall.value).then((_) {
+                                  getRecommendedMenu();
+                                });
+                              },
+                            );
+                          }),
+                    ),*/
+
+                    // Recommended Food Box
+                    Container(
+                        // Check if there is recommended food
+                        child: recommendedMenu.isEmpty
+                            ? null
+                            : Container(
+                                decoration: BoxDecoration(
+                                    color: AppColors.secondaryBackground,
+                                    borderRadius: BorderRadius.circular(40)),
+                                padding: EdgeInsets.all(16),
+                                child: GridView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount:
+                                        findCardsPerRow(viewWidth, 350),
+                                    crossAxisSpacing:
+                                        MediaQuery.of(context).size.height *
+                                            0.02,
+                                    mainAxisSpacing:
+                                        MediaQuery.of(context).size.width *
+                                            0.01,
+                                    childAspectRatio:
+                                        isLogBarExpanded ? 1.2 : 1.4,
+                                  ),
+                                  itemCount: recommendedMenu.length,
+                                  itemBuilder: (context, index) {
+                                    final strIndex = index.toString();
+                                    final item = recommendedMenu[strIndex];
+                                    if (item == null) return const SizedBox();
+
+                                    final foodName = item['Name'];
+                                    final calories =
+                                        int.tryParse(item['Calories']) ?? 0;
+                                    final protein = int.tryParse(item['protein']
+                                                ?.replaceAll(
+                                                    RegExp(r'[^\d]'), '') ??
+                                            '0') ??
+                                        0;
+                                    final carbs = int.tryParse(
+                                            item['totalCarbohydrates']
+                                                    ?.replaceAll(
+                                                        RegExp(r'[^\d]'), '') ??
+                                                '0') ??
+                                        0;
+                                    final fat = int.tryParse(item['totalFat']
+                                                ?.replaceAll(
+                                                    RegExp(r'[^\d]'), '') ??
+                                            '0') ??
+                                        0;
+                                    return FoodCard(
+                                      name: foodName,
+                                      description: item['Description'],
+                                      calories: "Calories $calories",
+                                      fontSize: isLogBarExpanded ? 14 : 18,
+                                      onAddPressed: () {
+                                        String? uid = Provider.of<UserProvider>(
+                                                context,
+                                                listen: false)
+                                            .userId;
+                                        if (uid == null || uid.isEmpty) {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: CustomText(
+                                                  content:
+                                                      "Please log in to add food",
+                                                  header: true,
+                                                  fontSize: 18,
+                                                ),
+                                                backgroundColor:
+                                                    AppColors.white,
+                                                iconColor: AppColors.accent,
+                                                actions: [
+                                                  CustomButton(
+                                                      text: "Log in",
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .push(
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  const SSOPage()),
+                                                        );
+                                                      },
+                                                      color: AppColors.accent,
+                                                      hoverColor: AppColors
+                                                          .primaryText),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        } else {
+                                          appendLog(foodName, calories, protein,
+                                              carbs, fat);
+                                          setState(
+                                              () => isLogBarExpanded = true);
+                                        }
+                                      },
+                                    );
+                                  },
+                                ))),
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: findCardsPerRow(viewWidth, 350),
+                        crossAxisSpacing:
+                            MediaQuery.of(context).size.height * 0.02,
+                        mainAxisSpacing:
+                            MediaQuery.of(context).size.width * 0.01,
+                        childAspectRatio: isLogBarExpanded ? 1.2 : 1.4,
+                      ),
+                      itemCount: filteredMenu.length,
+                      itemBuilder: (context, index) {
+                        final strIndex = index.toString();
+                        final item = filteredMenu[strIndex];
+                        if (item == null) return const SizedBox();
+
+                        final foodName = item['Name'];
+                        final calories = int.tryParse(item['Calories']) ?? 0;
+                        final protein = int.tryParse(item['protein']
+                                    ?.replaceAll(RegExp(r'[^\d]'), '') ??
+                                '0') ??
+                            0;
+                        final carbs = int.tryParse(item['totalCarbohydrates']
+                                    ?.replaceAll(RegExp(r'[^\d]'), '') ??
+                                '0') ??
+                            0;
+                        final fat = int.tryParse(item['totalFat']
+                                    ?.replaceAll(RegExp(r'[^\d]'), '') ??
+                                '0') ??
+                            0;
+
+                        return FoodCard(
+                          name: foodName,
+                          description: item['Description'],
+                          calories: "Calories $calories",
+                          fontSize: isLogBarExpanded ? 14 : 18,
+                          onAddPressed: () {
+                            String? uid = Provider.of<UserProvider>(context,
+                                    listen: false)
+                                .userId;
+                            if (uid == null || uid.isEmpty) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: CustomText(
+                                      content: "Please log in to add food",
+                                      header: true,
+                                      fontSize: 18,
+                                    ),
+                                    backgroundColor: AppColors.white,
+                                    iconColor: AppColors.accent,
+                                    actions: [
+                                      CustomButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(),
+                                          text: 'Return',
+                                          bold: true,
+                                          borderColor: AppColors.accent,
+                                          color: AppColors.white,
+                                          textColor: AppColors.accent,
+                                          hoverColor: AppColors.tertiaryText),
+                                      CustomButton(
+                                          text: "Log in",
+                                          onPressed: () {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const SSOPage()),
+                                            );
+                                          },
+                                          color: AppColors.accent,
+                                          hoverColor: AppColors.primaryText),
+                                    ],
+                                  );
+                                },
+                              );
+                            } else {
+                              appendLog(
+                                  foodName, calories, protein, carbs, fat);
+                              setState(() => isLogBarExpanded = true);
+                            }
+                          },
+                        );
+                      },
+                    )
+                  ]),
+                )),
+          ),
+        ),
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width:
+              isLogBarExpanded ? MediaQuery.of(context).size.width * 0.225 : 0,
+          decoration: BoxDecoration(
+            color: AppColors.secondaryBackground,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(25),
+              bottomLeft: Radius.circular(25),
+            ),
+          ),
+          child: isLogBarExpanded
+              ? Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.height * 0.02),
+                  child: Column(
+                    spacing: MediaQuery.of(context).size.height * 0.01,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                          child: CustomText(
+                              content: 'Dishes', fontSize: 24, header: true)),
+                      Container(height: 2, color: AppColors.primaryText),
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.all(
+                              MediaQuery.of(context).size.width * 0.01),
+                          color: AppColors.white,
+                          width: double.infinity,
+                          child: Scrollbar(
+                            thumbVisibility: false,
+                            child: SingleChildScrollView(
+                                child: Column(children: logBarCards)),
+                          ),
+                        ),
+                      ),
+                      Container(height: 2, color: AppColors.primaryText),
+                      ...[
+                        ['Calories', _totalCalories],
+                        ['Protein', _totalProtein],
+                        ['Carbs', _totalCarbs],
+                        ['Fat', _totalFat],
+                      ].map((e) => Row(
+                            children: [
+                              Expanded(
+                                  child: CustomText(
+                                      content: e[0] as String,
+                                      fontSize: 14,
+                                      header: true)),
+                              SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.05,
+                                  child: CustomText(
+                                      content: e[1].toString(),
+                                      fontSize: 14,
+                                      header: true)),
+                            ],
+                          )),
+                      Center(
+                        child: Padding(
+                            padding: EdgeInsets.only(
+                                bottom:
+                                    MediaQuery.of(context).size.height * .01),
+                            child: CustomButton(
+                                text: "Log Meal", onPressed: logMeal)),
+                      )
+                    ],
+                  ),
+                )
+              : null,
+        ),
+      ],
     );
+
 }
 }
