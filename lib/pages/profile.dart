@@ -54,14 +54,14 @@ Future<void> _initProfilePage() async {
   heightController.addListener(() => height.value = heightController.text);
   weightController.addListener(() => currentWeight.value = weightController.text);
   goalWeightController.addListener(() => goalWeight.value = goalWeightController.text);
-  age.addListener(() => updateFirestore(false));
-  name.addListener(() => updateFirestore(false));
-  height.addListener(() => updateFirestore(false));
-  currentWeight.addListener(() => updateFirestore(true));
-  activityLevel.addListener(() => updateFirestore(false));
-  gender.addListener(() => updateFirestore(false));
-  goalWeight.addListener(() => updateFirestore(false));
-  daysUntilGoal.addListener(() => updateFirestore(false));
+  // age.addListener(() => updateFirestore(false));
+  // name.addListener(() => updateFirestore(false));
+  // height.addListener(() => updateFirestore(false));
+  // currentWeight.addListener(() => updateFirestore(true));
+  // activityLevel.addListener(() => updateFirestore(false));
+  // gender.addListener(() => updateFirestore(false));
+  // goalWeight.addListener(() => updateFirestore(false));
+  // daysUntilGoal.addListener(() => updateFirestore(false));
   currentWeight.addListener(_updateSafeDays);
   goalWeight.addListener(_updateSafeDays);
   _updateSafeDays();
@@ -925,6 +925,13 @@ Future<void> _initProfilePage() async {
                         ),
                       ),
                     ),
+                    Expanded(
+                      flex: 10,
+                      child: CustomButton(
+                        text: "Save Data", 
+                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                        fontSize: 24,
+                        onPressed: () => updateFirestore(true)),)
                   ],
                 ),
               ),
