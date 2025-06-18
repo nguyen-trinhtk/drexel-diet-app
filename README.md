@@ -1,8 +1,5 @@
 # App Walkthrough
-
-https://github.com/user-attachments/assets/c4429960-6286-4ca6-a543-95a3d5c945b9
-
-
+https://github.com/user-attachments/assets/6d4770aa-5118-44b3-8208-6e3349fe4109
 
 # Description
 
