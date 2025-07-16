@@ -1,3 +1,10 @@
+# App Walkthrough
+
+
+https://github.com/user-attachments/assets/f298c092-6163-479e-9d95-1c9102832d2c
+
+
+
 # Description
 
 Are you struggling with Freshman Fifteen? If you want to have healthier and enjoyable meals but don’t know where to start, our team’s Drexel Personalized Dining app - the pocket nutrition assistant - is for you. The app fetches daily menus from the Drexel Dining website, offering personalized meal suggestions based on the user’s set preferences and calorie goals. It also calculates nutritional facts to make sure you hit all the macro- and micro-nutrients. 
